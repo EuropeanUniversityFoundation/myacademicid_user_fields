@@ -7,9 +7,9 @@ myacademicid_user_fields.example:
     _permission: 'access content'
 
 myacademicid_user_fields.settings_form:
-  path: '/admin/config/system/myacademicid-user-fields'
+  path: '/admin/config/people/accounts/myacademicid'
   defaults:
     _title: 'MyAcademicID user fields settings'
     _form: 'Drupal\myacademicid_user_fields\Form\SettingsForm'
   requirements:
-    _permission: 'administer myacademicid_user_fields configuration'
+    _permission: 'administer myacademicid user fields'

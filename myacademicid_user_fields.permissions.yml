@@ -1,4 +1,3 @@
-administer myacademicid_user_fields configuration:
-  title: 'Administer myacademicid_user_fields configuration'
-  description: 'Optional description.'
+administer myacademicid user fields:
+  title: 'Administer MyAcademicID user fields'
   restrict access: true

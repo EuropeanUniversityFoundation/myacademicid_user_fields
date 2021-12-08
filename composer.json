@@ -1,0 +1,13 @@
+{
+  "name": "euf/myacademicid_user_fields",
+  "type": "drupal-module",
+  "description": "Drupal 9 module providing base fields for the User entity to store MyAcademicID data.",
+  "keywords": [
+  ],
+  "homepage": "",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "",
+    "source": ""
+  }
+}
