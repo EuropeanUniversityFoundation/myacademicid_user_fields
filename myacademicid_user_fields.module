@@ -1,10 +1,38 @@
 <?php
 
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
+
 /**
  * @file
  * Primary module hooks for MyAcademicID user fields module.
- *
- * @DCG
- * This file is no longer required in Drupal 8.
- * @see https://www.drupal.org/node/2217931
  */
+
+/**
+ * Implements hook_entity_base_field_info().
+ */
+function myacademicid_user_fields_entity_base_field_info(EntityTypeInterface $entity_type) {
+  if ($entity_type->id() == 'user') {
+
+    $fields['maid_schac_home_organization'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('MyAcademicID schac_home_organization'))
+      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+      ->setRequired(FALSE)
+      ->setDescription(t('The SCHAC code of the user\'s home organization as provided by MyAcademicID.'));
+
+    $fields['maid_schac_personal_unique_code'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('MyAcademicID schac_personal_unique_code'))
+      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+      ->setRequired(FALSE)
+      ->setDescription(t('The user\'s personal unique code as provided by MyAcademicID.'));
+
+    $fields['maid_voperson_external_affilliation'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('MyAcademicID voperson_external_affilliation'))
+      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+      ->setRequired(FALSE)
+      ->setDescription(t('The user\'s affilliation with their home organization as provided by MyAcademicID.'));
+
+    return $fields;
+  }
+}

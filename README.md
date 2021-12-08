@@ -25,3 +25,10 @@ Finally, install the module:
 ## Usage
 
 The MyAcademicID user fields settings will be available at `/admin/config/people/accounts/myacademicid`. The corresponding permissions are grouped under _MyAcademicID user fields_ at `/admin/people/permissions`.
+
+## Tests
+
+Assuming there is a properly configured `phpunit.xml` at the project root, that Drupal is inside the `web` directory and that this module is in `web/modules/contrib`, run the following commands:
+
+    cd web/core
+    ../../vendor/bin/phpunit -c $PWD/../../phpunit.xml ../modules/contrib/myacademicid_user_fields/tests
