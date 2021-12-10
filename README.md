@@ -28,7 +28,6 @@ The MyAcademicID user fields settings will be available at `/admin/config/people
 
 ## Tests
 
-Assuming there is a properly configured `phpunit.xml` at the project root, that Drupal is inside the `web` directory and that this module is in `web/modules/contrib`, run the following commands:
+Assuming there is a properly configured `phpunit.xml` at the project root, run the tests with the following command:
 
-    cd web/core
-    ../../vendor/bin/phpunit -c $PWD/../../phpunit.xml ../modules/contrib/myacademicid_user_fields/tests
+    vendor/bin/phpunit web/modules/contrib/myacademicid_user_fields/tests
