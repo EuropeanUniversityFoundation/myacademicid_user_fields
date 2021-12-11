@@ -9,8 +9,6 @@ use Symfony\Component\Validator\ConstraintValidator;
  * Validates the SchacHomeOrganization constraint.
  *
  * This is essentially a long winded way to validate a hostname.
- * It could possibly be accomplished with a single RegEx found on StackExchange.
- * However, a readable explanation of that RegEx might be longer than this code.
  */
 class SchacHomeOrganizationValidator extends ConstraintValidator {
 
@@ -19,9 +17,6 @@ class SchacHomeOrganizationValidator extends ConstraintValidator {
    */
   public function validate($items, Constraint $constraint) {
     foreach ($items as $item) {
-      // Assume the best case scenario.
-      $fail = FALSE;
-
       // Begin by validating very basic assumptions.
       $fail = (
         !\is_string($item->value) ||
@@ -53,15 +48,15 @@ class SchacHomeOrganizationValidator extends ConstraintValidator {
    * @return bool $fail
    */
   private function validateLabels(string $hostname): bool {
-    $fail = FALSE;
-
+    // Labels are the components between periods in the hostname.
     $labels = \explode('.', $hostname);
 
     // The last label is the Top Level Domain (TLD).
     $tld = $labels[\count($labels)-1];
     // The TLD label must contain only letters.
+    // The TLD label must contain at least 2 characters.
     // The longest known TLD is 24 characters long.
-    $fail = (!\ctype_alpha($tld) || \strlen($tld) > 24);
+    $fail = (!\ctype_alpha($tld) || \strlen($tld) < 2 || \strlen($tld) > 24);
 
     if (!$fail) {
       // Validate all other labels.
@@ -95,16 +90,18 @@ class SchacHomeOrganizationValidator extends ConstraintValidator {
    * @return bool $fail
    */
   private function validateSingleLabel(string $label, bool $domain): bool {
-    $fail = FALSE;
-
     // Hyphens are allowed, under certain conditions.
     $parts = \explode('-', $label);
 
-    // No leading or trailing hyphens allowed.
-    $fail = (
-      empty($parts[0]) ||
-      empty($parts[\count($parts)-1])
-    );
+    // No leading or trailing hyphens allowed (so no empty parts).
+    $fail = (empty($parts[0]) || empty($parts[\count($parts)-1]));
+
+    if (!$fail) {
+      // Apart from hyphens, all other characters must be alphanumerical.
+      foreach ($parts as $part) {
+        $fail = ($fail || (!empty($part) && !\ctype_alnum($part)));
+      }
+    }
 
     // In the particular case of a domain label, another rule applies.
     if (!$fail && $domain) {
