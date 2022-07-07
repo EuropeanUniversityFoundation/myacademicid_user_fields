@@ -6,6 +6,11 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\user\UserInterface;
+use Drupal\myacademicid_user_fields\Event\UserSchacHomeOrganizationChangeEvent;
+use Drupal\myacademicid_user_fields\Event\UserSchacPersonalUniqueCodeChangeEvent;
+use Drupal\myacademicid_user_fields\Event\UserVopersonExternalAffilliationChangeEvent;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * MyAcademicID User Fields service.
@@ -18,6 +23,12 @@ class MyacademicidUserFields {
   const FIELD_SPUC = 'maid_schac_personal_unique_code';
   const FIELD_VEA = 'maid_voperson_external_affilliation';
 
+  const EVENT_CLASS = [
+    self::FIELD_SHO => UserSchacHomeOrganizationChangeEvent::class,
+    self::FIELD_SPUC => UserSchacPersonalUniqueCodeChangeEvent::class,
+    self::FIELD_VEA => UserVopersonExternalAffilliationChangeEvent::class,
+  ];
+
   const CLAIM_SHO = 'schac_home_organization';
   const CLAIM_SPUC = 'schac_personal_unique_code';
   const CLAIM_VEA = 'voperson_external_affilliation';
@@ -25,14 +36,25 @@ class MyacademicidUserFields {
   const DESCRIPTION = 'As provided by MyAcademicID.';
 
   /**
+   * Event dispatcher.
+   *
+   * @var \Symfony\Contracts\EventDispatcher\EventDispatcherInterface
+   */
+  protected $eventDispatcher;
+
+  /**
    * The constructor.
    *
+   * @param \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   The event dispatcher service.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation service.
    */
   public function __construct(
+    EventDispatcherInterface $event_dispatcher,
     TranslationInterface $string_translation
   ) {
+    $this->eventDispatcher    = $event_dispatcher;
     $this->stringTranslation = $string_translation;
   }
 
@@ -82,6 +104,28 @@ class MyacademicidUserFields {
       // ->addConstraint('VopersonExternalAffilliation');
 
     return $fields;
+  }
+
+  /**
+   * Check for changes in the user entity to dispatch events.
+   *
+   * @param \Drupal\user\UserInterface $user
+   */
+  public function checkFieldChange(UserInterface $user) {
+    foreach (self::EVENT_CLASS as $field => $event_class) {
+      $old_value = (empty($user->original)) ? NULL : $user->original
+        ->get($field)->getValue();
+      $new_value = $user
+        ->get($field)->getValue();
+
+      if ($old_value !== $new_value) {
+        // Instantiate our event.
+        $event = new $event_class($user);
+        // Dispatch the event.
+        $this->eventDispatcher
+          ->dispatch($event, $event_class::EVENT_NAME);
+      }
+    }
   }
 
 }

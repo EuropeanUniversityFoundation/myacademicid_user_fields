@@ -1,4 +1,10 @@
 services:
   myacademicid_user_fields:
     class: Drupal\myacademicid_user_fields\MyacademicidUserFields
-    arguments: ['@string_translation']
+    arguments: ['@event_dispatcher', '@string_translation']
+
+  myacademicid_user_fields.event_subscriber:
+    class: Drupal\myacademicid_user_fields\EventSubscriber\MyacademicidUserFieldsSubscriber
+    arguments: ['@messenger', '@string_translation']
+    tags:
+      - { name: event_subscriber }
