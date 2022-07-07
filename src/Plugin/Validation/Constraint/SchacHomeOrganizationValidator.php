@@ -28,7 +28,7 @@ class SchacHomeOrganizationValidator extends ConstraintValidator {
 
       if (!$fail) {
         // Validate individual hostname labels.
-        $fail = validateLabels($item->value);
+        $fail = $this->validateLabels($item->value);
       }
 
       if ($fail) {
@@ -73,7 +73,7 @@ class SchacHomeOrganizationValidator extends ConstraintValidator {
           // There are restrictions on the domain label in particular.
           $domain = ($i === \count($labels)-2);
           // Validate an individual label.
-          $fail = validateSingleLabel($label, $domain);
+          $fail = $this->validateSingleLabel($label, $domain);
         }
       }
     }
