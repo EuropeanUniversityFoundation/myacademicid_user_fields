@@ -1,0 +1,4 @@
+services:
+  myacademicid_user_fields:
+    class: Drupal\myacademicid_user_fields\MyacademicidUserFields
+    arguments: ['@string_translation']
