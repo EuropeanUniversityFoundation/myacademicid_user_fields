@@ -1,0 +1,12 @@
+# Local tasks
+myacademicid_user_fields.settings_form:
+  title: 'Settings'
+  base_route: myacademicid_user_fields.settings_form
+  route_name: myacademicid_user_fields.settings_form
+  weight: 1
+
+myacademicid_user_fields.trigger_set_events:
+  title: 'Trigger Set Events'
+  base_route: myacademicid_user_fields.settings_form
+  route_name: myacademicid_user_fields.trigger_set_events
+  weight: 2
