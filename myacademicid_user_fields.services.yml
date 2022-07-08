@@ -8,3 +8,21 @@ services:
     arguments: ['@messenger', '@string_translation']
     tags:
       - { name: event_subscriber }
+
+  myacademicid_user_fields.set_sho_subscriber:
+    class: Drupal\myacademicid_user_fields\EventSubscriber\setUserSchacHomeOrganization
+    arguments: ['@myacademicid_user_fields', '@messenger', '@string_translation']
+    tags:
+      - { name: event_subscriber }
+
+  myacademicid_user_fields.set_spuc_subscriber:
+    class: Drupal\myacademicid_user_fields\EventSubscriber\setUserSchacPersonalUniqueCode
+    arguments: ['@myacademicid_user_fields', '@messenger', '@string_translation']
+    tags:
+      - { name: event_subscriber }
+
+  myacademicid_user_fields.set_vea_subscriber:
+    class: Drupal\myacademicid_user_fields\EventSubscriber\setUserVopersonExternalAffilliation
+    arguments: ['@myacademicid_user_fields', '@messenger', '@string_translation']
+    tags:
+      - { name: event_subscriber }

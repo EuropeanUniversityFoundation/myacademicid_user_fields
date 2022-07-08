@@ -128,4 +128,43 @@ class MyacademicidUserFields {
     }
   }
 
+  /**
+   * Set schac_home_organization value on a user entity.
+   *
+   * @param \Drupal\user\UserInterface $user
+   * @param array $sho
+   */
+  public function setUserSchacHomeOrganization(UserInterface $user, array $sho) {
+    $base_field = self::FIELD_SHO;
+
+    $user->$base_field = $sho;
+    $user->save();
+  }
+
+  /**
+   * Set schac_personal_unique_code value on a user entity.
+   *
+   * @param \Drupal\user\UserInterface $user
+   * @param array $spuc
+   */
+  public function setUserSchacPersonalUniqueCode(UserInterface $user, array $spuc) {
+    $base_field = self::FIELD_SPUC;
+
+    $user->$base_field = $spuc;
+    $user->save();
+  }
+
+  /**
+   * Set voperson_external_affilliation value on a user entity.
+   *
+   * @param \Drupal\user\UserInterface $user
+   * @param array $vea
+   */
+  public function setUserVopersonExternalAffilliation(UserInterface $user, array $vea) {
+    $base_field = self::FIELD_VEA;
+
+    $user->$base_field = $vea;
+    $user->save();
+  }
+
 }
