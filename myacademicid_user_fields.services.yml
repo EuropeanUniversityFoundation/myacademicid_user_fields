@@ -10,19 +10,19 @@ services:
       - { name: event_subscriber }
 
   myacademicid_user_fields.set_sho_subscriber:
-    class: Drupal\myacademicid_user_fields\EventSubscriber\setUserSchacHomeOrganization
+    class: Drupal\myacademicid_user_fields\EventSubscriber\SetUserSchacHomeOrganizationEventSubscriber
     arguments: ['@myacademicid_user_fields', '@messenger', '@string_translation']
     tags:
       - { name: event_subscriber }
 
   myacademicid_user_fields.set_spuc_subscriber:
-    class: Drupal\myacademicid_user_fields\EventSubscriber\setUserSchacPersonalUniqueCode
+    class: Drupal\myacademicid_user_fields\EventSubscriber\SetUserSchacPersonalUniqueCodeEventSubscriber
     arguments: ['@myacademicid_user_fields', '@messenger', '@string_translation']
     tags:
       - { name: event_subscriber }
 
   myacademicid_user_fields.set_vea_subscriber:
-    class: Drupal\myacademicid_user_fields\EventSubscriber\setUserVopersonExternalAffilliation
+    class: Drupal\myacademicid_user_fields\EventSubscriber\SetUserVopersonExternalAffilliationEventSubscriber
     arguments: ['@myacademicid_user_fields', '@messenger', '@string_translation']
     tags:
       - { name: event_subscriber }
