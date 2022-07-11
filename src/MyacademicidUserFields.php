@@ -4,6 +4,7 @@ namespace Drupal\myacademicid_user_fields;
 
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\user\UserInterface;
@@ -43,18 +44,29 @@ class MyacademicidUserFields {
   protected $eventDispatcher;
 
   /**
+   * The messenger.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
    * The constructor.
    *
    * @param \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher service.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation service.
    */
   public function __construct(
     EventDispatcherInterface $event_dispatcher,
+    MessengerInterface $messenger,
     TranslationInterface $string_translation
   ) {
-    $this->eventDispatcher    = $event_dispatcher;
+    $this->eventDispatcher   = $event_dispatcher;
+    $this->messenger         = $messenger;
     $this->stringTranslation = $string_translation;
   }
 
@@ -135,10 +147,7 @@ class MyacademicidUserFields {
    * @param array $sho
    */
   public function setUserSchacHomeOrganization(UserInterface $user, array $sho) {
-    $base_field = self::FIELD_SHO;
-
-    $user->$base_field = $sho;
-    $user->save();
+    $this->setValidFieldValue($user, self::FIELD_SHO, $sho, self::CLAIM_SHO);
   }
 
   /**
@@ -148,10 +157,7 @@ class MyacademicidUserFields {
    * @param array $spuc
    */
   public function setUserSchacPersonalUniqueCode(UserInterface $user, array $spuc) {
-    $base_field = self::FIELD_SPUC;
-
-    $user->$base_field = $spuc;
-    $user->save();
+    $this->setValidFieldValue($user, self::FIELD_SPUC, $spuc, self::CLAIM_SPUC);
   }
 
   /**
@@ -161,9 +167,38 @@ class MyacademicidUserFields {
    * @param array $vea
    */
   public function setUserVopersonExternalAffilliation(UserInterface $user, array $vea) {
-    $base_field = self::FIELD_VEA;
+    $this->setValidFieldValue($user, self::FIELD_VEA, $vea, self::CLAIM_VEA);
+  }
 
-    $user->$base_field = $vea;
+  /**
+   * Set a field value on a user entity if entity validation allows.
+   *
+   * @param \Drupal\user\UserInterface $user
+   * @param string $field
+   * @param array $value
+   * @param string $claim
+   */
+  private function setValidFieldValue(UserInterface $user, string $field, array $value, string $claim) {
+    $original = $user->get($field)->getValue();
+
+    $user->set($field, $value);
+
+    $user->_skipProtectedUserFieldConstraint = TRUE;
+    $violations = $user->validate();
+
+    if ($violations->count() > 0) {
+      foreach ($violations as $idx => $violation) {
+        $this->messenger->addError($violation->getMessage());
+      }
+
+      $this->messenger->addError($this->t('Cannot set %claim claim to %value', [
+        '%claim' => $claim,
+        '%value' => \implode(', ', $value)
+      ]));
+
+      $user->set($field, $original);
+    }
+
     $user->save();
   }
 
