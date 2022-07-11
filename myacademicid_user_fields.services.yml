@@ -3,6 +3,10 @@ services:
     class: Drupal\myacademicid_user_fields\MyacademicidUserFields
     arguments: ['@event_dispatcher', '@messenger', '@string_translation']
 
+  myacademicid_user_fields.form_alter:
+    class: Drupal\myacademicid_user_fields\MyacademicidUserFieldsFormAlter
+    arguments: ['@current_user', '@string_translation']
+
   myacademicid_user_fields.event_subscriber:
     class: Drupal\myacademicid_user_fields\EventSubscriber\MyacademicidUserFieldsSubscriber
     arguments: ['@messenger', '@string_translation']

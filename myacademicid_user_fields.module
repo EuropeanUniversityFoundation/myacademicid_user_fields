@@ -2,6 +2,7 @@
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * @file
@@ -24,4 +25,12 @@ function myacademicid_user_fields_entity_base_field_info(EntityTypeInterface $en
 function myacademicid_user_fields_user_presave(EntityInterface $user) {
   $service = \Drupal::service('myacademicid_user_fields');
   $service->checkFieldChange($user);
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function myacademicid_user_fields_form_user_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form_alter = \Drupal::service('myacademicid_user_fields.form_alter');
+  $form_alter->userFormAlter($form, $form_state);
 }
