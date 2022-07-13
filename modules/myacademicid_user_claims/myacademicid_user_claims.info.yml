@@ -1,0 +1,9 @@
+name: MyAcademicID user claims
+type: module
+description: Maps MyAcademicID user fields to OAuth2 server claims.
+package: MyAcademicID
+core: 8.x
+core_version_requirement: ^8 || ^9
+dependencies:
+  - drupal:user
+  - oauth2_server:oauth2_server

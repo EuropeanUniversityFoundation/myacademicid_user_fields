@@ -1,0 +1,44 @@
+<?php
+
+/**
+ * @file
+ * Contains myacademicid_user_claims.module.
+ */
+
+use Drupal\user\UserInterface;
+use Drupal\myacademicid_user_fields\MyacademicidUserFields;
+
+/**
+ * Implements hook_oauth2_server_user_claims.
+ *
+ * @return array
+ *   An array of additional claims.
+ */
+function myacademicid_user_claims_oauth2_server_user_claims(UserInterface $account, array $requested_scopes) {
+  $field_claims = [
+    MyacademicidUserFields::FIELD_SHO => MyacademicidUserFields::CLAIM_SHO,
+    MyacademicidUserFields::FIELD_SPUC => MyacademicidUserFields::CLAIM_SPUC,
+    MyacademicidUserFields::FIELD_VEA => MyacademicidUserFields::CLAIM_VEA,
+  ];
+
+  $claims = [];
+
+  foreach ($field_claims as $field => $claim) {
+    // MyAcademicID scopes and claims have the same names.
+    if (in_array($claim, $requested_scopes)) {
+      // Check for the first value.
+      if (!empty($account->get($field)->value)) {
+        // Build an array with all values.
+        $field_values = [];
+
+        foreach ($account->get($field) as $item) {
+          $field_values[] = $item->value;
+        }
+
+        $claims[$claim] = $field_values;
+      }
+    }
+  }
+
+  return $claims;
+}
