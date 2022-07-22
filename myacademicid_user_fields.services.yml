@@ -30,3 +30,7 @@ services:
     arguments: ['@myacademicid_user_fields', '@messenger', '@string_translation']
     tags:
       - { name: event_subscriber }
+
+  myacademicid_user_fields.affilliation:
+    class: Drupal\myacademicid_user_fields\MyacademicidUserAffilliation
+    arguments: ['@string_translation']
