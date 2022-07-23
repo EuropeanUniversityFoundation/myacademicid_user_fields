@@ -6,18 +6,18 @@ myacademicid_user_fields.settings_form:
   requirements:
     _permission: 'administer myacademicid user fields'
 
+myacademicid_user_fields.affilliation_types_form:
+  path: '/admin/config/people/accounts/myacademicid/affilliation-types'
+  defaults:
+    _title: 'MyAcademicID affilliation types'
+    _form: 'Drupal\myacademicid_user_fields\Form\AffilliationTypesForm'
+  requirements:
+    _permission: 'administer myacademicid user fields'
+
 myacademicid_user_fields.trigger_set_events:
   path: '/admin/config/people/accounts/myacademicid/trigger-set-events'
   defaults:
     _title: 'Trigger set events'
     _form: 'Drupal\myacademicid_user_fields\Form\TriggerSetEventsForm'
-  requirements:
-    _permission: 'administer myacademicid user fields'
-
-myacademicid_user_fields.affilliation:
-  path: '/admin/config/people/accounts/myacademicid/affilliation'
-  defaults:
-    _title: 'Affilliation types'
-    _controller: '\Drupal\myacademicid_user_fields\Controller\MyacademicidUserFieldsController::affilliation'
   requirements:
     _permission: 'administer myacademicid user fields'
