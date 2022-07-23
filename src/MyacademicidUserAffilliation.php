@@ -2,6 +2,7 @@
 
 namespace Drupal\myacademicid_user_fields;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 
@@ -19,19 +20,35 @@ class MyacademicidUserAffilliation {
   protected $defaultTypes;
 
   /**
+   * Additional affilliation types.
+   */
+  protected $additionalTypes;
+
+  /**
    * All defined affilliation types.
    */
   protected $definedTypes;
 
   /**
+   * Config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
    * The constructor.
    *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation service.
    */
   public function __construct(
+    ConfigFactoryInterface $config_factory,
     TranslationInterface $string_translation
   ) {
+    $this->configFactory = $config_factory;
     $this->stringTranslation = $string_translation;
   }
 
@@ -71,6 +88,32 @@ class MyacademicidUserAffilliation {
   }
 
   /**
+   * Get list of additional affilliation types from config.
+   *
+   * @return array
+   *   An array of affilliation key => affilliation label pairs.
+   */
+  public function getAdditionalTypes(): array {
+    if (!isset($this->additionalTypes)) {
+      $this->additionalTypes = [];
+
+      $config = $this->configFactory->get('myacademicid_user_fields.settings');
+
+      $additional = $config->get('additional');
+
+      foreach ($additional as $idx => $value) {
+        $pair = \explode('|', $value, 2);
+        $key = $pair[0];
+        $label = (count($pair) === 2) ? $pair[1] : $key;
+
+        $this->additionalTypes[$key] = $label;
+      }
+    }
+
+    return $this->additionalTypes;
+  }
+
+  /**
    * Get list of all defined affilliation types.
    *
    * @return array
@@ -78,7 +121,10 @@ class MyacademicidUserAffilliation {
    */
   public function getDefinedTypes(): array {
     if (!isset($this->definedTypes)) {
-      $this->definedTypes = $this->getDefaultTypes();
+      $default = $this->getDefaultTypes();
+      $additional = $this->getAdditionalTypes();
+
+      $this->definedTypes = \array_merge($default, $additional);
     }
 
     return $this->definedTypes;

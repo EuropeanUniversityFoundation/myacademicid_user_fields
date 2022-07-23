@@ -1,0 +1,9 @@
+myacademicid_user_fields.settings:
+  type: config_object
+  label: 'MyAcademicID user fields settings'
+  mapping:
+    additional:
+      type: sequence
+      label: 'Additional affilliation types'
+      sequence:
+        type: string

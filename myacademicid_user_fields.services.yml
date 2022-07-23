@@ -33,4 +33,4 @@ services:
 
   myacademicid_user_fields.affilliation:
     class: Drupal\myacademicid_user_fields\MyacademicidUserAffilliation
-    arguments: ['@string_translation']
+    arguments: ['@config.factory', '@string_translation']

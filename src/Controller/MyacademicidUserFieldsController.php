@@ -55,6 +55,7 @@ class MyacademicidUserFieldsController extends ControllerBase {
     ];
 
     $header = [
+      $this->t('Source'),
       $this->t('Key'),
       $this->t('Label'),
       $this->t('Example claim'),
@@ -62,11 +63,23 @@ class MyacademicidUserFieldsController extends ControllerBase {
 
     $rows = [];
 
-    foreach ($this->affilliation->getOptions() as $key => $value) {
+    $default_types = $this->affilliation->getDefaultTypes();
+    $defined_types = $this->affilliation->getDefinedTypes();
+
+    foreach ($defined_types as $key => $value) {
+      if (\array_key_exists($key, $default_types)) {
+        $overridden = ($value !== $default_types[$key]);
+        $source = ($overridden) ? $this->t('Override') : $this->t('Default');
+      }
+      else {
+        $source = $this->t('Config');
+      }
+
       $rows[] = [
+        $source,
         $key,
         $value,
-        \implode('@', [$key, 'domain.tld'])
+        \implode('@', [$key, 'domain.tld']),
       ];
     }
 
