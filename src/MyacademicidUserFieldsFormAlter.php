@@ -6,6 +6,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxy;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\myacademicid_user_fields\MyacademicidUserAffilliation;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 
 /**
@@ -29,18 +30,27 @@ class MyacademicidUserFieldsFormAlter {
   protected $currentUser;
 
   /**
+   * The affilliation service.
+   */
+  protected $affilliation;
+
+  /**
    * The constructor.
    *
    * @param \Drupal\Core\Session\AccountProxy $current_user
    *   A proxied implementation of AccountInterface.
+   * @param \Drupal\myacademicid_user_fields\MyacademicidUserAffilliation $affilliation
+   *   The affilliation service.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation service.
    */
   public function __construct(
     AccountProxy $current_user,
+    MyacademicidUserAffilliation $affilliation,
     TranslationInterface $string_translation
   ) {
     $this->currentUser       = $current_user;
+    $this->affilliation      = $affilliation;
     $this->stringTranslation = $string_translation;
   }
 
