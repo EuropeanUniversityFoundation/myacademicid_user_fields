@@ -71,10 +71,15 @@ class AffilliationTypesForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    $intro = '<p>' . $this
+      ->t('Here are all the defined affilliation types. %caveat', [
+        '%caveat' => $this->t('This configuration is used by submodules.')
+      ]) . '</p>';
+
     $form['intro'] = [
       '#type' => 'html_tag',
       '#tag' => 'p',
-      '#value' => $this->t('These are all the defined affilliation types.'),
+      '#value' => $intro,
     ];
 
     $header = [

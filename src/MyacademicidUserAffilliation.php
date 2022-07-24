@@ -115,7 +115,7 @@ class MyacademicidUserAffilliation {
 
       $config = $this->configFactory->get('myacademicid_user_fields.settings');
 
-      $additional = $config->get('additional');
+      $additional = (array) $config->get('additional');
 
       foreach ($additional as $idx => $value) {
         $pair = \explode('|', $value, 2);

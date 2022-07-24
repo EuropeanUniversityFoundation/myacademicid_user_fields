@@ -1,0 +1,7 @@
+myacademicid_user_fields.member_affilliations_form:
+  path: '/admin/config/people/accounts/myacademicid/member-affilliations'
+  defaults:
+    _title: 'MyAcademicID member affilliations'
+    _form: 'Drupal\myacademicid_user_claims\Form\MemberAffilliationsForm'
+  requirements:
+    _permission: 'administer myacademicid user fields'

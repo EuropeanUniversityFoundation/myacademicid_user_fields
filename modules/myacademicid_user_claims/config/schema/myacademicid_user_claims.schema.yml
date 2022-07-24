@@ -1,0 +1,9 @@
+myacademicid_user_claims.settings:
+  type: config_object
+  label: 'MyAcademicID user claims settings'
+  mapping:
+    assert_member:
+      type: sequence
+      label: 'Additional member assertions'
+      sequence:
+        type: string

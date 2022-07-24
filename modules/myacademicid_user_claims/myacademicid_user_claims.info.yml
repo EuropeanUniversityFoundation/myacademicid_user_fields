@@ -7,3 +7,4 @@ core_version_requirement: ^8 || ^9
 dependencies:
   - drupal:user
   - oauth2_server:oauth2_server
+  - myacademicid_user_fields:myacademicid_user_fields

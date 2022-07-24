@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\myacademicid_user_fields\Form;
+namespace Drupal\myacademicid_user_claims\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
@@ -57,23 +57,23 @@ class MemberAffilliationsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'myacademicid_user_fields_settings';
+    return 'myacademicid_user_claims_settings';
   }
 
   /**
    * {@inheritdoc}
    */
   protected function getEditableConfigNames() {
-    return ['myacademicid_user_fields.settings'];
+    return ['myacademicid_user_claims.settings'];
   }
 
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->config('myacademicid_user_fields.settings');
+    $config = $this->config('myacademicid_user_claims.settings');
 
-    $assertions = $config->get('assert_member');
+    $assertions = (array) $config->get('assert_member');
 
     $types = $this->affilliation->getDefinedTypes();
 
@@ -88,7 +88,7 @@ class MemberAffilliationsForm extends ConfigFormBase {
     }
 
     $intro = '<p>' . $this
-      ->t('By default, the %member affilliation is asserted for:', [
+      ->t('By default, the %member affilliation must be asserted for:', [
         '%member' => MyacademicidUserAffilliation::MEMBER
       ]) . '</p>';
 
@@ -99,6 +99,21 @@ class MemberAffilliationsForm extends ConfigFormBase {
       ]) . '</li>';
     }
     $intro .= '</ul>';
+
+    $intro .= '<p>' . $this
+      ->t('The %member affilliation will be asserted if %condition.', [
+        '%member' => MyacademicidUserAffilliation::MEMBER,
+        '%condition' => $this->t(
+          'at least one of the above or below affilliations is present'
+        ),
+      ]) . '</p>';
+
+    $intro .= '<p>' . $this
+      ->t('If %condition, the %member affilliation will not be asserted.', [
+        '%condition' => $this->t(
+          'none of the above or below affilliations are present'),
+        '%member' => MyacademicidUserAffilliation::MEMBER,
+      ]) . '</p>';
 
     $form['intro'] = [
       '#type' => 'item',
@@ -131,7 +146,7 @@ class MemberAffilliationsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->config('myacademicid_user_fields.settings');
+    $config = $this->config('myacademicid_user_claims.settings');
 
     $assertions = [];
 
