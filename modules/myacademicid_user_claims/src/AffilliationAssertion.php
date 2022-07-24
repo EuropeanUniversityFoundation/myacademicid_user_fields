@@ -62,6 +62,25 @@ class AffilliationAssertion {
   }
 
   /**
+   * Member affilliation assertions defined in the system.
+   *
+   * @return array $assertions
+   */
+  public function getAssertions(): array {
+    $assertions = self::ASSERT_MEMBER;
+
+    $config = $this->configFactory->get('myacademicid_user_claims.settings');
+
+    $additional_assertions = (array) $config->get('assert_member');
+
+    foreach ($additional_assertions as $idx => $value) {
+      $assertions[] = $value;
+    }
+
+    return $assertions;
+  }
+
+  /**
    * Convert user fields to claims.
    *
    * @param \Drupal\user\UserInterface $user
@@ -92,7 +111,43 @@ class AffilliationAssertion {
       }
     }
 
+    $this->consolidateAffilliation($claims);
+
     return $claims;
+  }
+
+  /**
+   * Consolidate the affilliation claims.
+   */
+  private function consolidateAffilliation(array &$claims) {
+    $assertions = $this->getAssertions();
+
+    $structure = [];
+
+    // Gather all affilliation keys per schac_home_organization.
+    foreach ($claims[MyacademicidUserFields::CLAIM_VEA] as $idx => $value) {
+      $parts = \explode('@' ,$value);
+      $key = $parts[0];
+      $sho = $parts[1];
+
+      if (\array_key_exists($sho, $structure)) {
+        $structure[$sho][] = $key;
+      }
+      else {
+        $structure[$sho] = [$key];
+      }
+    }
+
+    // Check whether the member affilliation needs to be asserted and added.
+    foreach ($structure as $sho => $keys) {
+      if (
+        ! empty(\array_intersect($assertions, $keys)) &&
+        ! \in_array(MyacademicidUserAffilliation::MEMBER, $keys)
+      ) {
+        $member = \implode('@', [MyacademicidUserAffilliation::MEMBER, $sho]);
+        $claims[MyacademicidUserFields::CLAIM_VEA][] = $member;
+      }
+    }
   }
 
 }
