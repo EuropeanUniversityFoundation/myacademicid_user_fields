@@ -23,13 +23,6 @@ class MyacademicidUserAffilliation {
   const EMPLOYEE = 'employee';
   const LIBRARY_WALK_IN = 'library-walk-in';
 
-  const ASSERT_MEMBER = [
-    self::FACULTY,
-    self::STUDENT,
-    self::STAFF,
-    self::EMPLOYEE,
-  ];
-
   /**
    * Default affilliation types.
    */
