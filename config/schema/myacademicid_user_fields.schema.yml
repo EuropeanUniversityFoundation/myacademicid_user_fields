@@ -7,3 +7,8 @@ myacademicid_user_fields.settings:
       label: 'Additional affilliation types'
       sequence:
         type: string
+    assert_member:
+      type: sequence
+      label: 'Additional member assertions'
+      sequence:
+        type: string

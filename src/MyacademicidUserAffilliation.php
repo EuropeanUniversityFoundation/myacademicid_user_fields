@@ -15,6 +15,20 @@ class MyacademicidUserAffilliation {
   use StringTranslationTrait;
 
   const MEMBER = 'member';
+  const FACULTY = 'faculty';
+  const STUDENT = 'student';
+  const STAFF = 'staff';
+  const ALUM = 'alum';
+  const AFFILLIATE = 'affiliate';
+  const EMPLOYEE = 'employee';
+  const LIBRARY_WALK_IN = 'library-walk-in';
+
+  const ASSERT_MEMBER = [
+    self::FACULTY,
+    self::STUDENT,
+    self::STAFF,
+    self::EMPLOYEE,
+  ];
 
   /**
    * Default affilliation types.
@@ -63,13 +77,13 @@ class MyacademicidUserAffilliation {
   public static function defaultTypes() {
     $default_types = [
       self::MEMBER => t('Member'),
-      'faculty' => t('Faculty'),
-      'student' => t('Student'),
-      'staff' => t('Staff'),
-      'alum' => t('Alum'),
-      'affiliate' => t('Affiliate'),
-      'employee' => t('Employee'),
-      'library-walk-in' => t('Library walk-in'),
+      self::FACULTY => t('Faculty'),
+      self::STUDENT => t('Student'),
+      self::STAFF => t('Staff'),
+      self::ALUM => t('Alum'),
+      self::AFFILLIATE => t('Affiliate'),
+      self::EMPLOYEE => t('Employee'),
+      self::LIBRARY_WALK_IN => t('Library walk-in'),
     ];
 
     return $default_types;
