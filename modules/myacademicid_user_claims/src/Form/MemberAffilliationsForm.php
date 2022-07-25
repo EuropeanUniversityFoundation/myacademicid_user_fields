@@ -7,6 +7,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\myacademicid_user_claims\AffilliationAssertion;
 use Drupal\myacademicid_user_fields\MyacademicidUserAffilliation;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -79,7 +80,7 @@ class MemberAffilliationsForm extends ConfigFormBase {
 
     unset($types[MyacademicidUserAffilliation::MEMBER]);
 
-    $defaults = MyacademicidUserAffilliation::ASSERT_MEMBER;
+    $defaults = AffilliationAssertion::ASSERT_MEMBER;
     $list = [];
 
     foreach ($defaults as $i => $value) {
