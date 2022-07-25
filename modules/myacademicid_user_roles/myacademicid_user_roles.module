@@ -1,0 +1,16 @@
+<?php
+
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * @file
+ * Primary module hooks for MyAcademicID user roles module.
+ */
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function myacademicid_user_roles_user_presave(EntityInterface $user) {
+  $service = \Drupal::service('myacademicid_user_roles');
+  $service->checkRoleChange($user);
+}

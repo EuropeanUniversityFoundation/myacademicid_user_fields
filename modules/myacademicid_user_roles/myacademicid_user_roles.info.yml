@@ -1,0 +1,10 @@
+name: MyAcademicID user roles
+type: module
+description: Maps MyAcademicID user fields to user roles.
+package: MyAcademicID
+core: 8.x
+core_version_requirement: ^8 || ^9
+dependencies:
+  - drupal:user
+  - oauth2_server:oauth2_server
+  - myacademicid_user_fields:myacademicid_user_fields

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains myacademicid_user_claims.module.
+ * Primary module hooks for MyAcademicID user claims module.
  */
 
 use Drupal\user\UserInterface;

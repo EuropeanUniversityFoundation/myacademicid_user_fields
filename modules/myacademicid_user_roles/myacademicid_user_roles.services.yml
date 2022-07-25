@@ -1,0 +1,4 @@
+services:
+  myacademicid_user_roles:
+    class: Drupal\myacademicid_user_roles\MyacademicidUserRoles
+    arguments: ['@config.factory', '@event_dispatcher', '@string_translation']
