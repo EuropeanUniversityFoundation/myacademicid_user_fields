@@ -111,7 +111,9 @@ class AffilliationAssertion {
       }
     }
 
-    $this->consolidateAffilliation($claims);
+    if (\array_key_exists(MyacademicidUserFields::CLAIM_VEA, $claims)) {
+      $this->consolidateAffilliation($claims);
+    }
 
     return $claims;
   }
