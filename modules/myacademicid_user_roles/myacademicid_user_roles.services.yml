@@ -2,3 +2,9 @@ services:
   myacademicid_user_roles:
     class: Drupal\myacademicid_user_roles\MyacademicidUserRoles
     arguments: ['@config.factory', '@event_dispatcher', '@string_translation']
+
+  myacademicid_user_roles.event_subscriber:
+    class: Drupal\myacademicid_user_roles\EventSubscriber\UserRoleChangeEventSubscriber
+    arguments: ['@messenger', '@string_translation']
+    tags:
+      - { name: event_subscriber }
