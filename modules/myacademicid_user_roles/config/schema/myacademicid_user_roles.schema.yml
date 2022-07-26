@@ -1,0 +1,23 @@
+myacademicid_user_roles.affilliationmap:
+  type: config_object
+  label: 'Affilliation mapping'
+  mapping:
+    affilliation_mapping:
+      type: mapping
+      label: 'Affilliation types'
+      mapping:
+        role:
+          type: string
+          label: 'Role'
+
+myacademicid_user_roles.rolemap:
+  type: config_object
+  label: 'Role mapping'
+  mapping:
+    role_mapping:
+      type: mapping
+      label: 'Roles'
+      mapping:
+        affilliation:
+          type: string
+          label: 'Affilliation'

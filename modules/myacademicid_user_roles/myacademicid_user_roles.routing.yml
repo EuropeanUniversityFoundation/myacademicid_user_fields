@@ -1,0 +1,17 @@
+# Affilliation mapping form
+myacademicid_user_roles.affilliation_mapping_form:
+  path: '/admin/config/people/accounts/myacademicid/affilliation-mapping'
+  defaults:
+    _form: '\Drupal\myacademicid_user_roles\Form\AffilliationMappingForm'
+    _title: 'Affilliation mapping'
+  requirements:
+    _permission: 'administer myacademicid user fields'
+
+# Role mapping form
+myacademicid_user_roles.role_mapping_form:
+  path: '/admin/config/people/accounts/myacademicid/role-mapping'
+  defaults:
+    _form: '\Drupal\myacademicid_user_roles\Form\RoleMappingForm'
+    _title: 'Role mapping'
+  requirements:
+    _permission: 'administer myacademicid user fields'
