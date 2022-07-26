@@ -148,6 +148,11 @@ class AffilliationAssertion {
         $claims[MyacademicidUserFields::CLAIM_VEA][] = $member;
       }
     }
+
+    // Reduce the claims to unique values.
+    $redux = $claims[MyacademicidUserFields::CLAIM_VEA];
+    $redux = \array_values(\array_unique($redux));
+    $claims[MyacademicidUserFields::CLAIM_VEA] = $redux;
   }
 
 }
