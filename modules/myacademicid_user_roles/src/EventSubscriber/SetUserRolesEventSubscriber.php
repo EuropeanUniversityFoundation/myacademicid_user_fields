@@ -5,6 +5,7 @@ namespace Drupal\myacademicid_user_roles\EventSubscriber;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\user\Entity\User;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Drupal\myacademicid_user_roles\MyacademicidUserRoles;
 use Drupal\myacademicid_user_roles\Event\SetUserRolesEvent;
@@ -69,22 +70,26 @@ class SetUserRolesEventSubscriber implements EventSubscriberInterface {
    *   The event object.
    */
   public function onSetUserRoles(SetUserRolesEvent $event) {
+    $user = User::load($event->uid);
+
     if (empty($event->roles)) {
       $message = $this->t('Cannot set roles for user %user...', [
-        '%user' => $event->user->label(),
+        '%user' => $user->label(),
       ]);
 
       $this->messenger->addError($message);
     }
     else {
       $message = $this->t('Setting roles for user %user...', [
-        '%user' => $event->user->label(),
+        '%user' => $user->label(),
       ]);
 
       $this->messenger->addStatus($message);
 
-      $this->service->setUserRoles($event->user, $event->roles);
+      $this->service->setUserRoles($event->uid, $event->roles);
     }
+
+    unset($user);
   }
 
 }

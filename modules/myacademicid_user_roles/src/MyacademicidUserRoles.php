@@ -7,6 +7,7 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\user\Entity\Role;
+use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 use Drupal\myacademicid_user_fields\Event\SetUserVopersonExternalAffilliationEvent;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
@@ -79,7 +80,7 @@ class MyacademicidUserRoles {
 
     if ($old_roles !== $new_roles) {
       // Instantiate our event.
-      $event = new UserRoleChangeEvent($user);
+      $event = new UserRoleChangeEvent((string) $user->id());
       // Dispatch the event.
       $this->eventDispatcher
         ->dispatch($event, UserRoleChangeEvent::EVENT_NAME);
@@ -89,11 +90,11 @@ class MyacademicidUserRoles {
   /**
    * Determine affilliation to assign based on roles and home organization.
    *
-   * @param \Drupal\user\UserInterface $user
+   * @param string $uid
    * @param array $roles
    * @param array $sho
    */
-  public function affilliationfromRoles(UserInterface $user, array $roles, array $sho) {
+  public function affilliationfromRoles(string $uid, array $roles, array $sho) {
     $mode = $this->configFactory
       ->get('myacademicid_user_fields.settings')
       ->get('mode');
@@ -117,7 +118,7 @@ class MyacademicidUserRoles {
 
       if (! empty($vea)) {
         // Instantiate our event.
-        $event = new SetUserVopersonExternalAffilliationEvent($user, $vea);
+        $event = new SetUserVopersonExternalAffilliationEvent($uid, $vea);
         // Dispatch the event.
         $this->eventDispatcher
           ->dispatch($event, SetUserVopersonExternalAffilliationEvent::EVENT_NAME);
@@ -128,10 +129,10 @@ class MyacademicidUserRoles {
   /**
    * Determine roles to assign based on affilliation.
    *
-   * @param \Drupal\user\UserInterface $user
+   * @param string $uid
    * @param array $vea
    */
-  public function rolesFromAffilliation(UserInterface $user, array $vea) {
+  public function rolesFromAffilliation(string $uid, array $vea) {
     $mode = $this->configFactory
       ->get('myacademicid_user_fields.settings')
       ->get('mode');
@@ -144,8 +145,8 @@ class MyacademicidUserRoles {
       $structure = [];
 
       // Gather all affilliation keys per schac_home_organization.
-      foreach ($vea as $idx => $value) {
-        $parts = \explode('@' ,$value);
+      foreach ($vea as $idx => $item) {
+        $parts = \explode('@' ,$item->value);
         $key = $parts[0];
         $sho = $parts[1];
 
@@ -170,7 +171,7 @@ class MyacademicidUserRoles {
 
       if (! empty($roles)) {
         // Instantiate our event.
-        $event = new SetUserRolesEvent($user, $roles);
+        $event = new SetUserRolesEvent($uid, $roles);
         // Dispatch the event.
         $this->eventDispatcher
           ->dispatch($event, SetUserRolesEvent::EVENT_NAME);
@@ -181,15 +182,17 @@ class MyacademicidUserRoles {
   /**
    * Set roles for a user entity.
    *
-   * @param \Drupal\user\UserInterface $user
+   * @param string $uid
    * @param array $roles
    */
-  public function setUserRoles(UserInterface $user, array $roles) {
+  public function setUserRoles(string $uid, array $roles) {
     $affilliation_mapping = $this->configFactory
       ->get('myacademicid_user_roles.affilliation_to_role')
       ->get('affilliation_mapping');
 
     // Current status.
+    $user = User::load($uid);
+
     $current = $user->getRoles(TRUE);
 
     // Roles to add.

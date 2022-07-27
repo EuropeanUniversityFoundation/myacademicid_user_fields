@@ -5,6 +5,7 @@ namespace Drupal\myacademicid_user_fields\EventSubscriber;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\user\Entity\User;
 use Drupal\myacademicid_user_fields\Event\UserSchacHomeOrganizationChangeEvent;
 use Drupal\myacademicid_user_fields\Event\UserSchacPersonalUniqueCodeChangeEvent;
 use Drupal\myacademicid_user_fields\Event\UserVopersonExternalAffilliationChangeEvent;
@@ -65,9 +66,11 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
    *   The event object.
    */
   public function onUserSchacHomeOrganizationChange(UserSchacHomeOrganizationChangeEvent $event) {
+    $user = User::load($event->uid);
+
     if (empty($event->sho)) {
       $message = $this->t('User %user has no %claim claim.', [
-        '%user' => $event->user->label(),
+        '%user' => $user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_SHO,
       ]);
 
@@ -81,13 +84,15 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
       }
 
       $message = $this->t('User %user has a %claim claim of %value.', [
-        '%user' => $event->user->label(),
+        '%user' => $user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_SHO,
         '%value' => \implode(', ', $sho)
       ]);
 
       $this->messenger->addStatus($message);
     }
+
+    unset($user);
   }
 
   /**
@@ -97,9 +102,11 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
    *   The event object.
    */
   public function onUserSchacPersonalUniqueCodeChange(UserSchacPersonalUniqueCodeChangeEvent $event) {
+    $user = User::load($event->uid);
+
     if (empty($event->spuc)) {
       $message = $this->t('User %user has no %claim claim.', [
-        '%user' => $event->user->label(),
+        '%user' => $user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_SPUC,
       ]);
 
@@ -113,13 +120,15 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
       }
 
       $message = $this->t('User %user has a %claim claim of %value.', [
-        '%user' => $event->user->label(),
+        '%user' => $user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_SPUC,
         '%value' => \implode(', ', $spuc)
       ]);
 
       $this->messenger->addStatus($message);
     }
+
+    unset($user);
   }
 
   /**
@@ -129,9 +138,11 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
    *   The event object.
    */
   public function onUserVopersonExternalAffilliationChange(UserVopersonExternalAffilliationChangeEvent $event) {
+    $user = User::load($event->uid);
+
     if (empty($event->vea)) {
       $message = $this->t('User %user has no %claim claim.', [
-        '%user' => $event->user->label(),
+        '%user' => $user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_VEA,
       ]);
 
@@ -145,13 +156,15 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
       }
 
       $message = $this->t('User %user has a %claim claim of %value.', [
-        '%user' => $event->user->label(),
+        '%user' => $user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_VEA,
         '%value' => \implode(', ', $vea)
       ]);
 
       $this->messenger->addStatus($message);
     }
+
+    unset($user);
   }
 
 }

@@ -7,6 +7,7 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 use Drupal\myacademicid_user_fields\Event\UserSchacHomeOrganizationChangeEvent;
 use Drupal\myacademicid_user_fields\Event\UserSchacPersonalUniqueCodeChangeEvent;
@@ -127,6 +128,7 @@ class MyacademicidUserFields {
    * @param \Drupal\user\UserInterface $user
    */
   public function checkFieldChange(UserInterface $user) {
+    $uid = (string) $user->id();
     foreach (self::EVENT_CLASS as $field => $event_class) {
       $old_value = (empty($user->original)) ? NULL : $user->original
         ->get($field)->getValue();
@@ -135,7 +137,7 @@ class MyacademicidUserFields {
 
       if ($old_value !== $new_value) {
         // Instantiate our event.
-        $event = new $event_class($user);
+        $event = new $event_class($uid);
         // Dispatch the event.
         $this->eventDispatcher
           ->dispatch($event, $event_class::EVENT_NAME);
@@ -146,42 +148,44 @@ class MyacademicidUserFields {
   /**
    * Set schac_home_organization value on a user entity.
    *
-   * @param \Drupal\user\UserInterface $user
+   * @param string $uid
    * @param array $sho
    */
-  public function setUserSchacHomeOrganization(UserInterface $user, array $sho) {
-    $this->setValidFieldValue($user, self::FIELD_SHO, $sho, self::CLAIM_SHO);
+  public function setUserSchacHomeOrganization(string $uid, array $sho) {
+    $this->setValidFieldValue($uid, self::FIELD_SHO, $sho, self::CLAIM_SHO);
   }
 
   /**
    * Set schac_personal_unique_code value on a user entity.
    *
-   * @param \Drupal\user\UserInterface $user
+   * @param string $uid
    * @param array $spuc
    */
-  public function setUserSchacPersonalUniqueCode(UserInterface $user, array $spuc) {
-    $this->setValidFieldValue($user, self::FIELD_SPUC, $spuc, self::CLAIM_SPUC);
+  public function setUserSchacPersonalUniqueCode(string $uid, array $spuc) {
+    $this->setValidFieldValue($uid, self::FIELD_SPUC, $spuc, self::CLAIM_SPUC);
   }
 
   /**
    * Set voperson_external_affilliation value on a user entity.
    *
-   * @param \Drupal\user\UserInterface $user
+   * @param string $uid
    * @param array $vea
    */
-  public function setUserVopersonExternalAffilliation(UserInterface $user, array $vea) {
-    $this->setValidFieldValue($user, self::FIELD_VEA, $vea, self::CLAIM_VEA);
+  public function setUserVopersonExternalAffilliation(string $uid, array $vea) {
+    $this->setValidFieldValue($uid, self::FIELD_VEA, $vea, self::CLAIM_VEA);
   }
 
   /**
    * Set a field value on a user entity if entity validation allows.
    *
-   * @param \Drupal\user\UserInterface $user
+   * @param string $uid
    * @param string $field
    * @param array $value
    * @param string $claim
    */
-  private function setValidFieldValue(UserInterface $user, string $field, array $value, string $claim) {
+  private function setValidFieldValue(string $uid, string $field, array $value, string $claim) {
+    $user = User::load($uid);
+
     $original = $user->get($field)->getValue();
 
     $user->set($field, $value);

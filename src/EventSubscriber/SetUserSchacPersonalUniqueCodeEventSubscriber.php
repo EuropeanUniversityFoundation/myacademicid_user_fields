@@ -5,6 +5,7 @@ namespace Drupal\myacademicid_user_fields\EventSubscriber;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\user\Entity\User;
 use Drupal\myacademicid_user_fields\Event\SetUserSchacPersonalUniqueCodeEvent;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -68,9 +69,11 @@ class SetUserSchacPersonalUniqueCodeEventSubscriber implements EventSubscriberIn
    *   The event object.
    */
   public function onSetUserSchacPersonalUniqueCode(SetUserSchacPersonalUniqueCodeEvent $event) {
+    $user = User::load($event->uid);
+
     if (empty($event->spuc)) {
       $message = $this->t('Unsetting %claim claim for user %user...', [
-        '%user' => $event->user->label(),
+        '%user' => $user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_SPUC,
       ]);
 
@@ -78,16 +81,17 @@ class SetUserSchacPersonalUniqueCodeEventSubscriber implements EventSubscriberIn
     }
     else {
       $message = $this->t('Setting %claim claim as %spuc for user %user...', [
-        '%user' => $event->user->label(),
+        '%user' => $user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_SPUC,
         '%spuc' => \implode(', ', $event->spuc)
       ]);
 
       $this->messenger->addStatus($message);
     }
+    unset($user);
 
     $this->service
-      ->setUserSchacPersonalUniqueCode($event->user, $event->spuc);
+      ->setUserSchacPersonalUniqueCode($event->uid, $event->spuc);
   }
 
 }

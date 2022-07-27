@@ -5,6 +5,7 @@ namespace Drupal\myacademicid_user_fields\EventSubscriber;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\user\Entity\User;
 use Drupal\myacademicid_user_fields\Event\SetUserSchacHomeOrganizationEvent;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -68,9 +69,11 @@ class SetUserSchacHomeOrganizationEventSubscriber implements EventSubscriberInte
    *   The event object.
    */
   public function onSetUserSchacHomeOrganization(SetUserSchacHomeOrganizationEvent $event) {
+    $user = User::load($event->uid);
+
     if (empty($event->sho)) {
       $message = $this->t('Unsetting %claim claim for user %user...', [
-        '%user' => $event->user->label(),
+        '%user' => $user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_SHO,
       ]);
 
@@ -78,16 +81,17 @@ class SetUserSchacHomeOrganizationEventSubscriber implements EventSubscriberInte
     }
     else {
       $message = $this->t('Setting %claim claim as %sho for user %user...', [
-        '%user' => $event->user->label(),
+        '%user' => $user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_SHO,
         '%sho' => \implode(', ', $event->sho)
       ]);
 
       $this->messenger->addStatus($message);
     }
+    unset($user);
 
     $this->service
-      ->setUserSchacHomeOrganization($event->user, $event->sho);
+      ->setUserSchacHomeOrganization($event->uid, $event->sho);
   }
 
 }

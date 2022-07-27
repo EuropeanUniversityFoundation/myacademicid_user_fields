@@ -147,7 +147,7 @@ class TriggerSetEventsForm extends FormBase {
       );
 
       // Instantiate our event.
-      $event = new $event_class($user, $values[$claim]);
+      $event = new $event_class($user->id(), $values[$claim]);
       // Dispatch the event.
       $this->eventDispatcher
         ->dispatch($event, $event_class::EVENT_NAME);

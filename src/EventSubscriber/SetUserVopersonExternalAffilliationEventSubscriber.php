@@ -5,6 +5,7 @@ namespace Drupal\myacademicid_user_fields\EventSubscriber;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\user\Entity\User;
 use Drupal\myacademicid_user_fields\Event\SetUserVopersonExternalAffilliationEvent;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -68,9 +69,11 @@ class SetUserVopersonExternalAffilliationEventSubscriber implements EventSubscri
    *   The event object.
    */
   public function onSetUserVopersonExternalAffilliation(SetUserVopersonExternalAffilliationEvent $event) {
+    $user = User::load($event->uid);
+
     if (empty($event->vea)) {
       $message = $this->t('Unsetting %claim claim for user %user...', [
-        '%user' => $event->user->label(),
+        '%user' => $user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_VEA,
       ]);
 
@@ -78,16 +81,17 @@ class SetUserVopersonExternalAffilliationEventSubscriber implements EventSubscri
     }
     else {
       $message = $this->t('Setting %claim claim as %vea for user %user...', [
-        '%user' => $event->user->label(),
+        '%user' => $user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_VEA,
         '%vea' => \implode(', ', $event->vea)
       ]);
 
       $this->messenger->addStatus($message);
     }
+    unset($user);
 
     $this->service
-      ->setUserVopersonExternalAffilliation($event->user, $event->vea);
+      ->setUserVopersonExternalAffilliation($event->uid, $event->vea);
   }
 
 }

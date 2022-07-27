@@ -4,7 +4,6 @@ namespace Drupal\myacademicid_user_roles\Event;
 
 use Drupal\Component\EventDispatcher\Event;
 use Drupal\user\RoleInterface;
-use Drupal\user\UserInterface;
 
 /**
  * Event that is fired when a user's roles must be set.
@@ -14,11 +13,11 @@ class SetUserRolesEvent extends Event {
   const EVENT_NAME = 'set_user_roles';
 
   /**
-   * The user entity.
+   * The user ID.
    *
-   * @var \Drupal\user\UserInterface
+   * @var string
    */
-  public $user;
+  public $uid;
 
   /**
    * Array of user roles.
@@ -30,13 +29,13 @@ class SetUserRolesEvent extends Event {
   /**
    * Constructs the object.
    *
-   * @param \Drupal\user\UserInterface $user
-   *   The user entity.
+   * @param string $uid
+   *   The user ID.
    * @param array $roles
    *   Array of user roles.
    */
-  public function __construct(UserInterface $user, array $roles) {
-    $this->user = $user;
+  public function __construct(string $uid, array $roles) {
+    $this->uid = $uid;
     $this->roles = $roles;
   }
 

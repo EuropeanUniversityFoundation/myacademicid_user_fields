@@ -5,6 +5,7 @@ namespace Drupal\myacademicid_user_roles\EventSubscriber;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\user\Entity\User;
 use Drupal\myacademicid_user_fields\Event\UserVopersonExternalAffilliationChangeEvent;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Drupal\myacademicid_user_roles\MyacademicidUserRoles;
@@ -69,7 +70,7 @@ class UserVopersonExternalAffilliationChangeEventSubscriber implements EventSubs
    *   The event object.
    */
   public function onUserVopersonExternalAffilliationChange(UserVopersonExternalAffilliationChangeEvent $event) {
-    $this->service->rolesFromAffilliation($event->user, $event->vea);
+    $this->service->rolesFromAffilliation($event->uid, $event->vea);
   }
 
 }

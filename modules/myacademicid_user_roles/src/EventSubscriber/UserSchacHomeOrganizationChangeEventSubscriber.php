@@ -5,6 +5,7 @@ namespace Drupal\myacademicid_user_roles\EventSubscriber;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\user\Entity\User;
 use Drupal\myacademicid_user_fields\Event\UserSchacHomeOrganizationChangeEvent;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Drupal\myacademicid_user_roles\MyacademicidUserRoles;
@@ -69,9 +70,13 @@ class UserSchacHomeOrganizationChangeEventSubscriber implements EventSubscriberI
    *   The event object.
    */
   public function onUserSchacHomeOrganizationChange(UserSchacHomeOrganizationChangeEvent $event) {
-    $roles = $event->user->getRoles(TRUE);
+    $user = User::load($event->uid);
 
-    $this->service->affilliationFromRoles($event->user, $roles, $event->sho);
+    $roles = $user->getRoles(TRUE);
+
+    $this->service->affilliationFromRoles($event->uid, $roles, $event->sho);
+
+    unset($user);
   }
 
 }

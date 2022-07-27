@@ -3,7 +3,7 @@
 namespace Drupal\myacademicid_user_fields\Event;
 
 use Drupal\Component\EventDispatcher\Event;
-use Drupal\user\UserInterface;
+use Drupal\user\Entity\User;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 
 /**
@@ -14,11 +14,11 @@ class UserSchacHomeOrganizationChangeEvent extends Event {
   const EVENT_NAME = 'user_sho_change';
 
   /**
-   * The user entity.
+   * The user ID.
    *
-   * @var \Drupal\user\UserInterface
+   * @var string
    */
-  public $user;
+  public $uid;
 
   /**
    * Array of schac_home_organization values.
@@ -30,12 +30,14 @@ class UserSchacHomeOrganizationChangeEvent extends Event {
   /**
    * Constructs the object.
    *
-   * @param \Drupal\user\UserInterface $user
-   *   The user entity.
+   * @param string $uid
+   *   The user ID.
    */
-  public function __construct(UserInterface $user) {
-    $this->user = $user;
+  public function __construct(string $uid) {
+    $this->uid = $uid;
+    $user = User::load($uid);
     $field = $user->get(MyacademicidUserFields::FIELD_SHO);
+    unset($user);
 
     foreach ($field as $idx => $value) {
       $this->sho[] = $value;

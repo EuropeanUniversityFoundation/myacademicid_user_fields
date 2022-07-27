@@ -6,6 +6,7 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\user\Entity\Role;
+use Drupal\user\Entity\User;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Drupal\myacademicid_user_roles\Event\UserRoleChangeEvent;
 use Drupal\myacademicid_user_roles\MyacademicidUserRoles;
@@ -68,9 +69,11 @@ class UserRoleChangeEventSubscriber implements EventSubscriberInterface {
    *   The event object.
    */
   public function onUserRoleChange(UserRoleChangeEvent $event) {
+    $user = User::load($event->uid);
+
     if (empty($event->roles)) {
       $message = $this->t('User %user has no specific roles.', [
-        '%user' => $event->user->label(),
+        '%user' => $user->label(),
       ]);
 
       $this->messenger->addWarning($message);
@@ -84,7 +87,7 @@ class UserRoleChangeEventSubscriber implements EventSubscriberInterface {
       }
 
       $message = $this->t('User %user has the @roles %labels.', [
-        '%user' => $event->user->label(),
+        '%user' => $user->label(),
         '@roles' => (\count($labels)>1) ? $this->t('roles') : $this->t('role'),
         '%labels' => \implode(', ', $labels)
       ]);
@@ -92,14 +95,16 @@ class UserRoleChangeEventSubscriber implements EventSubscriberInterface {
       $this->messenger->addStatus($message);
 
       $sho = [];
-      $field = $event->user->get(MyacademicidUserFields::FIELD_SHO);
+      $field = $user->get(MyacademicidUserFields::FIELD_SHO);
 
       foreach ($field as $idx => $value) {
         $sho[] = $value;
       }
 
-      $this->service->affilliationFromRoles($event->user, $event->roles, $sho);
+      $this->service->affilliationFromRoles($event->uid, $event->roles, $sho);
     }
+
+    unset($user);
   }
 
 }

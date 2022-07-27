@@ -3,7 +3,7 @@
 namespace Drupal\myacademicid_user_roles\Event;
 
 use Drupal\Component\EventDispatcher\Event;
-use Drupal\user\UserInterface;
+use Drupal\user\Entity\User;
 
 /**
  * Event that is fired when a user's roles change.
@@ -13,11 +13,11 @@ class UserRoleChangeEvent extends Event {
   const EVENT_NAME = 'user_role_change';
 
   /**
-   * The user entity.
+   * The user ID.
    *
-   * @var \Drupal\user\UserInterface
+   * @var string
    */
-  public $user;
+  public $uid;
 
   /**
    * The user's roles.
@@ -29,13 +29,14 @@ class UserRoleChangeEvent extends Event {
   /**
    * Constructs the object.
    *
-   * @param \Drupal\user\UserInterface $user
-   *   The user entity.
+   * @param string $uid
+   *   The user ID.
    */
-  public function __construct(UserInterface $user) {
-    $this->user = $user;
-
-    $this->roles = $this->user->getRoles(TRUE);
+  public function __construct(string $uid) {
+    $this->uid = $uid;
+    $user = User::load($uid);
+    $this->roles = $user->getRoles(TRUE);
+    unset($user);
   }
 
 }
