@@ -107,7 +107,7 @@ class SettingsForm extends ConfigFormBase {
     if (! $server_allowed) {
       $form['mode'][self::SERVER_MODE]['#description'] = $this
         ->t('Requires the %module module to be enabled.', [
-          '%module' => $moduleHandler->getName(self::SERVER_SUBMODULE),
+          '%module' => $this->moduleHandler->getName(self::SERVER_SUBMODULE),
         ]);
 
       $form['mode'][self::SERVER_MODE]['#disabled'] = TRUE;

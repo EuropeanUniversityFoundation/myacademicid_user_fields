@@ -106,7 +106,7 @@ class MyacademicidUserAffilliation {
     if (!isset($this->additionalTypes)) {
       $this->additionalTypes = [];
 
-      $config = $this->configFactory->get('myacademicid_user_fields.settings');
+      $config = $this->configFactory->get('myacademicid_user_fields.types');
 
       $additional = (array) $config->get('additional');
 
