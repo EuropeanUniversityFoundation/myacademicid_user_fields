@@ -5,16 +5,15 @@ namespace Drupal\myacademicid_user_roles\EventSubscriber;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\user\Entity\Role;
+use Drupal\myacademicid_user_fields\Event\UserSchacHomeOrganizationChangeEvent;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
-use Drupal\myacademicid_user_roles\Event\UserRoleChangeEvent;
 use Drupal\myacademicid_user_roles\MyacademicidUserRoles;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * User role change event subscriber.
+ * MyAcademicID user fields event subscriber.
  */
-class UserRoleChangeEventSubscriber implements EventSubscriberInterface {
+class UserSchacHomeOrganizationChangeEventSubscriber implements EventSubscriberInterface {
 
   use StringTranslationTrait;
 
@@ -57,49 +56,22 @@ class UserRoleChangeEventSubscriber implements EventSubscriberInterface {
    */
   public static function getSubscribedEvents() {
     return [
-      UserRoleChangeEvent::EVENT_NAME => ['onUserRoleChange'],
+      UserSchacHomeOrganizationChangeEvent::EVENT_NAME => [
+        'onUserSchacHomeOrganizationChange'
+      ],
     ];
   }
 
   /**
-   * Subscribe to the user role change event.
+   * Subscribe to the user schac_home_organization change event.
    *
-   * @param \Drupal\myacademicid_user_roles\Event\UserRoleChangeEvent $event
+   * @param \Drupal\myacademicid_user_fields\Event\UserSchacHomeOrganizationChangeEvent $event
    *   The event object.
    */
-  public function onUserRoleChange(UserRoleChangeEvent $event) {
-    if (empty($event->roles)) {
-      $message = $this->t('User %user has no specific roles.', [
-        '%user' => $event->user->label(),
-      ]);
+  public function onUserSchacHomeOrganizationChange(UserSchacHomeOrganizationChangeEvent $event) {
+    $roles = $event->user->getRoles(TRUE);
 
-      $this->messenger->addWarning($message);
-    }
-    else {
-      $roles = Role::loadMultiple($event->roles);
-      $labels = [];
-
-      foreach ($roles as $idx => $role) {
-        $labels[] = $role->label();
-      }
-
-      $message = $this->t('User %user has the @roles %labels.', [
-        '%user' => $event->user->label(),
-        '@roles' => (\count($labels)>1) ? $this->t('roles') : $this->t('role'),
-        '%labels' => \implode(', ', $labels)
-      ]);
-
-      $this->messenger->addStatus($message);
-
-      $sho = [];
-      $field = $event->user->get(MyacademicidUserFields::FIELD_SHO);
-
-      foreach ($field as $idx => $value) {
-        $sho[] = $value;
-      }
-
-      $this->service->affilliationFromRoles($event->user, $event->roles, $sho);
-    }
+    $this->service->affilliationFromRoles($event->user, $roles, $event->sho);
   }
 
 }

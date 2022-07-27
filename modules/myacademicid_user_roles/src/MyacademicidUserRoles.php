@@ -8,6 +8,8 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\user\Entity\Role;
 use Drupal\user\UserInterface;
+use Drupal\myacademicid_user_fields\Event\SetUserVopersonExternalAffilliationEvent;
+use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Drupal\myacademicid_user_roles\Event\UserRoleChangeEvent;
 use Drupal\myacademicid_user_roles\Event\SetUserRolesEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -85,49 +87,94 @@ class MyacademicidUserRoles {
   }
 
   /**
+   * Determine affilliation to assign based on roles and home organization.
+   *
+   * @param \Drupal\user\UserInterface $user
+   * @param array $roles
+   * @param array $sho
+   */
+  public function affilliationfromRoles(UserInterface $user, array $roles, array $sho) {
+    $mode = $this->configFactory
+      ->get('myacademicid_user_fields.settings')
+      ->get('mode');
+
+    if ($mode === MyacademicidUserFields::SERVER_MODE) {
+      $role_mapping = $this->configFactory
+        ->get('myacademicid_user_roles.role_to_affilliation')
+        ->get('role_mapping');
+
+      $vea = [];
+
+      foreach ($roles as $idx => $rid) {
+        if (\array_key_exists($rid, $role_mapping)) {
+          $key = $role_mapping[$rid];
+
+          foreach ($sho as $idx => $item) {
+            $vea[] = \implode('@', [$key, $item->value]);
+          }
+        }
+      }
+
+      if (! empty($vea)) {
+        // Instantiate our event.
+        $event = new SetUserVopersonExternalAffilliationEvent($user, $vea);
+        // Dispatch the event.
+        $this->eventDispatcher
+          ->dispatch($event, SetUserVopersonExternalAffilliationEvent::EVENT_NAME);
+      }
+    }
+  }
+
+  /**
    * Determine roles to assign based on affilliation.
    *
    * @param \Drupal\user\UserInterface $user
    * @param array $vea
    */
   public function rolesFromAffilliation(UserInterface $user, array $vea) {
-    $affilliation_mapping = $this->configFactory
-      ->get('myacademicid_user_roles.affilliation_to_role')
-      ->get('affilliation_mapping');
+    $mode = $this->configFactory
+      ->get('myacademicid_user_fields.settings')
+      ->get('mode');
 
-    $structure = [];
+    if ($mode === MyacademicidUserFields::CLIENT_MODE) {
+      $affilliation_mapping = $this->configFactory
+        ->get('myacademicid_user_roles.affilliation_to_role')
+        ->get('affilliation_mapping');
 
-    // Gather all affilliation keys per schac_home_organization.
-    foreach ($vea as $idx => $value) {
-      $parts = \explode('@' ,$value->value);
-      $key = $parts[0];
-      $sho = $parts[1];
+      $structure = [];
 
-      if (\array_key_exists($sho, $structure)) {
-        $structure[$sho][] = $key;
-      }
-      else {
-        $structure[$sho] = [$key];
-      }
-    }
+      // Gather all affilliation keys per schac_home_organization.
+      foreach ($vea as $idx => $value) {
+        $parts = \explode('@' ,$value);
+        $key = $parts[0];
+        $sho = $parts[1];
 
-    $roles = [];
-
-    // Gather all mapped roles from affilliation keys.
-    foreach ($structure as $sho => $array) {
-      foreach ($array as $idx => $key) {
-        if (\array_key_exists($key, $affilliation_mapping)) {
-          $roles[] = $affilliation_mapping[$key];
+        if (\array_key_exists($sho, $structure)) {
+          $structure[$sho][] = $key;
+        }
+        else {
+          $structure[$sho] = [$key];
         }
       }
-    }
 
-    if (! empty($roles)) {
-      // Instantiate our event.
-      $event = new SetUserRolesEvent($user, $roles);
-      // Dispatch the event.
-      $this->eventDispatcher
-        ->dispatch($event, SetUserRolesEvent::EVENT_NAME);
+      $roles = [];
+
+      // Gather all mapped roles from affilliation keys.
+      foreach ($structure as $sho => $array) {
+        foreach ($array as $idx => $key) {
+          if (\array_key_exists($key, $affilliation_mapping)) {
+            $roles[] = $affilliation_mapping[$key];
+          }
+        }
+      }
+
+      if (! empty($roles)) {
+        // Instantiate our event.
+        $event = new SetUserRolesEvent($user, $roles);
+        // Dispatch the event.
+        $this->eventDispatcher
+          ->dispatch($event, SetUserRolesEvent::EVENT_NAME);
+      }
     }
   }
 
