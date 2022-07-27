@@ -62,7 +62,7 @@ class RoleMappingForm extends ConfigFormBase {
    */
   protected function getEditableConfigNames() {
     return [
-      'myacademicid_user_roles.rolemap',
+      'myacademicid_user_roles.role_to_affilliation',
     ];
   }
 
@@ -77,7 +77,7 @@ class RoleMappingForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->config('myacademicid_user_roles.rolemap');
+    $config = $this->config('myacademicid_user_roles.role_to_affilliation');
     $rolemap = $config->get('role_mapping');
 
     $form['#tree'] = TRUE;
@@ -115,16 +115,17 @@ class RoleMappingForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-
+    parent::validateForm($form, $form_state);
   }
 
   /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->config('myacademicid_user_roles.rolemap');
+    $config = $this->config('myacademicid_user_roles.role_to_affilliation');
 
-    $config->set('role_mapping', $form_state->getValue('role_mapping'));
+    $config->set('role_mapping', $form_state
+      ->getValue('role_mapping'));
 
     $config->save();
 

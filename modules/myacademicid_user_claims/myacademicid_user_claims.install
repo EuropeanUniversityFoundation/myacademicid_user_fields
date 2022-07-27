@@ -1,0 +1,27 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the MyAcademicID user claims module.
+ */
+
+use Drupal\myacademicid_user_fields\MyacademicidUserFields;
+
+/**
+ * Implements hook_install().
+ */
+function myacademicid_user_claims_install() {
+  \Drupal::messenger()->addStatus(__FUNCTION__);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function myacademicid_user_claims_uninstall() {
+  \Drupal::configFactory()
+    ->getEditable("myacademicid_user_fields.settings")
+    ->set('mode', MyacademicidUserFields::CLIENT_MODE)
+    ->save(TRUE);
+
+  \Drupal::messenger()->addStatus(__FUNCTION__);
+}

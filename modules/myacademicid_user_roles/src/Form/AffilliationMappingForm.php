@@ -70,7 +70,7 @@ class AffilliationMappingForm extends ConfigFormBase {
    */
   protected function getEditableConfigNames() {
     return [
-      'myacademicid_user_roles.affilliationmap',
+      'myacademicid_user_roles.affilliation_to_role',
     ];
   }
 
@@ -85,7 +85,7 @@ class AffilliationMappingForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->config('myacademicid_user_roles.affilliationmap');
+    $config = $this->config('myacademicid_user_roles.affilliation_to_role');
     $affilliationmap = $config->get('affilliation_mapping');
 
     $form['#tree'] = TRUE;
@@ -126,14 +126,14 @@ class AffilliationMappingForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-
+    parent::validateForm($form, $form_state);
   }
 
   /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->config('myacademicid_user_roles.affilliationmap');
+    $config = $this->config('myacademicid_user_roles.affilliation_to_role');
 
     $config->set('affilliation_mapping', $form_state
       ->getValue('affilliation_mapping')

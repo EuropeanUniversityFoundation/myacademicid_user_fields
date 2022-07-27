@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the MyAcademicID user roles module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function myacademicid_user_roles_install() {
+  \Drupal::messenger()->addStatus(__FUNCTION__);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function myacademicid_user_roles_uninstall() {
+  \Drupal::messenger()->addStatus(__FUNCTION__);
+}

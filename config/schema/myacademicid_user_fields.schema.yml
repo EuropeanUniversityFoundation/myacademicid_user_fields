@@ -2,6 +2,14 @@ myacademicid_user_fields.settings:
   type: config_object
   label: 'MyAcademicID user fields settings'
   mapping:
+    mode:
+      type: string
+      label: 'Mode'
+
+myacademicid_user_fields.types:
+  type: config_object
+  label: 'MyAcademicID affilliation types'
+  mapping:
     additional:
       type: sequence
       label: 'Additional affilliation types'

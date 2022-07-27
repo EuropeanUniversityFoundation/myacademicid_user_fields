@@ -20,6 +20,9 @@ class MyacademicidUserFields {
 
   use StringTranslationTrait;
 
+  const CLIENT_MODE = 'client';
+  const SERVER_MODE = 'server';
+
   const FIELD_SHO = 'maid_schac_home_organization';
   const FIELD_SPUC = 'maid_schac_personal_unique_code';
   const FIELD_VEA = 'maid_voperson_external_affilliation';

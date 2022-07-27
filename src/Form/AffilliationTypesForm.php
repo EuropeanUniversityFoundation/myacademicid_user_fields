@@ -57,14 +57,14 @@ class AffilliationTypesForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'myacademicid_user_fields_settings';
+    return 'myacademicid_user_fields_affilliation_types';
   }
 
   /**
    * {@inheritdoc}
    */
   protected function getEditableConfigNames() {
-    return ['myacademicid_user_fields.settings'];
+    return ['myacademicid_user_fields.types'];
   }
 
   /**
@@ -118,7 +118,7 @@ class AffilliationTypesForm extends ConfigFormBase {
       '#empty' => $this->t('Nothing to display.'),
     ];
 
-    $config = $this->config('myacademicid_user_fields.settings');
+    $config = $this->config('myacademicid_user_fields.types');
 
     $additional = (array) $config->get('additional');
 
@@ -154,7 +154,7 @@ class AffilliationTypesForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->config('myacademicid_user_fields.settings');
+    $config = $this->config('myacademicid_user_fields.types');
 
     $multiline = $form_state->getValue('additional');
 

@@ -1,4 +1,4 @@
-myacademicid_user_roles.affilliationmap:
+myacademicid_user_roles.affilliation_to_role:
   type: config_object
   label: 'Affilliation mapping'
   mapping:
@@ -10,7 +10,7 @@ myacademicid_user_roles.affilliationmap:
           type: string
           label: 'Role'
 
-myacademicid_user_roles.rolemap:
+myacademicid_user_roles.role_to_affilliation:
   type: config_object
   label: 'Role mapping'
   mapping:
@@ -20,4 +20,4 @@ myacademicid_user_roles.rolemap:
       mapping:
         affilliation:
           type: string
-          label: 'Affilliation'
+          label: 'Affilliation type'
