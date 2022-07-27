@@ -1,6 +1,6 @@
 myacademicid_user_fields.settings_form:
   title: MyAcademicID user fields
   description: Configure MyAcademicID user fields.
-  parent: entity.user.admin_form
+  parent: system.admin_config_services
   route_name: myacademicid_user_fields.settings_form
   weight: 10

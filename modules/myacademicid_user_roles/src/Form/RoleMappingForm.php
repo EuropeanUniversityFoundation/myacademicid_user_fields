@@ -6,6 +6,11 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\Url;
 use Drupal\user\Entity\Role;
 use Drupal\user\RoleInterface;
 use Drupal\myacademicid_user_fields\MyacademicidUserAffilliation;
@@ -13,6 +18,8 @@ use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class RoleMappingForm extends ConfigFormBase {
+
+  use StringTranslationTrait;
 
   /**
    * The user roles defined in the system.
@@ -29,19 +36,34 @@ class RoleMappingForm extends ConfigFormBase {
   protected $affilliation;
 
   /**
+   * The messenger.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
    * The constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
    * @param \Drupal\myacademicid_user_fields\MyacademicidUserAffilliation $affilliation
    *   The affilliation service.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translation service.
    */
   public function __construct(
-      ConfigFactoryInterface $config_factory,
-      MyacademicidUserAffilliation $affilliation
+    ConfigFactoryInterface $config_factory,
+    MyacademicidUserAffilliation $affilliation,
+    MessengerInterface $messenger,
+    TranslationInterface $string_translation
   ) {
     parent::__construct($config_factory);
-    $this->affilliation = $affilliation;
+    $this->affilliation      = $affilliation;
+    $this->messenger         = $messenger;
+    $this->stringTranslation = $string_translation;
 
     $this->roles = Role::loadMultiple();
 
@@ -55,6 +77,8 @@ class RoleMappingForm extends ConfigFormBase {
     return new static(
       $container->get('config.factory'),
       $container->get('myacademicid_user_fields.affilliation'),
+      $container->get('messenger'),
+      $container->get('string_translation'),
     );
   }
 
@@ -80,10 +104,15 @@ class RoleMappingForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $mode = $this->config('myacademicid_user_fields.settings')->get('mode');
     if ($mode === MyacademicidUserFields::CLIENT_MODE) {
-      $warning = $this
-        ->t('These settings have no effect when operating in Client mode.');
+      $settings_link = Link::fromTextAndUrl($this->t('Client mode'),
+        Url::fromRoute('myacademicid_user_fields.settings_form'))->toString();
 
-      \Drupal::messenger()->addWarning($warning);
+      $warning = $this
+        ->t('These settings have no effect when operating in @mode.', [
+          '@mode' => $settings_link,
+        ]);
+
+      $this->messenger->addWarning($warning);
     }
 
     $config = $this->config('myacademicid_user_roles.role_to_affilliation');

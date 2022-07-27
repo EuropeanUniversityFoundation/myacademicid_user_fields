@@ -2,9 +2,14 @@
 
 namespace Drupal\myacademicid_user_fields\Form;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configure MyAcademicID user fields settings for this site.
@@ -15,6 +20,46 @@ class SettingsForm extends ConfigFormBase {
   const SERVER_MODE = MyacademicidUserFields::SERVER_MODE;
 
   const SERVER_SUBMODULE = 'myacademicid_user_claims';
+
+  use StringTranslationTrait;
+
+  /**
+   * The module handler service.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * The constructor.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The affilliation service.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translation service.
+   */
+  public function __construct(
+    ConfigFactoryInterface $config_factory,
+    ModuleHandlerInterface $module_handler,
+    TranslationInterface $string_translation
+  ) {
+    parent::__construct($config_factory);
+    $this->moduleHandler     = $module_handler;
+    $this->stringTranslation = $string_translation;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('module_handler'),
+      $container->get('string_translation'),
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -43,9 +88,7 @@ class SettingsForm extends ConfigFormBase {
 
     $current_mode = $config->get('mode') ?? self::CLIENT_MODE;
 
-    $moduleHandler = \Drupal::service('module_handler');
-
-    $server_allowed = $moduleHandler
+    $server_allowed = $this->moduleHandler
       ->moduleExists(self::SERVER_SUBMODULE);
 
     $form['mode'] = [
@@ -59,7 +102,7 @@ class SettingsForm extends ConfigFormBase {
       ->t('Default mode; covers the most common use cases.');
 
     $form['mode'][self::SERVER_MODE]['#description'] = $this
-      ->t('To be used in combination with an OpenID Connect server module.');
+      ->t('To be used in combination with an OAuth2 server module.');
 
     if (! $server_allowed) {
       $form['mode'][self::SERVER_MODE]['#description'] = $this

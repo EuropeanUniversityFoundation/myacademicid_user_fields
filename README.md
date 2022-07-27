@@ -51,7 +51,7 @@ Users with this permission can edit MyAcademicID user fields (their own or any u
 
 Users without this permission will see their MyAcademicID claims printed as plain text in their user account form.
 
-With this permission, a user can also trigger the `SetUser{Claim}Event`s via a form located at `admin/config/people/accounts/myacademicid/trigger-set-events`.
+With this permission, a user can also trigger the `SetUser{Claim}Event`s via a form located at `admin/config/services/myacademicid/trigger-set-events`.
 
 ### Populating MyAcademicID user fields
 
