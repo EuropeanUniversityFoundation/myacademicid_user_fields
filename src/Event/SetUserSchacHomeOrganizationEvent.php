@@ -3,6 +3,7 @@
 namespace Drupal\myacademicid_user_fields\Event;
 
 use Drupal\Component\EventDispatcher\Event;
+use Drupal\user\UserInterface;
 
 /**
  * Event that is fired when a user's schac_home_organization must be set.
@@ -12,11 +13,11 @@ class SetUserSchacHomeOrganizationEvent extends Event {
   const EVENT_NAME = 'set_user_schac_home_organization';
 
   /**
-   * The user ID.
+   * The user entity.
    *
-   * @var string
+   * @var \Drupal\user\UserInterface
    */
-  public $uid;
+  public $user;
 
   /**
    * Array of schac_home_organization values.
@@ -28,13 +29,13 @@ class SetUserSchacHomeOrganizationEvent extends Event {
   /**
    * Constructs the object.
    *
-   * @param string $uid
-   *   The user ID.
+   * @param \Drupal\user\UserInterface $user
+   *   The user entity.
    * @param array $sho
    *   Array of schac_home_organization values.
    */
-  public function __construct(string $uid, array $sho) {
-    $this->uid = $uid;
+  public function __construct(UserInterface $user, array $sho) {
+    $this->user = $user;
     $this->sho = $sho;
   }
 

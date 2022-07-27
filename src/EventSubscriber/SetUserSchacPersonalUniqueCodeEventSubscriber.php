@@ -69,11 +69,9 @@ class SetUserSchacPersonalUniqueCodeEventSubscriber implements EventSubscriberIn
    *   The event object.
    */
   public function onSetUserSchacPersonalUniqueCode(SetUserSchacPersonalUniqueCodeEvent $event) {
-    $user = User::load($event->uid);
-
     if (empty($event->spuc)) {
       $message = $this->t('Unsetting %claim claim for user %user...', [
-        '%user' => $user->label(),
+        '%user' => $event->user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_SPUC,
       ]);
 
@@ -81,17 +79,16 @@ class SetUserSchacPersonalUniqueCodeEventSubscriber implements EventSubscriberIn
     }
     else {
       $message = $this->t('Setting %claim claim as %spuc for user %user...', [
-        '%user' => $user->label(),
+        '%user' => $event->user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_SPUC,
         '%spuc' => \implode(', ', $event->spuc)
       ]);
 
       $this->messenger->addStatus($message);
     }
-    unset($user);
 
     $this->service
-      ->setUserSchacPersonalUniqueCode($event->uid, $event->spuc);
+      ->setUserSchacPersonalUniqueCode($event->user, $event->spuc);
   }
 
 }

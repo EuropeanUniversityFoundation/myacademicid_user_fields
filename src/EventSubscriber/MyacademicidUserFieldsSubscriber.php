@@ -66,33 +66,23 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
    *   The event object.
    */
   public function onUserSchacHomeOrganizationChange(UserSchacHomeOrganizationChangeEvent $event) {
-    $user = User::load($event->uid);
-
     if (empty($event->sho)) {
       $message = $this->t('User %user has no %claim claim.', [
-        '%user' => $user->label(),
+        '%user' => $event->user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_SHO,
       ]);
 
       $this->messenger->addWarning($message);
     }
     else {
-      $sho = [];
-
-      foreach ($event->sho as $idx => $value) {
-        $sho[] = $value->value;
-      }
-
       $message = $this->t('User %user has a %claim claim of %value.', [
-        '%user' => $user->label(),
+        '%user' => $event->user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_SHO,
-        '%value' => \implode(', ', $sho)
+        '%value' => \implode(', ', $event->sho)
       ]);
 
       $this->messenger->addStatus($message);
     }
-
-    unset($user);
   }
 
   /**
@@ -102,33 +92,23 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
    *   The event object.
    */
   public function onUserSchacPersonalUniqueCodeChange(UserSchacPersonalUniqueCodeChangeEvent $event) {
-    $user = User::load($event->uid);
-
     if (empty($event->spuc)) {
       $message = $this->t('User %user has no %claim claim.', [
-        '%user' => $user->label(),
+        '%user' => $event->user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_SPUC,
       ]);
 
       $this->messenger->addWarning($message);
     }
     else {
-      $spuc = [];
-
-      foreach ($event->spuc as $idx => $value) {
-        $spuc[] = $value->value;
-      }
-
       $message = $this->t('User %user has a %claim claim of %value.', [
-        '%user' => $user->label(),
+        '%user' => $event->user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_SPUC,
-        '%value' => \implode(', ', $spuc)
+        '%value' => \implode(', ', $event->spuc)
       ]);
 
       $this->messenger->addStatus($message);
     }
-
-    unset($user);
   }
 
   /**
@@ -138,33 +118,23 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
    *   The event object.
    */
   public function onUserVopersonExternalAffilliationChange(UserVopersonExternalAffilliationChangeEvent $event) {
-    $user = User::load($event->uid);
-
     if (empty($event->vea)) {
       $message = $this->t('User %user has no %claim claim.', [
-        '%user' => $user->label(),
+        '%user' => $event->user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_VEA,
       ]);
 
       $this->messenger->addWarning($message);
     }
     else {
-      $vea = [];
-
-      foreach ($event->vea as $idx => $value) {
-        $vea[] = $value->value;
-      }
-
       $message = $this->t('User %user has a %claim claim of %value.', [
-        '%user' => $user->label(),
+        '%user' => $event->user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_VEA,
-        '%value' => \implode(', ', $vea)
+        '%value' => \implode(', ', $event->vea)
       ]);
 
       $this->messenger->addStatus($message);
     }
-
-    unset($user);
   }
 
 }

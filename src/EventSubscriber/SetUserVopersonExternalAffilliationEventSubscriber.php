@@ -69,11 +69,9 @@ class SetUserVopersonExternalAffilliationEventSubscriber implements EventSubscri
    *   The event object.
    */
   public function onSetUserVopersonExternalAffilliation(SetUserVopersonExternalAffilliationEvent $event) {
-    $user = User::load($event->uid);
-
     if (empty($event->vea)) {
       $message = $this->t('Unsetting %claim claim for user %user...', [
-        '%user' => $user->label(),
+        '%user' => $event->user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_VEA,
       ]);
 
@@ -81,17 +79,16 @@ class SetUserVopersonExternalAffilliationEventSubscriber implements EventSubscri
     }
     else {
       $message = $this->t('Setting %claim claim as %vea for user %user...', [
-        '%user' => $user->label(),
+        '%user' => $event->user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_VEA,
         '%vea' => \implode(', ', $event->vea)
       ]);
 
       $this->messenger->addStatus($message);
     }
-    unset($user);
 
     $this->service
-      ->setUserVopersonExternalAffilliation($event->uid, $event->vea);
+      ->setUserVopersonExternalAffilliation($event->user, $event->vea);
   }
 
 }

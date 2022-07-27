@@ -3,6 +3,7 @@
 namespace Drupal\myacademicid_user_fields\Event;
 
 use Drupal\Component\EventDispatcher\Event;
+use Drupal\user\UserInterface;
 
 /**
  * Event that is fired when a user's schac_personal_unique_code must be set.
@@ -12,11 +13,11 @@ class SetUserSchacPersonalUniqueCodeEvent extends Event {
   const EVENT_NAME = 'set_user_schac_personal_unique_code';
 
   /**
-   * The user ID.
+   * The user entity.
    *
-   * @var string
+   * @var \Drupal\user\UserInterface
    */
-  public $uid;
+  public $user;
 
   /**
    * Array of schac_personal_unique_code values.
@@ -28,13 +29,13 @@ class SetUserSchacPersonalUniqueCodeEvent extends Event {
   /**
    * Constructs the object.
    *
-   * @param string $uid
-   *   The user ID.
+   * @param \Drupal\user\UserInterface $user
+   *   The user entity.
    * @param array $spuc
    *   Array of schac_personal_unique_code values.
    */
-  public function __construct(string $uid, array $sho) {
-    $this->uid = $uid;
+  public function __construct(UserInterface $user, array $sho) {
+    $this->user = $user;
     $this->spuc = $spuc;
   }
 

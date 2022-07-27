@@ -3,7 +3,7 @@
 namespace Drupal\myacademicid_user_fields\Event;
 
 use Drupal\Component\EventDispatcher\Event;
-use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 
 /**
@@ -14,11 +14,11 @@ class UserVopersonExternalAffilliationChangeEvent extends Event {
   const EVENT_NAME = 'user_vea_change';
 
   /**
-   * The user ID.
+   * The user entity.
    *
-   * @var string
+   * @var \Drupal\user\UserInterface
    */
-  public $uid;
+  public $user;
 
   /**
    * Array of voperson_external_affilliation values.
@@ -30,17 +30,16 @@ class UserVopersonExternalAffilliationChangeEvent extends Event {
   /**
    * Constructs the object.
    *
-   * @param string $uid
-   *   The user ID.
+   * @param \Drupal\user\UserInterface $user
+   *   The user entity.
    */
-  public function __construct(string $uid) {
-    $this->uid = $uid;
-    $user = User::load($uid);
-    $field = $user->get(MyacademicidUserFields::FIELD_VEA);
-    unset($user);
+  public function __construct(UserInterface $user) {
+    $this->user = $user;
 
-    foreach ($field as $idx => $value) {
-      $this->vea[] = $value;
+    $field = $this->user->get(MyacademicidUserFields::FIELD_VEA);
+
+    foreach ($field as $idx => $item) {
+      $this->vea[] = $item->value;
     }
   }
 
