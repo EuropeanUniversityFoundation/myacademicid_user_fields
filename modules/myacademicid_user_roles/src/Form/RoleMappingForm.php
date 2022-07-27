@@ -9,6 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\Entity\Role;
 use Drupal\user\RoleInterface;
 use Drupal\myacademicid_user_fields\MyacademicidUserAffilliation;
+use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class RoleMappingForm extends ConfigFormBase {
@@ -77,6 +78,14 @@ class RoleMappingForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    $mode = $this->config('myacademicid_user_fields.settings')->get('mode');
+    if ($mode === MyacademicidUserFields::CLIENT_MODE) {
+      $warning = $this
+        ->t('These settings have no effect when operating in Client mode.');
+
+      \Drupal::messenger()->addWarning($warning);
+    }
+
     $config = $this->config('myacademicid_user_roles.role_to_affilliation');
     $rolemap = $config->get('role_mapping');
 

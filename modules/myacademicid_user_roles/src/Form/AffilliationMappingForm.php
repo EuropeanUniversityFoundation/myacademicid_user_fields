@@ -9,6 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\Entity\Role;
 use Drupal\user\RoleInterface;
 use Drupal\myacademicid_user_fields\MyacademicidUserAffilliation;
+use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class AffilliationMappingForm extends ConfigFormBase {
@@ -85,6 +86,14 @@ class AffilliationMappingForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    $mode = $this->config('myacademicid_user_fields.settings')->get('mode');
+    if ($mode === MyacademicidUserFields::SERVER_MODE) {
+      $warning = $this
+        ->t('These settings have no effect when operating in Server mode.');
+
+      \Drupal::messenger()->addWarning($warning);
+    }
+
     $config = $this->config('myacademicid_user_roles.affilliation_to_role');
     $affilliationmap = $config->get('affilliation_mapping');
 
