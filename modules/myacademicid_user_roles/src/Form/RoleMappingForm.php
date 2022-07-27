@@ -3,7 +3,6 @@
 namespace Drupal\myacademicid_user_roles\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
@@ -85,17 +84,17 @@ class RoleMappingForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
-    return [
-      'myacademicid_user_roles.role_to_affilliation',
-    ];
+  public function getFormId() {
+    return 'myacademicid_user_roles_role_mapping_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
-    return 'myacademicid_user_roles_role_mapping_form';
+  protected function getEditableConfigNames() {
+    return [
+      'myacademicid_user_roles.role_to_affilliation',
+    ];
   }
 
   /**
