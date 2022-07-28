@@ -3,21 +3,17 @@ myacademicid_user_roles.affilliation_to_role:
   label: 'Affilliation mapping'
   mapping:
     affilliation_mapping:
-      type: mapping
+      type: sequence
       label: 'Affilliation types'
-      mapping:
-        role:
-          type: string
-          label: 'Role'
+      sequence:
+        type: string
 
 myacademicid_user_roles.role_to_affilliation:
   type: config_object
   label: 'Role mapping'
   mapping:
     role_mapping:
-      type: mapping
+      type: sequence
       label: 'Roles'
-      mapping:
-        affilliation:
-          type: string
-          label: 'Affilliation type'
+      sequence:
+        type: string

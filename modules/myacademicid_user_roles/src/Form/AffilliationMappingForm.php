@@ -172,9 +172,9 @@ class AffilliationMappingForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $this->config('myacademicid_user_roles.affilliation_to_role');
 
-    $config->set('affilliation_mapping', $form_state
-      ->getValue('affilliation_mapping')
-    );
+    $config->set('affilliation_mapping', \array_filter(
+      $form_state->getValue('affilliation_mapping')
+    ));
 
     $config->save();
 

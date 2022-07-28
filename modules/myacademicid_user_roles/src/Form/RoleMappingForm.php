@@ -161,8 +161,9 @@ class RoleMappingForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $this->config('myacademicid_user_roles.role_to_affilliation');
 
-    $config->set('role_mapping', $form_state
-      ->getValue('role_mapping'));
+    $config->set('role_mapping', \array_filter(
+      $form_state->getValue('role_mapping')
+    ));
 
     $config->save();
 
