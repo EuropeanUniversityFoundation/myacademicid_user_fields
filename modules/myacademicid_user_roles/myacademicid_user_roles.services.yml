@@ -1,28 +1,4 @@
 services:
   myacademicid_user_roles:
     class: Drupal\myacademicid_user_roles\MyacademicidUserRoles
-    arguments: ['@config.factory', '@event_dispatcher', '@messenger', '@string_translation']
-
-  myacademicid_user_roles.role_change_event_subscriber:
-    class: Drupal\myacademicid_user_roles\EventSubscriber\UserRoleChangeEventSubscriber
-    arguments: ['@myacademicid_user_roles', '@messenger', '@string_translation']
-    tags:
-      - { name: event_subscriber }
-
-  myacademicid_user_roles.sho_change_event_subscriber:
-    class: Drupal\myacademicid_user_roles\EventSubscriber\UserSchacHomeOrganizationChangeEventSubscriber
-    arguments: ['@myacademicid_user_roles', '@messenger', '@string_translation']
-    tags:
-      - { name: event_subscriber }
-
-  myacademicid_user_roles.vea_change_event_subscriber:
-    class: Drupal\myacademicid_user_roles\EventSubscriber\UserVopersonExternalAffilliationChangeEventSubscriber
-    arguments: ['@myacademicid_user_roles', '@messenger', '@string_translation']
-    tags:
-      - { name: event_subscriber }
-
-  myacademicid_user_roles.set_roles_event_subscriber:
-    class: Drupal\myacademicid_user_roles\EventSubscriber\SetUserRolesEventSubscriber
-    arguments: ['@myacademicid_user_roles', '@messenger', '@string_translation']
-    tags:
-      - { name: event_subscriber }
+    arguments: ['@config.factory', '@messenger', '@string_translation']
