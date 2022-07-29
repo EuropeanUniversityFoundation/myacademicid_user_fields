@@ -87,8 +87,11 @@ class SetUserSchacHomeOrganizationEventSubscriber implements EventSubscriberInte
       $this->messenger->addStatus($message);
     }
 
-    $this->service
-      ->setUserSchacHomeOrganization($event->user, $event->sho);
+    $this->service->setUserSchacHomeOrganization(
+      $event->user,
+      $event->sho,
+      $event->save
+    );
   }
 
 }

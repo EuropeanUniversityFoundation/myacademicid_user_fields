@@ -27,16 +27,26 @@ class SetUserVopersonExternalAffilliationEvent extends Event {
   public $vea;
 
   /**
+   * Whether the user entity should be saved after setting the value.
+   *
+   * @var boolean
+   */
+  public $save;
+
+  /**
    * Constructs the object.
    *
    * @param \Drupal\user\UserInterface $user
    *   The user entity.
    * @param array $vea
    *   Array of voperson_external_affilliation values.
+   * @param boolean $save
+   *   Whether the user entity should be saved after setting the value.
    */
-  public function __construct(UserInterface $user, array $vea) {
+  public function __construct(UserInterface $user, array $vea, $save = TRUE) {
     $this->user = $user;
     $this->vea = $vea;
+    $this->save = $save;
   }
 
 }

@@ -87,8 +87,11 @@ class SetUserSchacPersonalUniqueCodeEventSubscriber implements EventSubscriberIn
       $this->messenger->addStatus($message);
     }
 
-    $this->service
-      ->setUserSchacPersonalUniqueCode($event->user, $event->spuc);
+    $this->service->setUserSchacPersonalUniqueCode(
+      $event->user,
+      $event->spuc,
+      $event->save
+    );
   }
 
 }

@@ -148,41 +148,59 @@ class MyacademicidUserFields {
    * Set schac_home_organization value on a user entity.
    *
    * @param \Drupal\user\UserInterface $user
+   *   The user entity.
    * @param array $sho
+   *   Array of schac_home_organization values.
+   * @param boolean $save
+   *   Whether the user entity should be saved after setting the value.
    */
-  public function setUserSchacHomeOrganization(UserInterface $user, array $sho) {
-    $this->setValidFieldValue($user, self::FIELD_SHO, $sho, self::CLAIM_SHO);
+  public function setUserSchacHomeOrganization(UserInterface $user, array $sho, $save = TRUE) {
+    $this->setValidFieldValue($user, self::FIELD_SHO, $sho, self::CLAIM_SHO, $save);
   }
 
   /**
    * Set schac_personal_unique_code value on a user entity.
    *
    * @param \Drupal\user\UserInterface $user
+   *   The user entity.
    * @param array $spuc
+   *   Array of schac_personal_unique_code values.
+   * @param boolean $save
+   *   Whether the user entity should be saved after setting the value.
    */
-  public function setUserSchacPersonalUniqueCode(UserInterface $user, array $spuc) {
-    $this->setValidFieldValue($user, self::FIELD_SPUC, $spuc, self::CLAIM_SPUC);
+  public function setUserSchacPersonalUniqueCode(UserInterface $user, array $spuc, $save = TRUE) {
+    $this->setValidFieldValue($user, self::FIELD_SPUC, $spuc, self::CLAIM_SPUC, $save);
   }
 
   /**
    * Set voperson_external_affilliation value on a user entity.
    *
    * @param \Drupal\user\UserInterface $user
+   *   The user entity.
    * @param array $vea
+   *   Array of voperson_external_affilliation values.
+   * @param boolean $save
+   *   Whether the user entity should be saved after setting the value.
    */
-  public function setUserVopersonExternalAffilliation(UserInterface $user, array $vea) {
-    $this->setValidFieldValue($user, self::FIELD_VEA, $vea, self::CLAIM_VEA);
+  public function setUserVopersonExternalAffilliation(UserInterface $user, array $vea, $save = TRUE) {
+    $this->setValidFieldValue($user, self::FIELD_VEA, $vea, self::CLAIM_VEA, $save);
   }
 
   /**
    * Set a field value on a user entity if entity validation allows.
    *
    * @param \Drupal\user\UserInterface $user
+   *   The user entity.
    * @param string $field
+   *   The field machine name.
    * @param array $value
+   *   The new value for the field.
    * @param string $claim
+   *   The corresponding claim to the field.
+   * @param boolean $save
+   *   Whether the user entity should be saved after setting the value.
    */
-  private function setValidFieldValue(UserInterface $user, string $field, array $value, string $claim) {
+  private function setValidFieldValue(UserInterface $user, string $field, array $value, string $claim, $save = TRUE) {
     $original = $user->get($field)->getValue();
 
     $user->set($field, $value);
@@ -203,7 +221,9 @@ class MyacademicidUserFields {
       $user->set($field, $original);
     }
 
-    $user->save();
+    if ($save) {
+      $user->save();
+    }
   }
 
 }

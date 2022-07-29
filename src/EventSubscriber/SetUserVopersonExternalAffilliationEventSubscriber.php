@@ -87,8 +87,11 @@ class SetUserVopersonExternalAffilliationEventSubscriber implements EventSubscri
       $this->messenger->addStatus($message);
     }
 
-    $this->service
-      ->setUserVopersonExternalAffilliation($event->user, $event->vea);
+    $this->service->setUserVopersonExternalAffilliation(
+      $event->user,
+      $event->vea,
+      $event->save
+    );
   }
 
 }

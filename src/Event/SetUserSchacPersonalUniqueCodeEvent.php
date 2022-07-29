@@ -27,16 +27,26 @@ class SetUserSchacPersonalUniqueCodeEvent extends Event {
   public $spuc;
 
   /**
+   * Whether the user entity should be saved after setting the value.
+   *
+   * @var boolean
+   */
+  public $save;
+
+  /**
    * Constructs the object.
    *
    * @param \Drupal\user\UserInterface $user
    *   The user entity.
    * @param array $spuc
    *   Array of schac_personal_unique_code values.
+   * @param boolean $save
+   *   Whether the user entity should be saved after setting the value.
    */
-  public function __construct(UserInterface $user, array $sho) {
+  public function __construct(UserInterface $user, array $spuc, $save = TRUE) {
     $this->user = $user;
     $this->spuc = $spuc;
+    $this->save = $save;
   }
 
 }
