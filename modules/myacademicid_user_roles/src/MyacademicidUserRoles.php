@@ -7,7 +7,8 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\user\UserInterface;
-use Drupal\myacademicid_user_fields\MyacademicidUserFields;
+use Drupal\myacademicid_user_roles\Event\UserRolesChangeEvent;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * MyAcademicID User Roles service.
@@ -24,6 +25,13 @@ class MyacademicidUserRoles {
   protected $configFactory;
 
   /**
+   * Event dispatcher.
+   *
+   * @var \Symfony\Contracts\EventDispatcher\EventDispatcherInterface
+   */
+  protected $eventDispatcher;
+
+  /**
    * The messenger.
    *
    * @var \Drupal\Core\Messenger\MessengerInterface
@@ -35,6 +43,8 @@ class MyacademicidUserRoles {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
+   * @param \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   The event dispatcher service.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
@@ -42,10 +52,12 @@ class MyacademicidUserRoles {
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
+    EventDispatcherInterface $event_dispatcher,
     MessengerInterface $messenger,
     TranslationInterface $string_translation
   ) {
     $this->configFactory     = $config_factory;
+    $this->eventDispatcher   = $event_dispatcher;
     $this->messenger         = $messenger;
     $this->stringTranslation = $string_translation;
   }
@@ -56,56 +68,15 @@ class MyacademicidUserRoles {
    * @param \Drupal\user\UserInterface $user
    */
   public function checkRoleChange(UserInterface $user) {
-    $mode = $this->configFactory
-      ->get('myacademicid_user_fields.settings')
-      ->get('mode');
+    // Get the original user roles.
+    $roles = (isset($user->original)) ? $user->original->getRoles(TRUE) : [];
 
-    switch ($mode) {
-      case MyacademicidUserFields::SERVER_MODE:
-        // Check for differences in user roles.
-        $old_roles = (empty($user->original)) ? NULL : $user->original
-          ->getRoles(TRUE);
-        $new_roles = $user
-          ->getRoles(TRUE);
-
-        // Check for differences in schac_home_organization.
-        $old_sho = (empty($user->original)) ? NULL : $user->original
-          ->get(MyacademicidUserFields::FIELD_SHO);
-        $new_sho = $user
-          ->get(MyacademicidUserFields::FIELD_SHO);
-
-        // Either difference calls for a recalculation of affilliation.
-        if ($old_roles !== $new_roles || $old_sho !== $new_sho) {
-          $sho = [];
-
-          foreach ($new_sho as $idx => $item) {
-            $sho[] = $item->value;
-          }
-
-          $this->affilliationFromRoles($user, $new_roles, $sho);
-        }
-
-        break;
-
-      default:
-        // Check for differences in voperson_external_affilliation.
-        $old_vea = (empty($user->original)) ? NULL : $user->original
-          ->get(MyacademicidUserFields::FIELD_VEA);
-        $new_vea = $user
-          ->get(MyacademicidUserFields::FIELD_VEA);
-
-        // A difference calls for a recalculation of user roles.
-        if ($old_vea !== $new_vea) {
-          $vea = [];
-
-          foreach ($new_vea as $idx => $item) {
-            $vea[] = $item->value;
-          }
-
-          $this->rolesFromAffilliation($user, $vea);
-        }
-
-        break;
+    if (sort($roles) !== sort($user->getRoles(TRUE))) {
+      // Instantiate our event.
+      $event = new UserRolesChangeEvent($user);
+      // Dispatch the event.
+      $this->eventDispatcher
+        ->dispatch($event, UserRolesChangeEvent::EVENT_NAME);
     }
   }
 
@@ -113,10 +84,13 @@ class MyacademicidUserRoles {
    * Determine affilliation to assign based on roles and home organization.
    *
    * @param \Drupal\user\UserInterface $user
+   *   The user entity.
    * @param array $roles
+   *   The user roles.
    * @param array $sho
+   *   Array of schac_home_organization values.
    */
-  public function affilliationfromRoles(UserInterface $user, array $roles, array $sho) {
+  public function affilliationfromRoles(UserInterface $user, array $roles, array $sho): array {
     $role_mapping = $this->configFactory
       ->get('myacademicid_user_roles.role_to_affilliation')
       ->get('role_mapping');
@@ -136,37 +110,21 @@ class MyacademicidUserRoles {
       }
     }
 
-    if (! empty($vea)) {
-      $original = $user->get(MyacademicidUserFields::FIELD_VEA)->getValue();
-
-      $user->set(MyacademicidUserFields::FIELD_VEA, $vea);
-
-      $user->_skipProtectedUserFieldConstraint = TRUE;
-      $violations = $user->validate();
-
-      if ($violations->count() > 0) {
-        foreach ($violations as $idx => $violation) {
-          $this->messenger->addError($violation->getMessage());
-        }
-
-        $this->messenger
-          ->addError($this->t('Cannot set %claim claim to %value', [
-            '%claim' => $claim,
-            '%value' => \implode(', ', $value)
-          ]));
-
-        $user->set(MyacademicidUserFields::FIELD_VEA, $original);
-      }
-    }
+    return $vea;
   }
 
   /**
    * Determine roles to assign based on affilliation.
    *
    * @param \Drupal\user\UserInterface $user
+   *   The user entity.
    * @param array $vea
+   *   The voperson_external_affilliation values.
+   *
+   * @return array $roles
+   *   Array of user roles.
    */
-  public function rolesFromAffilliation(UserInterface $user, array $vea) {
+  public function rolesFromAffilliation(UserInterface $user, array $vea): array {
     $affilliation_mapping = $this->configFactory
       ->get('myacademicid_user_roles.affilliation_to_role')
       ->get('affilliation_mapping');
@@ -193,6 +151,20 @@ class MyacademicidUserRoles {
       }
     }
 
+    return $roles;
+  }
+
+  /**
+   * Set roles on a user entity.
+   *
+   * @param \Drupal\user\UserInterface $user
+   *   The user entity.
+   * @param array $roles
+   *   The roles to be set on the user entity.
+   * @param boolean $save
+   *   Whether the user entity should be saved after setting the value.
+   */
+  public function setUserRoles(UserInterface $user, array $roles, $save = TRUE) {
     $current = $user->getRoles(TRUE);
 
     // Roles to add.
@@ -210,6 +182,10 @@ class MyacademicidUserRoles {
       ) {
         $user->removeRole($rid);
       }
+    }
+
+    if ($save) {
+      $user->save();
     }
   }
 

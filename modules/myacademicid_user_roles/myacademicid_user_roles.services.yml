@@ -1,4 +1,10 @@
 services:
   myacademicid_user_roles:
     class: Drupal\myacademicid_user_roles\MyacademicidUserRoles
-    arguments: ['@config.factory', '@messenger', '@string_translation']
+    arguments: ['@config.factory', '@event_dispatcher', '@messenger', '@string_translation']
+
+  myacademicid_user_roles.event_subscriber:
+    class: Drupal\myacademicid_user_roles\EventSubscriber\MyacademicidUserRolesSubscriber
+    arguments: ['@config.factory', '@event_dispatcher', 'myacademicid_user_roles', '@messenger']
+    tags:
+      - { name: event_subscriber }
