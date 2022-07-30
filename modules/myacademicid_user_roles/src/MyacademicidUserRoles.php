@@ -7,6 +7,7 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\user\UserInterface;
+use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Drupal\myacademicid_user_roles\Event\UserRolesChangeEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -135,14 +136,22 @@ class MyacademicidUserRoles {
       ->get('myacademicid_user_roles.affilliation_to_role')
       ->get('affilliation_mapping');
 
-    $keys = [];
+    $field = $user->get(MyacademicidUserFields::FIELD_SHO);
     $sho = [];
+
+    foreach ($field as $key => $item) {
+      $sho[] = $item->value;
+    }
+
+    $keys = [];
 
     // Gather all affilliation keys and schac_home_organization values.
     foreach ($vea as $idx => $item) {
       $parts = \explode('@' ,$item);
-      $keys[] = $parts[0];
-      $sho[] = $parts[1];
+
+      if (\in_array($parts[1], $sho)) {
+        $keys[] = $parts[0];
+      }
     }
 
     $roles = [];
