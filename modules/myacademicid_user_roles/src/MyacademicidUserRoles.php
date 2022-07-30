@@ -76,7 +76,7 @@ class MyacademicidUserRoles {
     // Get the current user roles.
     $new_roles = $user->getRoles(TRUE);
 
-    if (sort($old_roles) !== sort($new_roles)) {
+    if ($old_roles !== $new_roles) {
       // Instantiate our event.
       $event = new UserRolesChangeEvent($user);
       // Dispatch the event.

@@ -96,18 +96,42 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
    */
   public function onUserRolesChange(UserRolesChangeEvent $event) {
     dpm(__METHOD__);
-    // Get the original schac_home_organization values.
-    $old_sho = (isset($event->user->original)) ? $event->user->original
-      ->get(MyacademicidUserFields::FIELD_SHO)->getValue() : [];
-    // Get the current schac_home_organization values.
-    $new_sho = $event->user
-      ->get(MyacademicidUserFields::FIELD_SHO)->getValue();
+    $mode = $this->configFactory
+      ->get('myacademicid_user_fields.settings')
+      ->get('mode');
 
-    // Defer to the onUserSchacHomeOrganizationChange method.
-    if ($old_sho === $new_sho) {
-      // Instantiate a mock UserSchacHomeOrganizationChangeEvent.
-      $mock_event = new UserSchacHomeOrganizationChangeEvent($event->user);
-      $this->onUserSchacHomeOrganizationChange($mock_event);
+    // Default case: Server sets different SHO and/or Roles; recalculate VEA.
+    if ($mode === MyacademicidUserFields::SERVER_MODE) {
+      // Get the original schac_home_organization values.
+      $old_sho = (isset($event->user->original)) ? $event->user->original
+        ->get(MyacademicidUserFields::FIELD_SHO)->getValue() : [];
+      // Get the current schac_home_organization values.
+      $new_sho = $event->user
+        ->get(MyacademicidUserFields::FIELD_SHO)->getValue();
+
+      // Defer to the onUserSchacHomeOrganizationChange method.
+      if ($old_sho === $new_sho) {
+        // Instantiate a mock UserSchacHomeOrganizationChangeEvent.
+        $mock_event = new UserSchacHomeOrganizationChangeEvent($event->user);
+        $this->onUserSchacHomeOrganizationChange($mock_event);
+      }
+    }
+
+    // Edge case: enforce user roles based on affilliation.
+    elseif ($mode === MyacademicidUserFields::CLIENT_MODE) {
+      // Get the original voperson_external_affilliation values.
+      $old_vea = (isset($event->user->original)) ? $event->user->original
+        ->get(MyacademicidUserFields::FIELD_VEA)->getValue() : [];
+      // Get the current voperson_external_affilliation values.
+      $new_vea = $event->user
+        ->get(MyacademicidUserFields::FIELD_VEA)->getValue();
+
+      // Defer to the onUserVopersonExternalAffilliationChange method.
+      if ($old_vea === $new_vea) {
+        // Instantiate a mock UserVopersonExternalAffilliationChangeEvent.
+        $mock = new UserVopersonExternalAffilliationChangeEvent($event->user);
+        $this->onUserVopersonExternalAffilliationChange($mock);
+      }
     }
   }
 
