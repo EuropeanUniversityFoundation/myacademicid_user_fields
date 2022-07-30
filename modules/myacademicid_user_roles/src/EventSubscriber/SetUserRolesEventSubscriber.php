@@ -6,8 +6,8 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\user\Entity\User;
-use Drupal\myacademicid_user_roles\MyacademicidUserRoles;
 use Drupal\myacademicid_user_roles\Event\SetUserRolesEvent;
+use Drupal\myacademicid_user_roles\MyacademicidUserRoles;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -42,7 +42,7 @@ class SetUserRolesEventSubscriber implements EventSubscriberInterface {
    *   The string translation service.
    */
   public function __construct(
-    MyacademicidUserFields $service,
+    MyacademicidUserRoles $service,
     MessengerInterface $messenger,
     TranslationInterface $string_translation
   ) {
@@ -69,6 +69,7 @@ class SetUserRolesEventSubscriber implements EventSubscriberInterface {
    *   The event object.
    */
   public function onSetUserRoles(SetUserRolesEvent $event) {
+    dpm(__METHOD__);
     $message = $this->t('Setting roles for user %user...', [
       '%user' => $event->user->label(),
     ]);

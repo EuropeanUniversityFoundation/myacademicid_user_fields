@@ -68,10 +68,14 @@ class MyacademicidUserRoles {
    * @param \Drupal\user\UserInterface $user
    */
   public function checkRoleChange(UserInterface $user) {
+    dpm(__METHOD__);
     // Get the original user roles.
-    $roles = (isset($user->original)) ? $user->original->getRoles(TRUE) : [];
+    $old_roles = (isset($user->original)) ?
+      $user->original->getRoles(TRUE) : [];
+    // Get the current user roles.
+    $new_roles = $user->getRoles(TRUE);
 
-    if (sort($roles) !== sort($user->getRoles(TRUE))) {
+    if (sort($old_roles) !== sort($new_roles)) {
       // Instantiate our event.
       $event = new UserRolesChangeEvent($user);
       // Dispatch the event.
@@ -91,6 +95,7 @@ class MyacademicidUserRoles {
    *   Array of schac_home_organization values.
    */
   public function affilliationfromRoles(UserInterface $user, array $roles, array $sho): array {
+    dpm(__METHOD__);
     $role_mapping = $this->configFactory
       ->get('myacademicid_user_roles.role_to_affilliation')
       ->get('role_mapping');
@@ -125,6 +130,7 @@ class MyacademicidUserRoles {
    *   Array of user roles.
    */
   public function rolesFromAffilliation(UserInterface $user, array $vea): array {
+    dpm(__METHOD__);
     $affilliation_mapping = $this->configFactory
       ->get('myacademicid_user_roles.affilliation_to_role')
       ->get('affilliation_mapping');
@@ -165,6 +171,11 @@ class MyacademicidUserRoles {
    *   Whether the user entity should be saved after setting the value.
    */
   public function setUserRoles(UserInterface $user, array $roles, $save = TRUE) {
+    dpm(__METHOD__);
+    $affilliation_mapping = $this->configFactory
+      ->get('myacademicid_user_roles.affilliation_to_role')
+      ->get('affilliation_mapping');
+
     $current = $user->getRoles(TRUE);
 
     // Roles to add.

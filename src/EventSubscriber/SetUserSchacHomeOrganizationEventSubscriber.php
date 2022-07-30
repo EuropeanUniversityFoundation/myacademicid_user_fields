@@ -69,6 +69,7 @@ class SetUserSchacHomeOrganizationEventSubscriber implements EventSubscriberInte
    *   The event object.
    */
   public function onSetUserSchacHomeOrganization(SetUserSchacHomeOrganizationEvent $event) {
+    dpm(__METHOD__);
     if (empty($event->sho)) {
       $message = $this->t('Unsetting %claim claim for user %user...', [
         '%user' => $event->user->label(),

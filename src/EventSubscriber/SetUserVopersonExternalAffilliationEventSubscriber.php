@@ -69,6 +69,7 @@ class SetUserVopersonExternalAffilliationEventSubscriber implements EventSubscri
    *   The event object.
    */
   public function onSetUserVopersonExternalAffilliation(SetUserVopersonExternalAffilliationEvent $event) {
+    dpm(__METHOD__);
     if (empty($event->vea)) {
       $message = $this->t('Unsetting %claim claim for user %user...', [
         '%user' => $event->user->label(),

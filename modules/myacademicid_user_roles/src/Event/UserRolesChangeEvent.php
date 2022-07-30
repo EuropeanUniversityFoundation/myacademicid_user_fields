@@ -33,6 +33,7 @@ class UserRolesChangeEvent extends Event {
    *   The user entity.
    */
   public function __construct(UserInterface $user) {
+    dpm(__METHOD__);
     $this->user = $user;
     $this->roles = $user->getRoles(TRUE);
   }

@@ -95,6 +95,7 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
    *   The event object.
    */
   public function onUserRolesChange(UserRolesChangeEvent $event) {
+    dpm(__METHOD__);
     // Get the original schac_home_organization values.
     $old_sho = (isset($event->user->original)) ? $event->user->original
       ->get(MyacademicidUserFields::FIELD_SHO) : [];
@@ -117,6 +118,7 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
    *   The event object.
    */
   public function onUserSchacHomeOrganizationChange(UserSchacHomeOrganizationChangeEvent $event) {
+    dpm(__METHOD__);
     $mode = $this->configFactory
       ->get('myacademicid_user_fields.settings')
       ->get('mode');
@@ -153,6 +155,7 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
    *   The event object.
    */
   public function onUserVopersonExternalAffilliationChange(UserVopersonExternalAffilliationChangeEvent $event) {
+    dpm(__METHOD__);
     $mode = $this->configFactory
       ->get('myacademicid_user_fields.settings')
       ->get('mode');

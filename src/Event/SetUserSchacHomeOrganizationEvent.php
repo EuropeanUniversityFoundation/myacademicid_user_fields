@@ -44,6 +44,7 @@ class SetUserSchacHomeOrganizationEvent extends Event {
    *   Whether the user entity should be saved after setting the value.
    */
   public function __construct(UserInterface $user, array $sho, $save = TRUE) {
+    dpm(__METHOD__);
     $this->user = $user;
     $this->sho = $sho;
     $this->save = $save;

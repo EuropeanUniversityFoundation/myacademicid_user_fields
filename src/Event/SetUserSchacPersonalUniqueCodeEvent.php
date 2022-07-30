@@ -44,6 +44,7 @@ class SetUserSchacPersonalUniqueCodeEvent extends Event {
    *   Whether the user entity should be saved after setting the value.
    */
   public function __construct(UserInterface $user, array $spuc, $save = TRUE) {
+    dpm(__METHOD__);
     $this->user = $user;
     $this->spuc = $spuc;
     $this->save = $save;
