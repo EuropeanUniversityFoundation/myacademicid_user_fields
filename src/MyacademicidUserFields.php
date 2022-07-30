@@ -130,12 +130,7 @@ class MyacademicidUserFields {
   public function checkFieldChange(UserInterface $user) {
     dpm(__METHOD__);
     foreach (self::EVENT_CLASS as $field => $event_class) {
-      $old_value = (empty($user->original)) ? NULL : $user->original
-        ->get($field)->getValue();
-      $new_value = $user
-        ->get($field)->getValue();
-
-      if ($old_value !== $new_value) {
+      if (! $this->equalValue($user, $field)) {
         // Instantiate our event.
         $event = new $event_class($user);
         // Dispatch the event.
@@ -143,6 +138,25 @@ class MyacademicidUserFields {
           ->dispatch($event, $event_class::EVENT_NAME);
       }
     }
+  }
+
+  /**
+   * Check for equal field value on a user entity.
+   *
+   * @param \Drupal\user\UserInterface $user
+   *   The user entity.
+   * @param string $field
+   *   The field name.
+   *
+   * @return boolean
+   */
+  public function equalValue(UserInterface $user, string $field): bool {
+    $old_value = (empty($user->original)) ? NULL : $user->original
+      ->get($field)->getValue();
+    $new_value = $user
+      ->get($field)->getValue();
+
+    return ($old_value === $new_value);
   }
 
   /**

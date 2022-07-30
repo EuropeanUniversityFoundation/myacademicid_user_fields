@@ -33,6 +33,13 @@ class MyacademicidUserRoles {
   protected $eventDispatcher;
 
   /**
+   * The MyAcademicID User Fields service.
+   *
+   * @var \Drupal\myacademicid_user_fields\MyacademicidUserFields
+   */
+  protected $fieldsService;
+
+  /**
    * The messenger.
    *
    * @var \Drupal\Core\Messenger\MessengerInterface
@@ -46,6 +53,8 @@ class MyacademicidUserRoles {
    *   The config factory.
    * @param \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher service.
+   * @param \Drupal\myacademicid_user_fields\MyacademicidUserFields $fields_service
+   *   The MyAcademicID User Fields service.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
@@ -54,11 +63,13 @@ class MyacademicidUserRoles {
   public function __construct(
     ConfigFactoryInterface $config_factory,
     EventDispatcherInterface $event_dispatcher,
+    MyacademicidUserFields $fields_service,
     MessengerInterface $messenger,
     TranslationInterface $string_translation
   ) {
     $this->configFactory     = $config_factory;
     $this->eventDispatcher   = $event_dispatcher;
+    $this->fieldsService     = $fields_service;
     $this->messenger         = $messenger;
     $this->stringTranslation = $string_translation;
   }
@@ -70,19 +81,31 @@ class MyacademicidUserRoles {
    */
   public function checkRoleChange(UserInterface $user) {
     dpm(__METHOD__);
-    // Get the original user roles.
-    $old_roles = (isset($user->original)) ?
-      $user->original->getRoles(TRUE) : [];
-    // Get the current user roles.
-    $new_roles = $user->getRoles(TRUE);
-
-    if ($old_roles !== $new_roles) {
+    if (! $this->equalRoles($user)) {
       // Instantiate our event.
       $event = new UserRolesChangeEvent($user);
       // Dispatch the event.
       $this->eventDispatcher
         ->dispatch($event, UserRolesChangeEvent::EVENT_NAME);
     }
+  }
+
+  /**
+   * Check for equal roles on a user entity.
+   *
+   * @param \Drupal\user\UserInterface $user
+   *   The user entity.
+   *
+   * @return boolean
+   */
+  public function equalRoles(UserInterface $user): bool {
+    // Get the original user roles.
+    $old_roles = (isset($user->original)) ?
+      $user->original->getRoles(TRUE) : [];
+    // Get the current user roles.
+    $new_roles = $user->getRoles(TRUE);
+
+    return ($old_roles === $new_roles);
   }
 
   /**

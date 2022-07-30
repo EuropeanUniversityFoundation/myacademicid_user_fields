@@ -34,11 +34,18 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
   protected $eventDispatcher;
 
   /**
+   * The MyAcademicID User Fields service.
+   *
+   * @var \Drupal\myacademicid_user_fields\MyacademicidUserFields
+   */
+  protected $fieldsService;
+
+  /**
    * The MyAcademicID User Roles service.
    *
    * @var \Drupal\myacademicid_user_roles\MyacademicidUserRoles
    */
-  protected $service;
+  protected $rolesService;
 
   /**
    * The messenger.
@@ -54,7 +61,9 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
    *   The config factory.
    * @param \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher service.
-   * @param \Drupal\myacademicid_user_roles\MyacademicidUserRoles $service
+   * @param \Drupal\myacademicid_user_fields\MyacademicidUserFields $fields_service
+   *   The MyAcademicID User Fields service.
+   * @param \Drupal\myacademicid_user_roles\MyacademicidUserRoles $roles_service
    *   The MyAcademicID User Roles service.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger.
@@ -62,12 +71,14 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
   public function __construct(
     ConfigFactoryInterface $config_factory,
     EventDispatcherInterface $event_dispatcher,
-    MyacademicidUserRoles $service,
+    MyacademicidUserFields $fields_service,
+    MyacademicidUserRoles $roles_service,
     MessengerInterface $messenger
   ) {
     $this->configFactory   = $config_factory;
     $this->eventDispatcher = $event_dispatcher;
-    $this->service         = $service;
+    $this->fieldsService   = $fields_service;
+    $this->rolesService    = $roles_service;
     $this->messenger       = $messenger;
   }
 
@@ -102,15 +113,10 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
 
     // Default case: Server sets different SHO and/or Roles; recalculate VEA.
     if ($mode === MyacademicidUserFields::SERVER_MODE) {
-      // Get the original schac_home_organization values.
-      $old_sho = (isset($event->user->original)) ? $event->user->original
-        ->get(MyacademicidUserFields::FIELD_SHO)->getValue() : [];
-      // Get the current schac_home_organization values.
-      $new_sho = $event->user
-        ->get(MyacademicidUserFields::FIELD_SHO)->getValue();
-
+      $equals = $this->fieldsService
+        ->equalValue($event->user, MyacademicidUserFields::FIELD_SHO);
       // Defer to the onUserSchacHomeOrganizationChange method.
-      if ($old_sho === $new_sho) {
+      if ($equals) {
         // Instantiate a mock UserSchacHomeOrganizationChangeEvent.
         $mock_event = new UserSchacHomeOrganizationChangeEvent($event->user);
         $this->onUserSchacHomeOrganizationChange($mock_event);
@@ -119,15 +125,10 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
 
     // Edge case: enforce user roles based on affilliation.
     elseif ($mode === MyacademicidUserFields::CLIENT_MODE) {
-      // Get the original voperson_external_affilliation values.
-      $old_vea = (isset($event->user->original)) ? $event->user->original
-        ->get(MyacademicidUserFields::FIELD_VEA)->getValue() : [];
-      // Get the current voperson_external_affilliation values.
-      $new_vea = $event->user
-        ->get(MyacademicidUserFields::FIELD_VEA)->getValue();
-
-      // Defer to the onUserVopersonExternalAffilliationChange method.
-      if ($old_vea === $new_vea) {
+      $equals = $this->fieldsService
+        ->equalValue($event->user, MyacademicidUserFields::FIELD_VEA);
+      // Defer to the onUserSchacHomeOrganizationChange method.
+      if ($equals) {
         // Instantiate a mock UserVopersonExternalAffilliationChangeEvent.
         $mock = new UserVopersonExternalAffilliationChangeEvent($event->user);
         $this->onUserVopersonExternalAffilliationChange($mock);
@@ -162,7 +163,7 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
       // Instantiate our event.
       $event = new SetUserVopersonExternalAffilliationEvent(
         $event->user,
-        $this->service->affilliationfromRoles($event->user, $roles, $sho),
+        $this->rolesService->affilliationfromRoles($event->user, $roles, $sho),
         FALSE
       );
       // Dispatch the event.
@@ -174,15 +175,10 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
 
     // Edge case: Client sets same VEA, different SHO; implies VEA changed.
     elseif ($mode === MyacademicidUserFields::CLIENT_MODE) {
-      // Get the original voperson_external_affilliation values.
-      $old_vea = (isset($event->user->original)) ? $event->user->original
-        ->get(MyacademicidUserFields::FIELD_VEA)->getValue() : [];
-      // Get the current voperson_external_affilliation values.
-      $new_vea = $event->user
-        ->get(MyacademicidUserFields::FIELD_VEA)->getValue();
-
-      // Defer to the onUserVopersonExternalAffilliationChange method.
-      if ($old_vea === $new_vea) {
+      $equals = $this->fieldsService
+        ->equalValue($event->user, MyacademicidUserFields::FIELD_VEA);
+      // Defer to the onUserSchacHomeOrganizationChange method.
+      if ($equals) {
         // Instantiate a mock UserVopersonExternalAffilliationChangeEvent.
         $mock = new UserVopersonExternalAffilliationChangeEvent($event->user);
         $this->onUserVopersonExternalAffilliationChange($mock);
@@ -214,7 +210,7 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
       // Instantiate our event.
       $event = new SetUserRolesEvent(
         $event->user,
-        $this->service->rolesFromAffilliation($event->user, $vea),
+        $this->rolesService->rolesFromAffilliation($event->user, $vea),
         FALSE
       );
       // Dispatch the event.
