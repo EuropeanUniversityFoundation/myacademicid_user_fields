@@ -153,12 +153,8 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
       // Collect user roles and schac_home_organization values.
       $roles = $event->user->getRoles(TRUE);
 
-      $field = $event->user->get(MyacademicidUserFields::FIELD_SHO);
-      $sho = [];
-
-      foreach ($field as $key => $item) {
-        $sho[] = $item->value;
-      }
+      $sho = $this->rolesService
+        ->flattenValue($user, MyacademicidUserFields::FIELD_SHO);
 
       // Instantiate our event.
       $event = new SetUserVopersonExternalAffilliationEvent(
@@ -200,12 +196,8 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
 
     if ($mode === MyacademicidUserFields::CLIENT_MODE) {
       // Collect user voperson_external_affilliation values.
-      $field = $event->user->get(MyacademicidUserFields::FIELD_VEA);
-      $vea = [];
-
-      foreach ($field as $key => $item) {
-        $vea[] = $item->value;
-      }
+      $vea = $this->rolesService
+        ->flattenValue($event->user, MyacademicidUserFields::FIELD_VEA);
 
       // Instantiate our event.
       $event = new SetUserRolesEvent(

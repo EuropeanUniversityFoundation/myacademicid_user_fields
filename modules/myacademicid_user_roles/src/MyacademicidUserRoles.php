@@ -159,12 +159,7 @@ class MyacademicidUserRoles {
       ->get('myacademicid_user_roles.affilliation_to_role')
       ->get('affilliation_mapping');
 
-    $field = $user->get(MyacademicidUserFields::FIELD_SHO);
-    $sho = [];
-
-    foreach ($field as $key => $item) {
-      $sho[] = $item->value;
-    }
+    $sho = $this->flattenValue($user, MyacademicidUserFields::FIELD_SHO);
 
     $keys = [];
 
@@ -230,6 +225,28 @@ class MyacademicidUserRoles {
     if ($save) {
       $user->save();
     }
+  }
+
+  /**
+   * Get a flat array of field values from a user entity.
+   *
+   * @param \Drupal\user\UserInterface $user
+   *   The user entity.
+   * @param string $field
+   *   The field name.
+   *
+   * @return array $value
+   *   Array of field values.
+   */
+  public function flattenValue(UserInterface $user, string $field): array {
+    $obj = $user->get($field);
+    $value = [];
+
+    foreach ($obj as $key => $item) {
+      $value[] = $item->value;
+    }
+
+    return $value;
   }
 
 }
