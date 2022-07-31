@@ -1,6 +1,10 @@
 services:
+  myacademicid_user_hei:
+    class: Drupal\myacademicid_user_hei\MyacademicidUserHei
+    arguments: ['@config.factory', '@entity_type.manager', '@event_dispatcher', '@ewp_institutions_user.bridge', '@messenger', '@myacademicid_user_fields', '@string_translation']
+
   myacademicid_user_hei.event_subscriber:
     class: Drupal\myacademicid_user_hei\EventSubscriber\MyacademicidUserHeiSubscriber
-    arguments: ['@entity_type.manager', '@ewp_institutions_user.bridge', '@messenger', '@string_translation']
+    arguments: ['@myacademicid_user_hei', '@messenger', '@string_translation']
     tags:
       - { name: event_subscriber }
