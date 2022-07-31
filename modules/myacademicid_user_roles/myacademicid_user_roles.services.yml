@@ -5,7 +5,7 @@ services:
 
   myacademicid_user_roles.event_subscriber:
     class: Drupal\myacademicid_user_roles\EventSubscriber\MyacademicidUserRolesSubscriber
-    arguments: ['@config.factory', '@event_dispatcher', '@myacademicid_user_fields', '@myacademicid_user_roles', '@messenger']
+    arguments: ['@config.factory', '@event_dispatcher', '@myacademicid_user_fields', '@myacademicid_user_roles', '@messenger', '@string_translation']
     tags:
       - { name: event_subscriber }
 

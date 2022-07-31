@@ -5,6 +5,7 @@ namespace Drupal\myacademicid_user_roles\EventSubscriber;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use Drupal\myacademicid_user_roles\Event\SetUserRolesEvent;
 use Drupal\myacademicid_user_roles\MyacademicidUserRoles;
@@ -70,11 +71,28 @@ class SetUserRolesEventSubscriber implements EventSubscriberInterface {
    */
   public function onSetUserRoles(SetUserRolesEvent $event) {
     dpm(__METHOD__);
-    $message = $this->t('Setting roles for user %user...', [
-      '%user' => $event->user->label(),
-    ]);
+    if (empty($event->roles)) {
+      $message = $this->t('Unsetting mapped roles for user %user...', [
+        '%user' => $event->user->label(),
+      ]);
 
-    $this->messenger->addStatus($message);
+      $this->messenger->addWarning($message);
+    }
+    else {
+      $labels = [];
+
+      foreach ($event->roles as $idx => $key) {
+        $labels[] = Role::load($key)->label();
+      }
+
+      $message = $this->t('Setting mapped @roles %labels for user %user...', [
+        '%user' => $event->user->label(),
+        '@roles' => (count($labels) > 1) ? $this->t('roles') : $this->t('role'),
+        '%labels' => \implode(', ', \array_unique($labels)),
+      ]);
+
+      $this->messenger->addStatus($message);
+    }
 
     $this->service->setUserRoles(
       $event->user,

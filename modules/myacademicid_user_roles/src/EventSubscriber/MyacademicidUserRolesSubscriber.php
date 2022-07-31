@@ -4,6 +4,9 @@ namespace Drupal\myacademicid_user_roles\EventSubscriber;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\user\Entity\Role;
 use Drupal\myacademicid_user_fields\Event\SetUserVopersonExternalAffilliationEvent;
 use Drupal\myacademicid_user_fields\Event\UserSchacHomeOrganizationChangeEvent;
 use Drupal\myacademicid_user_fields\Event\UserVopersonExternalAffilliationChangeEvent;
@@ -18,6 +21,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * MyAcademicID user roles event subscriber.
  */
 class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
+
+  use StringTranslationTrait;
 
   /**
    * Config factory.
@@ -67,19 +72,23 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
    *   The MyAcademicID user roles service.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translation service.
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
     EventDispatcherInterface $event_dispatcher,
     MyacademicidUserFields $fields_service,
     MyacademicidUserRoles $roles_service,
-    MessengerInterface $messenger
+    MessengerInterface $messenger,
+    TranslationInterface $string_translation
   ) {
-    $this->configFactory   = $config_factory;
-    $this->eventDispatcher = $event_dispatcher;
-    $this->fieldsService   = $fields_service;
-    $this->rolesService    = $roles_service;
-    $this->messenger       = $messenger;
+    $this->configFactory     = $config_factory;
+    $this->eventDispatcher   = $event_dispatcher;
+    $this->fieldsService     = $fields_service;
+    $this->rolesService      = $roles_service;
+    $this->messenger         = $messenger;
+    $this->stringTranslation = $string_translation;
   }
 
   /**
@@ -107,6 +116,29 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
    */
   public function onUserRolesChange(UserRolesChangeEvent $event) {
     dpm(__METHOD__);
+    if (empty($event->roles)) {
+      $message = $this->t('No roles set for user %user.', [
+        '%user' => $event->user->label(),
+      ]);
+
+      $this->messenger->addWarning($message);
+    }
+    else {
+      $labels = [];
+
+      foreach ($event->roles as $idx => $key) {
+        $labels[] = Role::load($key)->label();
+      }
+
+      $message = $this->t('%labels @roles set for user %user.', [
+        '%labels' => \implode(', ', \array_unique($labels)),
+        '@roles' => (count($labels) > 1) ? $this->t('roles') : $this->t('role'),
+        '%user' => $event->user->label(),
+      ]);
+
+      $this->messenger->addStatus($message);
+    }
+
     $mode = $this->configFactory
       ->get('myacademicid_user_fields.settings')
       ->get('mode');
