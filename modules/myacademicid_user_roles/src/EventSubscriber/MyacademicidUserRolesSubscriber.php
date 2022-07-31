@@ -154,7 +154,7 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
       $roles = $event->user->getRoles(TRUE);
 
       $sho = $this->rolesService
-        ->flattenValue($user, MyacademicidUserFields::FIELD_SHO);
+        ->flattenValue($event->user, MyacademicidUserFields::FIELD_SHO);
 
       // Instantiate our event.
       $event = new SetUserVopersonExternalAffilliationEvent(
