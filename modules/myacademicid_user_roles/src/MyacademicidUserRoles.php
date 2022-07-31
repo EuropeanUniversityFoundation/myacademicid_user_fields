@@ -6,6 +6,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\user\Entity\Role;
 use Drupal\user\UserInterface;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Drupal\myacademicid_user_roles\Event\UserRolesChangeEvent;
@@ -247,6 +248,25 @@ class MyacademicidUserRoles {
     }
 
     return $value;
+  }
+
+  /**
+   * Get a flat array of role labels.
+   *
+   * @param array $roles
+   *   Array of role keys.
+   *
+   * @return array $labels
+   *   Array of role labels.
+   */
+  public function roleLabels(array $roles): array {
+    $labels = [];
+
+    foreach ($roles as $idx => $key) {
+      $labels[] = Role::load($key)->label();
+    }
+
+    return $labels;
   }
 
 }

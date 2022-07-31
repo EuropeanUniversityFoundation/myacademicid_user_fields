@@ -5,7 +5,6 @@ namespace Drupal\myacademicid_user_roles\EventSubscriber;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use Drupal\myacademicid_user_roles\Event\SetUserRolesEvent;
 use Drupal\myacademicid_user_roles\MyacademicidUserRoles;
@@ -79,11 +78,7 @@ class SetUserRolesEventSubscriber implements EventSubscriberInterface {
       $this->messenger->addWarning($message);
     }
     else {
-      $labels = [];
-
-      foreach ($event->roles as $idx => $key) {
-        $labels[] = Role::load($key)->label();
-      }
+      $labels = $this->service->roleLabels($event->roles);
 
       $message = $this->t('Setting mapped @roles %labels for user %user...', [
         '%user' => $event->user->label(),

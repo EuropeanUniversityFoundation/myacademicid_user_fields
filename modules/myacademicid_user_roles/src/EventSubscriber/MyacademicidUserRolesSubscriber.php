@@ -6,7 +6,6 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\user\Entity\Role;
 use Drupal\myacademicid_user_fields\Event\SetUserVopersonExternalAffilliationEvent;
 use Drupal\myacademicid_user_fields\Event\UserSchacHomeOrganizationChangeEvent;
 use Drupal\myacademicid_user_fields\Event\UserVopersonExternalAffilliationChangeEvent;
@@ -124,11 +123,7 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
       $this->messenger->addWarning($message);
     }
     else {
-      $labels = [];
-
-      foreach ($event->roles as $idx => $key) {
-        $labels[] = Role::load($key)->label();
-      }
+      $labels = $this->rolesService->roleLabels($event->roles);
 
       $message = $this->t('%labels @roles set for user %user.', [
         '%labels' => \implode(', ', \array_unique($labels)),
