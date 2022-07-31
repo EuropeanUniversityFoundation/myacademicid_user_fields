@@ -18,7 +18,7 @@ class SetUserSchacHomeOrganizationEventSubscriber implements EventSubscriberInte
   use StringTranslationTrait;
 
   /**
-   * The MyAcademicID User Fields service.
+   * The MyAcademicID user fields service.
    *
    * @var \Drupal\myacademicid_user_fields\MyacademicidUserFields
    */
@@ -35,7 +35,7 @@ class SetUserSchacHomeOrganizationEventSubscriber implements EventSubscriberInte
    * Constructs event subscriber.
    *
    * @param \Drupal\myacademicid_user_fields\MyacademicidUserFields $service
-   *   The MyAcademicID User Fields service.
+   *   The MyAcademicID user fields service.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation

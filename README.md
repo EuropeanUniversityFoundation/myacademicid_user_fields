@@ -1,4 +1,4 @@
-# MyAcademicID User Fields
+# MyAcademicID user fields
 
 This module adds funcionality related to **MyAcademicID** data points that can be leveraged in Drupal applications.
 
@@ -40,7 +40,7 @@ This module defines two groups of `Event`s and corresponding `EventSubscriber`s 
 
 - `User{Claim}ChangeEvent`s are dispatched when the corresponding _User_ fields change;
 - the built-in `MyacademicidUserFieldsSubscriber` issues messages accordingly;
-- `SetUser{Claim}Event`s are dispatched when the corresponding User fields should be set to a given value;
+- `SetUser{Claim}Event`s are dispatched when the corresponding user fields should be set to a given value;
 - the built-in `SetUser{Claim}EventSubscriber`s set the field values if the User entity passes validation.
 
 ### Access to user fields

@@ -10,7 +10,7 @@ use Drupal\myacademicid_user_fields\MyacademicidUserAffilliation;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 
 /**
- * MyAcademicID User Fields form alter service.
+ * MyAcademicID user fields form alter service.
  */
 class MyacademicidUserFieldsFormAlter {
 
@@ -67,7 +67,7 @@ class MyacademicidUserFieldsFormAlter {
 
     $form[self::WRAPPER] = [
       '#type' => 'details',
-      '#title' => $this->t('MyAcademicID User Fields'),
+      '#title' => $this->t('MyAcademicID user fields'),
       '#weight' => 100,
       '#open' => $allowed
     ];

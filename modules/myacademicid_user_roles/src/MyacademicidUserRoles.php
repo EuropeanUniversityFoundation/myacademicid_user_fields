@@ -12,7 +12,7 @@ use Drupal\myacademicid_user_roles\Event\UserRolesChangeEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
- * MyAcademicID User Roles service.
+ * MyAcademicID user roles service.
  */
 class MyacademicidUserRoles {
 
@@ -33,7 +33,7 @@ class MyacademicidUserRoles {
   protected $eventDispatcher;
 
   /**
-   * The MyAcademicID User Fields service.
+   * The MyAcademicID user fields service.
    *
    * @var \Drupal\myacademicid_user_fields\MyacademicidUserFields
    */
@@ -54,7 +54,7 @@ class MyacademicidUserRoles {
    * @param \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher service.
    * @param \Drupal\myacademicid_user_fields\MyacademicidUserFields $fields_service
-   *   The MyAcademicID User Fields service.
+   *   The MyAcademicID user fields service.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation

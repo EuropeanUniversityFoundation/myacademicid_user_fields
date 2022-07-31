@@ -34,14 +34,14 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
   protected $eventDispatcher;
 
   /**
-   * The MyAcademicID User Fields service.
+   * The MyAcademicID user fields service.
    *
    * @var \Drupal\myacademicid_user_fields\MyacademicidUserFields
    */
   protected $fieldsService;
 
   /**
-   * The MyAcademicID User Roles service.
+   * The MyAcademicID user roles service.
    *
    * @var \Drupal\myacademicid_user_roles\MyacademicidUserRoles
    */
@@ -62,9 +62,9 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
    * @param \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher service.
    * @param \Drupal\myacademicid_user_fields\MyacademicidUserFields $fields_service
-   *   The MyAcademicID User Fields service.
+   *   The MyAcademicID user fields service.
    * @param \Drupal\myacademicid_user_roles\MyacademicidUserRoles $roles_service
-   *   The MyAcademicID User Roles service.
+   *   The MyAcademicID user roles service.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger.
    */

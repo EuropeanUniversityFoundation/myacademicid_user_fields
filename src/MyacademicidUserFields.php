@@ -15,7 +15,7 @@ use Drupal\myacademicid_user_fields\Event\UserVopersonExternalAffilliationChange
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
- * MyAcademicID User Fields service.
+ * MyAcademicID user fields service.
  */
 class MyacademicidUserFields {
 

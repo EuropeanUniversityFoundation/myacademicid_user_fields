@@ -18,7 +18,7 @@ class SetUserRolesEventSubscriber implements EventSubscriberInterface {
   use StringTranslationTrait;
 
   /**
-   * The MyAcademicID User Roles service.
+   * The MyAcademicID user roles service.
    *
    * @var \Drupal\myacademicid_user_roles\MyacademicidUserRoles
    */
@@ -35,7 +35,7 @@ class SetUserRolesEventSubscriber implements EventSubscriberInterface {
    * Constructs event subscriber.
    *
    * @param \Drupal\myacademicid_user_roles\MyacademicidUserRoles $service
-   *   The MyAcademicID User Roles service.
+   *   The MyAcademicID user roles service.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
