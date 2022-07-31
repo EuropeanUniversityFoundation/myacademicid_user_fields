@@ -44,7 +44,6 @@ class SetUserVopersonExternalAffilliationEvent extends Event {
    *   Whether the user entity should be saved after setting the value.
    */
   public function __construct(UserInterface $user, array $vea, $save = TRUE) {
-    dpm(__METHOD__);
     $this->user = $user;
     $this->vea = $vea;
     $this->save = $save;

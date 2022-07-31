@@ -34,7 +34,6 @@ class UserSchacPersonalUniqueCodeChangeEvent extends Event {
    *   The user entity.
    */
   public function __construct(UserInterface $user) {
-    dpm(__METHOD__);
     $this->user = $user;
 
     $field = $this->user->get(MyacademicidUserFields::FIELD_SPUC);
