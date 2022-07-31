@@ -1,0 +1,7 @@
+myacademicid_user_hei.settings_form:
+  path: '/admin/config/services/myacademicid/hei'
+  defaults:
+    _title: 'EWP Institutions bridge'
+    _form: 'Drupal\myacademicid_user_hei\Form\SettingsForm'
+  requirements:
+    _permission: 'administer myacademicid user fields'

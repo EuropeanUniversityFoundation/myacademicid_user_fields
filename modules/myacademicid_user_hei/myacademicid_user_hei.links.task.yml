@@ -1,0 +1,6 @@
+# Local tasks
+myacademicid_user_hei.settings_form:
+  title: 'EWP Institutions bridge'
+  base_route: myacademicid_user_fields.settings_form
+  route_name: myacademicid_user_hei.settings_form
+  weight: 8

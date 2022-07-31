@@ -1,0 +1,6 @@
+services:
+  myacademicid_user_hei.event_subscriber:
+    class: Drupal\myacademicid_user_hei\EventSubscriber\MyacademicidUserHeiSubscriber
+    arguments: ['@messenger']
+    tags:
+      - { name: event_subscriber }
