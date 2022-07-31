@@ -1,6 +1,6 @@
 services:
   myacademicid_user_hei.event_subscriber:
     class: Drupal\myacademicid_user_hei\EventSubscriber\MyacademicidUserHeiSubscriber
-    arguments: ['@messenger']
+    arguments: ['@entity_type.manager', '@ewp_institutions_user.bridge', '@messenger', '@string_translation']
     tags:
       - { name: event_subscriber }
