@@ -3,6 +3,7 @@
 namespace Drupal\myacademicid_user_hei\EventSubscriber;
 
 use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\ewp_institutions_user\Event\UserInstitutionChangeEvent;
@@ -33,22 +34,33 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
   protected $messenger;
 
   /**
+   * The renderer service.
+   *
+   * @var \Drupal\Core\Render\RendererInterface
+   */
+  protected $renderer;
+
+  /**
    * Constructs event subscriber.
    *
    * @param \Drupal\myacademicid_user_hei\MyacademicidUserHei $maid_user_hei
    *   MyAcademicID user institution service.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger.
+   * @param \Drupal\Core\Render\RendererInterface $renderer
+   *   The renderer service.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation service.
    */
   public function __construct(
     MyacademicidUserHei $maid_user_hei,
     MessengerInterface $messenger,
+    RendererInterface $renderer,
     TranslationInterface $string_translation
   ) {
     $this->maidUserHei       = $maid_user_hei;
     $this->messenger         = $messenger;
+    $this->renderer          = $renderer;
     $this->stringTranslation = $string_translation;
   }
 
@@ -95,7 +107,7 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
         $message = $this->t('User %user\'s %claim claim matches @link', [
           '%user' => $event->user->label(),
           '%claim' => MyacademicidUserFields::CLAIM_SHO,
-          '@link' => render($renderable),
+          '@link' => $this->renderer->render($renderable),
         ]);
         $this->messenger->addMessage($message);
       }
