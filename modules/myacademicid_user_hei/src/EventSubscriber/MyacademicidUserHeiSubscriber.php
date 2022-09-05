@@ -2,15 +2,18 @@
 
 namespace Drupal\myacademicid_user_hei\EventSubscriber;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\ewp_institutions_user\Event\UserInstitutionChangeEvent;
 use Drupal\myacademicid_user_fields\Event\UserSchacHomeOrganizationChangeEvent;
+use Drupal\myacademicid_user_fields\Event\SetUserSchacHomeOrganizationEvent;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Drupal\myacademicid_user_hei\MyacademicidUserHei;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * MyAcademicID user institution event subscriber.
@@ -18,6 +21,20 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
 
   use StringTranslationTrait;
+
+  /**
+   * Config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
+   * Event dispatcher.
+   *
+   * @var \Symfony\Contracts\EventDispatcher\EventDispatcherInterface
+   */
+  protected $eventDispatcher;
 
   /**
    * MyAcademicID user institution service.
@@ -43,6 +60,10 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
   /**
    * Constructs event subscriber.
    *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
+   * @param \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   The event dispatcher service.
    * @param \Drupal\myacademicid_user_hei\MyacademicidUserHei $maid_user_hei
    *   MyAcademicID user institution service.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
@@ -53,11 +74,15 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
    *   The string translation service.
    */
   public function __construct(
+    ConfigFactoryInterface $config_factory,
+    EventDispatcherInterface $event_dispatcher,
     MyacademicidUserHei $maid_user_hei,
     MessengerInterface $messenger,
     RendererInterface $renderer,
     TranslationInterface $string_translation
   ) {
+    $this->configFactory     = $config_factory;
+    $this->eventDispatcher   = $event_dispatcher;
     $this->maidUserHei       = $maid_user_hei;
     $this->messenger         = $messenger;
     $this->renderer          = $renderer;
@@ -86,7 +111,24 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
    */
   public function onUserInstitutionChange(UserInstitutionChangeEvent $event) {
     dpm(__METHOD__);
-    dpm($event);
+    $mode = $this->configFactory
+      ->get('myacademicid_user_fields.settings')
+      ->get('mode');
+
+    // Default case: Server sets different HEI; rewrite SHO.
+    if ($mode === MyacademicidUserFields::SERVER_MODE) {
+      // Instantiate our event.
+      $event = new SetUserSchacHomeOrganizationEvent(
+        $event->user,
+        $event->hei_id,
+        FALSE
+      );
+      // Dispatch the event.
+      $this->eventDispatcher->dispatch(
+        $event,
+        SetUserSchacHomeOrganizationEvent::EVENT_NAME
+      );
+    }
   }
 
   /**

@@ -13,8 +13,8 @@ use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Drupal\myacademicid_user_roles\Event\SetUserRolesEvent;
 use Drupal\myacademicid_user_roles\Event\UserRolesChangeEvent;
 use Drupal\myacademicid_user_roles\MyacademicidUserRoles;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * MyAcademicID user roles event subscriber.
