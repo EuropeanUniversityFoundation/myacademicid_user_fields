@@ -1,7 +1,7 @@
 services:
   myacademicid_user_hei:
     class: Drupal\myacademicid_user_hei\MyacademicidUserHei
-    arguments: ['@config.factory', '@entity_type.manager', '@event_dispatcher', '@ewp_institutions_user.bridge', '@messenger', '@myacademicid_user_fields', '@string_translation']
+    arguments: ['@config.factory', '@entity_type.manager', '@event_dispatcher', '@ewp_institutions_get.manager', '@ewp_institutions_lookup.manager', '@ewp_institutions_user.bridge', '@messenger', '@myacademicid_user_fields', '@string_translation']
 
   myacademicid_user_hei.event_subscriber:
     class: Drupal\myacademicid_user_hei\EventSubscriber\MyacademicidUserHeiSubscriber

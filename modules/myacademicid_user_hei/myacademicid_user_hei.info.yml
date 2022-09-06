@@ -7,4 +7,6 @@ core_version_requirement: ^8 || ^9 || ^10
 dependencies:
   - myacademicid_user_fields:myacademicid_user_fields
   - ewp_institutions:ewp_institutions
+  - ewp_institutions:ewp_institutions_get
+  - ewp_institutions:ewp_institutions_lookup
   - ewp_institutions:ewp_institutions_user

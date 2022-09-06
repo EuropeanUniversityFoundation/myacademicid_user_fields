@@ -8,6 +8,8 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\user\UserInterface;
+use Drupal\ewp_institutions_get\InstitutionManager;
+use Drupal\ewp_institutions_lookup\InstitutionLookupManager;
 use Drupal\ewp_institutions_user\InstitutionUserBridge;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -45,6 +47,20 @@ class MyacademicidUserHei {
   protected $eventDispatcher;
 
   /**
+   * EWP Institutions manager service.
+   *
+   * @var \Drupal\ewp_institutions_get\InstitutionManager
+   */
+  protected $heiManager;
+
+  /**
+   * EWP Institutions lookup manager service.
+   *
+   * @var \Drupal\ewp_institutions_lookup\InstitutionLookupManager
+   */
+  protected $heiLookup;
+
+  /**
    * EWP Institutions user bridge service.
    *
    * @var \Drupal\ewp_institutions_user\InstitutionUserBridge
@@ -74,6 +90,10 @@ class MyacademicidUserHei {
    *   The entity type manager.
    * @param \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher service.
+   * @param \Drupal\ewp_institutions_get\InstitutionManager $hei_manager
+   *   EWP Institutions manager service.
+   * @param \Drupal\ewp_institutions_user\InstitutionLookupManager $hei_lookup
+   *   EWP Institutions lookup manager service.
    * @param \Drupal\ewp_institutions_user\InstitutionUserBridge $hei_user
    *   EWP Institutions user bridge service.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
@@ -87,6 +107,8 @@ class MyacademicidUserHei {
     ConfigFactoryInterface $config_factory,
     EntityTypeManagerInterface $entity_type_manager,
     EventDispatcherInterface $event_dispatcher,
+    InstitutionManager $hei_manager,
+    InstitutionLookupManager $hei_lookup,
     InstitutionUserBridge $hei_user,
     MessengerInterface $messenger,
     MyacademicidUserFields $maid_user_fields,
@@ -95,6 +117,8 @@ class MyacademicidUserHei {
     $this->configFactory     = $config_factory;
     $this->entityTypeManager = $entity_type_manager;
     $this->eventDispatcher   = $event_dispatcher;
+    $this->heiManager        = $hei_manager;
+    $this->heiLookup         = $hei_lookup;
     $this->heiUser           = $hei_user;
     $this->messenger         = $messenger;
     $this->maidUserFields    = $maid_user_fields;
@@ -106,12 +130,20 @@ class MyacademicidUserHei {
    *
    * @param string $sho
    *   The event object.
+   *
+   * @return array
+   *   An array of [id => Drupal\ewp_institutions\Entity\InstitutionEntity]
    */
-  public function getHeiBySho(string $sho) {
+  public function getHeiBySho(string $sho, $import = FALSE): array {
     dpm(__METHOD__);
-    $hei = $this->entityTypeManager
-      ->getStorage(self::ENTITY_TYPE)
-      ->loadByProperties([self::UNIQUE_FIELD => $sho]);
+    $hei = $this->heiManager->getInstitution($sho);
+
+    if (empty($hei) && $import) {
+      $lookup = $this->heiLookup->lookup($sho);
+
+      $hei = $this->heiManager
+        ->getInstitution($sho, $create_from = $lookup[$sho]);
+    }
 
     return $hei;
   }

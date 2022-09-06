@@ -7,9 +7,10 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\ewp_institutions_user\Event\SetUserInstitutionEvent;
 use Drupal\ewp_institutions_user\Event\UserInstitutionChangeEvent;
-use Drupal\myacademicid_user_fields\Event\UserSchacHomeOrganizationChangeEvent;
 use Drupal\myacademicid_user_fields\Event\SetUserSchacHomeOrganizationEvent;
+use Drupal\myacademicid_user_fields\Event\UserSchacHomeOrganizationChangeEvent;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Drupal\myacademicid_user_hei\MyacademicidUserHei;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -118,14 +119,14 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
     // Default case: Server sets different HEI; rewrite SHO.
     if ($mode === MyacademicidUserFields::SERVER_MODE) {
       // Instantiate our event.
-      $event = new SetUserSchacHomeOrganizationEvent(
+      $new_event = new SetUserSchacHomeOrganizationEvent(
         $event->user,
         $event->hei_id,
         FALSE
       );
       // Dispatch the event.
       $this->eventDispatcher->dispatch(
-        $event,
+        $new_event,
         SetUserSchacHomeOrganizationEvent::EVENT_NAME
       );
     }
@@ -139,27 +140,50 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
    */
   public function onUserSchacHomeOrganizationChange(UserSchacHomeOrganizationChangeEvent $event) {
     dpm(__METHOD__);
-    foreach ($event->sho as $idx => $sho) {
-      $exists = $this->maidUserHei->getHeiBySho($sho);
+    $mode = $this->configFactory
+      ->get('myacademicid_user_fields.settings')
+      ->get('mode');
 
-      if ($exists) {
-        foreach ($exists as $id => $hei) {
-          $renderable = $hei->toLink()->toRenderable();
+    // Default case: Client sets different SHO; reassign HEI.
+    if ($mode === MyacademicidUserFields::CLIENT_MODE) {
+      $hei_list = [];
+      $import = FALSE;
+
+      foreach ($event->sho as $idx => $sho) {
+        $exists = $this->maidUserHei->getHeiBySho($sho, $import);
+
+        if ($exists) {
+          foreach ($exists as $id => $hei) {
+            $hei_list[] = $hei;
+            $renderable = $hei->toLink()->toRenderable();
+          }
+          $message = $this->t('User %user\'s %claim claim matches @link', [
+            '%user' => $event->user->label(),
+            '%claim' => MyacademicidUserFields::CLAIM_SHO,
+            '@link' => $this->renderer->render($renderable),
+          ]);
+          $this->messenger->addMessage($message);
         }
-        $message = $this->t('User %user\'s %claim claim matches @link', [
-          '%user' => $event->user->label(),
-          '%claim' => MyacademicidUserFields::CLAIM_SHO,
-          '@link' => $this->renderer->render($renderable),
-        ]);
-        $this->messenger->addMessage($message);
+        else {
+          $message = $this->t('No match found for %claim claim %sho.', [
+            '%claim' => MyacademicidUserFields::CLAIM_SHO,
+            '%sho' => $sho,
+          ]);
+          $this->messenger->addWarning($message);
+        }
       }
-      else {
-        $message = $this->t('No match found for %claim claim %sho.', [
-          '%claim' => MyacademicidUserFields::CLAIM_SHO,
-          '%sho' => $sho,
-        ]);
-        $this->messenger->addWarning($message);
-      }
+
+      // Instantiate our new event.
+      $new_event = new SetUserInstitutionEvent(
+        $event->user,
+        $hei_list,
+        FALSE
+      );
+      // Dispatch the new event.
+      $this->eventDispatcher->dispatch(
+        $new_event,
+        SetUserInstitutionEvent::EVENT_NAME
+      );
     }
   }
 
