@@ -88,7 +88,7 @@ class MyacademicidUserFields {
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setRequired(FALSE)
       ->setDisplayOptions('form', [
-        'type' => 'textfield',
+        'type' => 'string_textfield',
         'weight' => 100,
       ])
       ->addConstraint('SchacHomeOrganization');
@@ -101,7 +101,7 @@ class MyacademicidUserFields {
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setRequired(FALSE)
       ->setDisplayOptions('form', [
-        'type' => 'textfield',
+        'type' => 'string_textfield',
         'weight' => 100,
       ]);
       // ->addConstraint('SchacPersonalUniqueCode');
@@ -114,7 +114,7 @@ class MyacademicidUserFields {
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setRequired(FALSE)
       ->setDisplayOptions('form', [
-        'type' => 'textfield',
+        'type' => 'string_textfield',
         'weight' => 100,
       ]);
       // ->addConstraint('VopersonExternalAffilliation');
