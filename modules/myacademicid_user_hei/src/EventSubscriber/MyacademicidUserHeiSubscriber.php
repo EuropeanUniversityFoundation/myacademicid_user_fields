@@ -202,6 +202,7 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
             '%sho' => $sho,
           ]);
           $this->messenger->addWarning($message);
+          $this->heiService->logUnmatched($event->user, $sho, $import);
         }
       }
 

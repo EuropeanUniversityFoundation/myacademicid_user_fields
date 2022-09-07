@@ -1,7 +1,7 @@
 services:
   myacademicid_user_hei:
     class: Drupal\myacademicid_user_hei\MyacademicidUserHei
-    arguments: ['@ewp_institutions_get.manager', '@ewp_institutions_lookup.manager']
+    arguments: ['@ewp_institutions_get.manager', '@ewp_institutions_lookup.manager', '@logger.factory', '@renderer', '@string_translation']
 
   myacademicid_user_hei.event_subscriber:
     class: Drupal\myacademicid_user_hei\EventSubscriber\MyacademicidUserHeiSubscriber
