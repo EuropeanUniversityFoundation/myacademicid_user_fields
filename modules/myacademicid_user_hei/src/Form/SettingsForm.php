@@ -36,7 +36,7 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->config('myacademicid_user_fields.settings');
+    $config = $this->config('myacademicid_user_hei.settings');
 
     $sync_modes = [
       self::KEEP_IN_SYNC => $this

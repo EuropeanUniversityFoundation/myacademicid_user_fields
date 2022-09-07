@@ -9,6 +9,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\ewp_institutions_user\Event\SetUserInstitutionEvent;
 use Drupal\ewp_institutions_user\Event\UserInstitutionChangeEvent;
+use Drupal\ewp_institutions_user\InstitutionUserBridge;
 use Drupal\myacademicid_user_fields\Event\SetUserSchacHomeOrganizationEvent;
 use Drupal\myacademicid_user_fields\Event\UserSchacHomeOrganizationChangeEvent;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
@@ -38,11 +39,18 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
   protected $eventDispatcher;
 
   /**
-   * MyAcademicID user institution service.
+   * The MyAcademicID user fields service.
+   *
+   * @var \Drupal\myacademicid_user_fields\MyacademicidUserFields
+   */
+  protected $fieldsService;
+
+  /**
+   * The MyAcademicID user institution service.
    *
    * @var \Drupal\myacademicid_user_hei\MyacademicidUserHei
    */
-  protected $maidUserHei;
+  protected $heiService;
 
   /**
    * The messenger.
@@ -65,8 +73,10 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
    *   The config factory.
    * @param \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher service.
-   * @param \Drupal\myacademicid_user_hei\MyacademicidUserHei $maid_user_hei
-   *   MyAcademicID user institution service.
+   * @param \Drupal\myacademicid_user_fields\MyacademicidUserFields $fields_service
+   *   The MyAcademicID user fields service.
+   * @param \Drupal\myacademicid_user_hei\MyacademicidUserHei $hei_service
+   *   The MyAcademicID user institution service.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger.
    * @param \Drupal\Core\Render\RendererInterface $renderer
@@ -77,14 +87,16 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
   public function __construct(
     ConfigFactoryInterface $config_factory,
     EventDispatcherInterface $event_dispatcher,
-    MyacademicidUserHei $maid_user_hei,
+    MyacademicidUserFields $fields_service,
+    MyacademicidUserHei $hei_service,
     MessengerInterface $messenger,
     RendererInterface $renderer,
     TranslationInterface $string_translation
   ) {
     $this->configFactory     = $config_factory;
     $this->eventDispatcher   = $event_dispatcher;
-    $this->maidUserHei       = $maid_user_hei;
+    $this->fieldsService     = $fields_service;
+    $this->heiService        = $hei_service;
     $this->messenger         = $messenger;
     $this->renderer          = $renderer;
     $this->stringTranslation = $string_translation;
@@ -130,6 +142,24 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
         SetUserSchacHomeOrganizationEvent::EVENT_NAME
       );
     }
+
+    // Edge case: enforce HEI based on SHO if strict sync is enabled.
+    elseif ($mode === MyacademicidUserFields::CLIENT_MODE) {
+      $sync_mode = $this->configFactory
+        ->get('myacademicid_user_hei.settings')
+        ->get('sync_mode');
+
+      if ($sync_mode === MyacademicidUserHei::KEEP_IN_SYNC) {
+        $equals = $this->fieldsService
+          ->equalValue($event->user, MyacademicidUserFields::FIELD_SHO);
+        // Defer to the onUserSchacHomeOrganizationChange method.
+        if ($equals) {
+          // Instantiate a mock UserSchacHomeOrganizationChangeEvent.
+          $mock = new UserSchacHomeOrganizationChangeEvent($event->user);
+          $this->onUserSchacHomeOrganizationChange($mock);
+        }
+      }
+    }
   }
 
   /**
@@ -147,10 +177,12 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
     // Default case: Client sets different SHO; reassign HEI.
     if ($mode === MyacademicidUserFields::CLIENT_MODE) {
       $hei_list = [];
-      $import = FALSE;
+      $import = $this->configFactory
+        ->get('myacademicid_user_hei.settings')
+        ->get('import');
 
       foreach ($event->sho as $idx => $sho) {
-        $exists = $this->maidUserHei->getHeiBySho($sho, $import);
+        $exists = $this->heiService->getHeiBySho($sho, $import);
 
         if ($exists) {
           foreach ($exists as $id => $hei) {
@@ -184,6 +216,24 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
         $new_event,
         SetUserInstitutionEvent::EVENT_NAME
       );
+    }
+
+    // Edge case: enforce SHO based on HEI if strict sync is enabled.
+    elseif ($mode === MyacademicidUserFields::SERVER_MODE) {
+      $sync_mode = $this->configFactory
+        ->get('myacademicid_user_hei.settings')
+        ->get('sync_mode');
+
+      if ($sync_mode === MyacademicidUserHei::KEEP_IN_SYNC) {
+        $equals = $this->fieldsService
+          ->equalValue($event->user, InstitutionUserBridge::BASE_FIELD);
+        // Defer to the onUserInstitutionChange method.
+        if ($equals) {
+          // Instantiate a mock UserInstitutionChangeEvent.
+          $mock = new UserInstitutionChangeEvent($event->user);
+          $this->onUserInstitutionChange($mock);
+        }
+      }
     }
   }
 

@@ -5,6 +5,6 @@ services:
 
   myacademicid_user_hei.event_subscriber:
     class: Drupal\myacademicid_user_hei\EventSubscriber\MyacademicidUserHeiSubscriber
-    arguments: ['@config.factory', '@event_dispatcher', '@myacademicid_user_hei', '@messenger', '@renderer', '@string_translation']
+    arguments: ['@config.factory', '@event_dispatcher', '@myacademicid_user_fields', '@myacademicid_user_hei', '@messenger', '@renderer', '@string_translation']
     tags:
       - { name: event_subscriber }
