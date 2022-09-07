@@ -1,0 +1,10 @@
+myacademicid_user_hei.settings:
+  type: config_object
+  label: 'MyAcademicID user institution settings'
+  mapping:
+    sync_mode:
+      type: string
+      label: 'Synchronization mode'
+    import:
+      type: boolean
+      label: 'Lookup and import'
