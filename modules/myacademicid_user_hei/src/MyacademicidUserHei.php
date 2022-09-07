@@ -90,7 +90,6 @@ class MyacademicidUserHei {
    *   An array of [id => Drupal\ewp_institutions\Entity\InstitutionEntity]
    */
   public function getHeiBySho(string $sho, $import = FALSE): array {
-    dpm(__METHOD__);
     $hei = $this->heiManager->getInstitution($sho);
 
     if (empty($hei) && $import) {
@@ -116,7 +115,6 @@ class MyacademicidUserHei {
    *   Whether there was an attempt to lookup and import an Institution.
    */
   public function logUnmatched(UserInterface $user, string $sho, bool $import): void {
-    dpm(__METHOD__);
     $link = $user->toLink();
     $renderable = $link->toRenderable();
 

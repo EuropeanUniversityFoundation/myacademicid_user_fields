@@ -66,7 +66,6 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
    *   The event object.
    */
   public function onUserSchacHomeOrganizationChange(UserSchacHomeOrganizationChangeEvent $event) {
-    dpm(__METHOD__);
     if (empty($event->sho)) {
       $message = $this->t('User %user has no %claim claim.', [
         '%user' => $event->user->label(),
@@ -93,7 +92,6 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
    *   The event object.
    */
   public function onUserSchacPersonalUniqueCodeChange(UserSchacPersonalUniqueCodeChangeEvent $event) {
-    dpm(__METHOD__);
     if (empty($event->spuc)) {
       $message = $this->t('User %user has no %claim claim.', [
         '%user' => $event->user->label(),
@@ -120,7 +118,6 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
    *   The event object.
    */
   public function onUserVopersonExternalAffilliationChange(UserVopersonExternalAffilliationChangeEvent $event) {
-    dpm(__METHOD__);
     if (empty($event->vea)) {
       $message = $this->t('User %user has no %claim claim.', [
         '%user' => $event->user->label(),

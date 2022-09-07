@@ -69,7 +69,6 @@ class SetUserSchacPersonalUniqueCodeEventSubscriber implements EventSubscriberIn
    *   The event object.
    */
   public function onSetUserSchacPersonalUniqueCode(SetUserSchacPersonalUniqueCodeEvent $event) {
-    dpm(__METHOD__);
     if (empty($event->spuc)) {
       $message = $this->t('Unsetting %claim claim for user %user...', [
         '%user' => $event->user->label(),

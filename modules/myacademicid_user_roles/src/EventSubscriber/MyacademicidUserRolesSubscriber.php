@@ -114,7 +114,6 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
    *   The event object.
    */
   public function onUserRolesChange(UserRolesChangeEvent $event) {
-    dpm(__METHOD__);
     if (empty($event->roles)) {
       $message = $this->t('No roles set for user %user.', [
         '%user' => $event->user->label(),
@@ -170,7 +169,6 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
    *   The event object.
    */
   public function onUserSchacHomeOrganizationChange(UserSchacHomeOrganizationChangeEvent $event) {
-    dpm(__METHOD__);
     $mode = $this->configFactory
       ->get('myacademicid_user_fields.settings')
       ->get('mode');
@@ -216,7 +214,6 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
    *   The event object.
    */
   public function onUserVopersonExternalAffilliationChange(UserVopersonExternalAffilliationChangeEvent $event) {
-    dpm(__METHOD__);
     $mode = $this->configFactory
       ->get('myacademicid_user_fields.settings')
       ->get('mode');

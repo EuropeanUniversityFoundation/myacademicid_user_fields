@@ -123,7 +123,6 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
    *   The event object.
    */
   public function onUserInstitutionChange(UserInstitutionChangeEvent $event) {
-    dpm(__METHOD__);
     $mode = $this->configFactory
       ->get('myacademicid_user_fields.settings')
       ->get('mode');
@@ -169,7 +168,6 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
    *   The event object.
    */
   public function onUserSchacHomeOrganizationChange(UserSchacHomeOrganizationChangeEvent $event) {
-    dpm(__METHOD__);
     $mode = $this->configFactory
       ->get('myacademicid_user_fields.settings')
       ->get('mode');

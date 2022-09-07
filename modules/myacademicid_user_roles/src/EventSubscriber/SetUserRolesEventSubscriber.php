@@ -69,7 +69,6 @@ class SetUserRolesEventSubscriber implements EventSubscriberInterface {
    *   The event object.
    */
   public function onSetUserRoles(SetUserRolesEvent $event) {
-    dpm(__METHOD__);
     if (empty($event->roles)) {
       $message = $this->t('Unsetting mapped roles for user %user...', [
         '%user' => $event->user->label(),

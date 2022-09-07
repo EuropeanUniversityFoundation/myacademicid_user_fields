@@ -128,7 +128,6 @@ class MyacademicidUserFields {
    * @param \Drupal\user\UserInterface $user
    */
   public function checkFieldChange(UserInterface $user) {
-    dpm(__METHOD__);
     foreach (self::EVENT_CLASS as $field => $event_class) {
       if (! $this->equalValue($user, $field)) {
         // Instantiate our event.
@@ -170,7 +169,6 @@ class MyacademicidUserFields {
    *   Whether the user entity should be saved after setting the value.
    */
   public function setUserSchacHomeOrganization(UserInterface $user, array $sho, $save = TRUE) {
-    dpm(__METHOD__);
     $this->setValidFieldValue($user, self::FIELD_SHO, $sho, self::CLAIM_SHO, $save);
   }
 
@@ -185,7 +183,6 @@ class MyacademicidUserFields {
    *   Whether the user entity should be saved after setting the value.
    */
   public function setUserSchacPersonalUniqueCode(UserInterface $user, array $spuc, $save = TRUE) {
-    dpm(__METHOD__);
     $this->setValidFieldValue($user, self::FIELD_SPUC, $spuc, self::CLAIM_SPUC, $save);
   }
 
@@ -200,7 +197,6 @@ class MyacademicidUserFields {
    *   Whether the user entity should be saved after setting the value.
    */
   public function setUserVopersonExternalAffilliation(UserInterface $user, array $vea, $save = TRUE) {
-    dpm(__METHOD__);
     $this->setValidFieldValue($user, self::FIELD_VEA, $vea, self::CLAIM_VEA, $save);
   }
 
@@ -219,7 +215,6 @@ class MyacademicidUserFields {
    *   Whether the user entity should be saved after setting the value.
    */
   private function setValidFieldValue(UserInterface $user, string $field, array $value, string $claim, $save = TRUE) {
-    dpm(__METHOD__);
     $original = $user->get($field)->getValue();
 
     $user->set($field, $value);
