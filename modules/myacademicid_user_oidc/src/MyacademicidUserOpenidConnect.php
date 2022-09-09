@@ -10,10 +10,10 @@ use Drupal\myacademicid_user_fields\MyacademicidUserFields;
  */
 class MyacademicidUserOpenidConnect {
 
-  const CLAIMS = [
-    MyacademicidUserFields::CLAIM_SHO,
-    MyacademicidUserFields::CLAIM_SPUC,
-    MyacademicidUserFields::CLAIM_VEA,
+  const MAPPING = [
+    MyacademicidUserFields::CLAIM_SHO => MyacademicidUserFields::FIELD_SHO,
+    MyacademicidUserFields::CLAIM_SPUC => MyacademicidUserFields::FIELD_SPUC,
+    MyacademicidUserFields::CLAIM_VEA => MyacademicidUserFields::FIELD_VEA,
   ];
 
   /**
@@ -25,7 +25,7 @@ class MyacademicidUserOpenidConnect {
    * @ingroup openid_connect_api
    */
   public function claimsAlter(array &$claims) {
-    foreach (self::CLAIMS as $idx => $claim) {
+    foreach (self::MAPPING as $claim => $field) {
       $claims[$claim] = [
         'scope' => $claim,
         'title' => $claim,
@@ -60,14 +60,14 @@ class MyacademicidUserOpenidConnect {
    */
   public function userinfoSave(UserInterface $account, array $context) {
     // Update only when the required information is available.
-    foreach (self::CLAIMS as $idx => $claim) {
+    foreach (self::MAPPING as $claim => $field) {
       if (!empty($context['userinfo'][$claim])) {
         $list = $context['userinfo'][$claim];
         $values = [];
         foreach ($list as $value) {
           $values[] = $value;
         }
-        $account->set($claim, $values);
+        $account->set($field, $values);
       }
     }
   }
