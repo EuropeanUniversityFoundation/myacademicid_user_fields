@@ -1,0 +1,4 @@
+services:
+  myacademicid_user_oidc:
+    class: Drupal\myacademicid_user_oidc\MyacademicidUserOpenidConnect
+    arguments: []

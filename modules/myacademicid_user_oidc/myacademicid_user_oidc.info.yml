@@ -1,0 +1,10 @@
+name: MyAcademicID user OpenID Connect
+type: module
+description: Maps OpenID Connect claims to MyAcademicID user fields.
+package: MyAcademicID
+core: 8.x
+core_version_requirement: ^8 || ^9 || ^10
+dependencies:
+  - drupal:user
+  - openid_connect:openid_connect
+  - myacademicid_user_fields:myacademicid_user_fields
