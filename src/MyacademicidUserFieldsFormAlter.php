@@ -61,57 +61,55 @@ class MyacademicidUserFieldsFormAlter {
    * @param Drupal\Core\Form\FormStateInterface $form_state
    */
   public function userFormAlter(&$form, FormStateInterface $form_state) {
-    if (!$this->currentUser->isAnonymous()) {
-      // Determine whether the current user is allowed to set the value.
-      $allowed = ($this->currentUser
-          ->hasPermission(self::ADMIN_PERMISSION, $this->currentUser));
+    // Determine whether the current user is allowed to set the value.
+    $allowed = ($this->currentUser
+        ->hasPermission(self::ADMIN_PERMISSION, $this->currentUser));
 
-      $form[self::WRAPPER] = [
-        '#type' => 'details',
-        '#title' => $this->t('MyAcademicID user fields'),
-        '#weight' => 100,
-        '#open' => $allowed
-      ];
+    $form[self::WRAPPER] = [
+      '#type' => 'details',
+      '#title' => $this->t('MyAcademicID user fields'),
+      '#weight' => 100,
+      '#open' => $allowed
+    ];
 
-      foreach (self::BASE_FIELDS as $idx => $field) {
-        // If the base field is in the user form, changes may be needed,
-        if (\array_key_exists($field, $form)) {
-          // If not allowed, the form element must be replaced with text.
-          if (! $allowed) {
-            $empty = '<em>' . $this->t('Field is not set.') . '</em>';
-            $list = '';
+    foreach (self::BASE_FIELDS as $idx => $field) {
+      // If the base field is in the user form, changes may be needed,
+      if (\array_key_exists($field, $form)) {
+        // If not allowed, the form element must be replaced with text.
+        if (! $allowed) {
+          // Hide the form element.
+          $form[$field]['#type'] = 'hidden';
 
-            foreach ($form[$field]['widget'] as $key => $value) {
-              if (\is_numeric($key)) {
-                $default_value = $value['value']['#default_value'];
+          $empty = '<em>' . $this->t('Field is not set.') . '</em>';
+          $list = '';
 
-                if (!empty($default_value)) {
-                  $list .= '<li><code>' . $default_value . '</code></li>';
-                }
+          foreach ($form[$field]['widget'] as $key => $value) {
+            if (\is_numeric($key)) {
+              $default_value = $value['value']['#default_value'];
+
+              if (!empty($default_value)) {
+                $list .= '<li><code>' . $default_value . '</code></li>';
               }
             }
-
-            $markup = (empty($list)) ? $empty : '<ul>' . $list . '</ul>';
-
-            // Build the new form element.
-            $new_element = [
-              '#type' => 'item',
-              '#title' => $form[$field]['widget']['#title'],
-              '#markup' => $markup,
-            ];
-
-            $form[$field] = $new_element;
           }
 
+          $markup = (empty($list)) ? $empty : '<ul>' . $list . '</ul>';
+
+          // Build the new form element.
+          $new_element = [
+            '#type' => 'item',
+            '#title' => $form[$field]['widget']['#title'],
+            '#markup' => $markup,
+            '#weight' => $form[$field]['#weight'],
+          ];
+
+          $form[self::WRAPPER][$field . '_placeholder'] = $new_element;
+        }
+        else {
+          // Move the form element into the container.
           $form[self::WRAPPER][$field] = $form[$field];
           unset($form[$field]);
         }
-      }
-    }
-    else {
-      // Hide the fields in the registration form to avoid errors.
-      foreach (self::BASE_FIELDS as $idx => $field) {
-        $form[$field]['#type'] = 'hidden';
       }
     }
   }
