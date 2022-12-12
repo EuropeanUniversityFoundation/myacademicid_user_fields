@@ -13,11 +13,3 @@ myacademicid_user_fields.affilliation_types_form:
     _form: 'Drupal\myacademicid_user_fields\Form\AffilliationTypesForm'
   requirements:
     _permission: 'administer myacademicid user fields'
-
-myacademicid_user_fields.trigger_set_events:
-  path: '/admin/config/services/myacademicid/trigger-set-events'
-  defaults:
-    _title: 'Trigger set events'
-    _form: 'Drupal\myacademicid_user_fields\Form\TriggerSetEventsForm'
-  requirements:
-    _permission: 'administer myacademicid user fields'

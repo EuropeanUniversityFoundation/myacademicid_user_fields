@@ -10,9 +10,3 @@ myacademicid_user_fields.affilliation_types_form:
   base_route: myacademicid_user_fields.settings_form
   route_name: myacademicid_user_fields.affilliation_types_form
   weight: 2
-
-myacademicid_user_fields.trigger_set_events:
-  title: 'Trigger Set Events'
-  base_route: myacademicid_user_fields.settings_form
-  route_name: myacademicid_user_fields.trigger_set_events
-  weight: 10
