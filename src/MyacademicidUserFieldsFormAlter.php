@@ -17,6 +17,7 @@ class MyacademicidUserFieldsFormAlter {
   use StringTranslationTrait;
 
   const ADMIN_PERMISSION = 'administer myacademicid user fields';
+  const VIEW_PERMISSION = 'access user profiles';
   const BASE_FIELDS = [
     MyacademicidUserFields::FIELD_SHO,
     MyacademicidUserFields::FIELD_SPUC,
@@ -61,22 +62,26 @@ class MyacademicidUserFieldsFormAlter {
    * @param Drupal\Core\Form\FormStateInterface $form_state
    */
   public function userFormAlter(&$form, FormStateInterface $form_state) {
+    // Determine whether the current user is allowed to view the value.
+    $view_allowed = $this->currentUser
+      ->hasPermission(self::VIEW_PERMISSION, $this->currentUser);
+
     // Determine whether the current user is allowed to set the value.
-    $allowed = ($this->currentUser
-        ->hasPermission(self::ADMIN_PERMISSION, $this->currentUser));
+    $set_allowed = $this->currentUser
+      ->hasPermission(self::ADMIN_PERMISSION, $this->currentUser);
 
     $form[self::WRAPPER] = [
-      '#type' => 'details',
+      '#type' => ($view_allowed) ? 'details' : 'hidden',
       '#title' => $this->t('MyAcademicID user fields'),
       '#weight' => 100,
-      '#open' => $allowed
+      '#open' => $set_allowed
     ];
 
     foreach (self::BASE_FIELDS as $idx => $field) {
       // If the base field is in the user form, changes may be needed,
       if (\array_key_exists($field, $form)) {
         // If not allowed, the form element must be replaced with text.
-        if (! $allowed) {
+        if (! $set_allowed) {
           // Hide the form element.
           $form[$field]['#type'] = 'hidden';
 
