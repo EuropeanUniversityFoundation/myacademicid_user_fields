@@ -75,7 +75,7 @@ class SetUserVopersonExternalAffilliationEventSubscriber implements EventSubscri
         '%claim' => MyacademicidUserFields::CLAIM_VEA,
       ]);
 
-      $this->messenger->addWarning($message);
+      // $this->messenger->addWarning($message);
     }
     else {
       $message = $this->t('Setting %claim claim as %vea for user %user...', [
@@ -84,7 +84,7 @@ class SetUserVopersonExternalAffilliationEventSubscriber implements EventSubscri
         '%vea' => \implode(', ', $event->vea)
       ]);
 
-      $this->messenger->addStatus($message);
+      // $this->messenger->addStatus($message);
     }
 
     $this->service->setUserVopersonExternalAffilliation(

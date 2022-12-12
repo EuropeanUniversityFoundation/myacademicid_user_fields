@@ -74,7 +74,7 @@ class SetUserRolesEventSubscriber implements EventSubscriberInterface {
         '%user' => $event->user->label(),
       ]);
 
-      $this->messenger->addWarning($message);
+      // $this->messenger->addWarning($message);
     }
     else {
       $labels = $this->service->roleLabels($event->roles);
@@ -85,7 +85,7 @@ class SetUserRolesEventSubscriber implements EventSubscriberInterface {
         '%labels' => \implode(', ', \array_unique($labels)),
       ]);
 
-      $this->messenger->addStatus($message);
+      // $this->messenger->addStatus($message);
     }
 
     $this->service->setUserRoles(

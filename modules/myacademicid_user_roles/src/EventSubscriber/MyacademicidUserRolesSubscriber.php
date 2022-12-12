@@ -119,7 +119,7 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
         '%user' => $event->user->label(),
       ]);
 
-      $this->messenger->addWarning($message);
+      // $this->messenger->addWarning($message);
     }
     else {
       $labels = $this->rolesService->roleLabels($event->roles);
@@ -130,7 +130,7 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
         '%user' => $event->user->label(),
       ]);
 
-      $this->messenger->addStatus($message);
+      // $this->messenger->addStatus($message);
     }
 
     $mode = $this->configFactory

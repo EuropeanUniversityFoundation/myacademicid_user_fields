@@ -72,7 +72,7 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
         '%claim' => MyacademicidUserFields::CLAIM_SHO,
       ]);
 
-      $this->messenger->addWarning($message);
+      // $this->messenger->addWarning($message);
     }
     else {
       $message = $this->t('User %user has a %claim claim of %value.', [
@@ -81,7 +81,7 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
         '%value' => \implode(', ', $event->sho)
       ]);
 
-      $this->messenger->addStatus($message);
+      // $this->messenger->addStatus($message);
     }
   }
 
@@ -98,7 +98,7 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
         '%claim' => MyacademicidUserFields::CLAIM_SPUC,
       ]);
 
-      $this->messenger->addWarning($message);
+      // $this->messenger->addWarning($message);
     }
     else {
       $message = $this->t('User %user has a %claim claim of %value.', [
@@ -107,7 +107,7 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
         '%value' => \implode(', ', $event->spuc)
       ]);
 
-      $this->messenger->addStatus($message);
+      // $this->messenger->addStatus($message);
     }
   }
 
@@ -124,7 +124,7 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
         '%claim' => MyacademicidUserFields::CLAIM_VEA,
       ]);
 
-      $this->messenger->addWarning($message);
+      // $this->messenger->addWarning($message);
     }
     else {
       $message = $this->t('User %user has a %claim claim of %value.', [
@@ -133,7 +133,7 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
         '%value' => \implode(', ', $event->vea)
       ]);
 
-      $this->messenger->addStatus($message);
+      // $this->messenger->addStatus($message);
     }
   }
 

@@ -75,7 +75,7 @@ class SetUserSchacHomeOrganizationEventSubscriber implements EventSubscriberInte
         '%claim' => MyacademicidUserFields::CLAIM_SHO,
       ]);
 
-      $this->messenger->addWarning($message);
+      // $this->messenger->addWarning($message);
     }
     else {
       $message = $this->t('Setting %claim claim as %sho for user %user...', [
@@ -84,7 +84,7 @@ class SetUserSchacHomeOrganizationEventSubscriber implements EventSubscriberInte
         '%sho' => \implode(', ', $event->sho)
       ]);
 
-      $this->messenger->addStatus($message);
+      // $this->messenger->addStatus($message);
     }
 
     $this->service->setUserSchacHomeOrganization(

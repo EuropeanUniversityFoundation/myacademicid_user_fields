@@ -192,14 +192,14 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
             '%claim' => MyacademicidUserFields::CLAIM_SHO,
             '@link' => $this->renderer->render($renderable),
           ]);
-          $this->messenger->addMessage($message);
+          // $this->messenger->addMessage($message);
         }
         else {
           $message = $this->t('No match found for %claim claim %sho.', [
             '%claim' => MyacademicidUserFields::CLAIM_SHO,
             '%sho' => $sho,
           ]);
-          $this->messenger->addWarning($message);
+          // $this->messenger->addWarning($message);
           $this->heiService->logUnmatched($event->user, $sho, $import);
         }
       }

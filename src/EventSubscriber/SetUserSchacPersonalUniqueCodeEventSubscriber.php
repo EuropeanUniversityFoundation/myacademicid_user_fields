@@ -75,7 +75,7 @@ class SetUserSchacPersonalUniqueCodeEventSubscriber implements EventSubscriberIn
         '%claim' => MyacademicidUserFields::CLAIM_SPUC,
       ]);
 
-      $this->messenger->addWarning($message);
+      // $this->messenger->addWarning($message);
     }
     else {
       $message = $this->t('Setting %claim claim as %spuc for user %user...', [
@@ -84,7 +84,7 @@ class SetUserSchacPersonalUniqueCodeEventSubscriber implements EventSubscriberIn
         '%spuc' => \implode(', ', $event->spuc)
       ]);
 
-      $this->messenger->addStatus($message);
+      // $this->messenger->addStatus($message);
     }
 
     $this->service->setUserSchacPersonalUniqueCode(
