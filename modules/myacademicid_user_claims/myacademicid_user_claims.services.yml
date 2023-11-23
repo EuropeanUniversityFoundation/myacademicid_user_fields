@@ -1,4 +1,4 @@
 services:
   myacademicid_user_claims.assertion:
-    class: Drupal\myacademicid_user_claims\AffilliationAssertion
-    arguments: ['@config.factory', '@myacademicid_user_fields.affilliation', '@string_translation']
+    class: Drupal\myacademicid_user_claims\AffiliationAssertion
+    arguments: ['@config.factory', '@myacademicid_user_fields.affiliation', '@string_translation']

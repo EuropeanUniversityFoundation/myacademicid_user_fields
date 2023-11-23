@@ -12,11 +12,11 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\user\Entity\Role;
 use Drupal\user\RoleInterface;
-use Drupal\myacademicid_user_fields\MyacademicidUserAffilliation;
+use Drupal\myacademicid_user_fields\MyacademicidUserAffiliation;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class AffilliationMappingForm extends ConfigFormBase {
+class AffiliationMappingForm extends ConfigFormBase {
 
   use StringTranslationTrait;
 
@@ -28,11 +28,11 @@ class AffilliationMappingForm extends ConfigFormBase {
   protected $roles;
 
   /**
-   * The affilliation service.
+   * The affiliation service.
    *
-   * @var Drupal\myacademicid_user_fields\MyacademicidUserAffilliation
+   * @var Drupal\myacademicid_user_fields\MyacademicidUserAffiliation
    */
-  protected $affilliation;
+  protected $affiliation;
 
   /**
    * The messenger.
@@ -46,8 +46,8 @@ class AffilliationMappingForm extends ConfigFormBase {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
-   * @param \Drupal\myacademicid_user_fields\MyacademicidUserAffilliation $affilliation
-   *   The affilliation service.
+   * @param \Drupal\myacademicid_user_fields\MyacademicidUserAffiliation $affiliation
+   *   The affiliation service.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
@@ -55,12 +55,12 @@ class AffilliationMappingForm extends ConfigFormBase {
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
-    MyacademicidUserAffilliation $affilliation,
+    MyacademicidUserAffiliation $affiliation,
     MessengerInterface $messenger,
     TranslationInterface $string_translation
   ) {
     parent::__construct($config_factory);
-    $this->affilliation      = $affilliation;
+    $this->affiliation      = $affiliation;
     $this->messenger         = $messenger;
     $this->stringTranslation = $string_translation;
 
@@ -83,7 +83,7 @@ class AffilliationMappingForm extends ConfigFormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
-      $container->get('myacademicid_user_fields.affilliation'),
+      $container->get('myacademicid_user_fields.affiliation'),
       $container->get('messenger'),
       $container->get('string_translation'),
     );
@@ -93,7 +93,7 @@ class AffilliationMappingForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'myacademicid_user_roles_affilliation_mapping_form';
+    return 'myacademicid_user_roles_affiliation_mapping_form';
   }
 
   /**
@@ -101,7 +101,7 @@ class AffilliationMappingForm extends ConfigFormBase {
    */
   protected function getEditableConfigNames() {
     return [
-      'myacademicid_user_roles.affilliation_to_role',
+      'myacademicid_user_roles.affiliation_to_role',
     ];
   }
 
@@ -122,15 +122,15 @@ class AffilliationMappingForm extends ConfigFormBase {
       $this->messenger->addWarning($warning);
     }
 
-    $config = $this->config('myacademicid_user_roles.affilliation_to_role');
-    $affilliationmap = $config->get('affilliation_mapping');
+    $config = $this->config('myacademicid_user_roles.affiliation_to_role');
+    $affiliationmap = $config->get('affiliation_mapping');
 
     $form['#tree'] = TRUE;
-    $form['affilliation_mapping'] = [
-      '#title' => $this->t('Affilliation type to user role'),
+    $form['affiliation_mapping'] = [
+      '#title' => $this->t('Affiliation type to user role'),
       '#type' => 'fieldset',
       '#description' => $this->t(
-        'Map affilliation claims to be converted into user roles. %caveat', [
+        'Map affiliation claims to be converted into user roles. %caveat', [
           '%caveat' => $this->t(
             'Admin roles cannot be automatically assigned for security reasons.'
           )
@@ -143,10 +143,10 @@ class AffilliationMappingForm extends ConfigFormBase {
       $role_options[$rid] = $role->label();
     }
 
-    foreach ($this->affilliation->getOptions() as $key => $label) {
-      $default = isset($affilliationmap[$key]) ? $affilliationmap[$key] : '';
+    foreach ($this->affiliation->getOptions() as $key => $label) {
+      $default = isset($affiliationmap[$key]) ? $affiliationmap[$key] : '';
 
-      $form['affilliation_mapping'][$key] = [
+      $form['affiliation_mapping'][$key] = [
         '#type' => 'select',
         '#title' => $label,
         '#options' => $role_options,
@@ -170,10 +170,10 @@ class AffilliationMappingForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->config('myacademicid_user_roles.affilliation_to_role');
+    $config = $this->config('myacademicid_user_roles.affiliation_to_role');
 
-    $config->set('affilliation_mapping', \array_filter(
-      $form_state->getValue('affilliation_mapping')
+    $config->set('affiliation_mapping', \array_filter(
+      $form_state->getValue('affiliation_mapping')
     ));
 
     $config->save();

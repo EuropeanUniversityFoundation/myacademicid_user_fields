@@ -109,7 +109,7 @@ class MyacademicidUserRoles {
   }
 
   /**
-   * Determine affilliation to assign based on roles and home organization.
+   * Determine affiliation to assign based on roles and home organization.
    *
    * @param \Drupal\user\UserInterface $user
    *   The user entity.
@@ -118,9 +118,9 @@ class MyacademicidUserRoles {
    * @param array $sho
    *   Array of schac_home_organization values.
    */
-  public function affilliationfromRoles(UserInterface $user, array $roles, array $sho): array {
+  public function affiliationfromRoles(UserInterface $user, array $roles, array $sho): array {
     $role_mapping = $this->configFactory
-      ->get('myacademicid_user_roles.role_to_affilliation')
+      ->get('myacademicid_user_roles.role_to_affiliation')
       ->get('role_mapping');
 
     $vea = [];
@@ -142,26 +142,26 @@ class MyacademicidUserRoles {
   }
 
   /**
-   * Determine roles to assign based on affilliation.
+   * Determine roles to assign based on affiliation.
    *
    * @param \Drupal\user\UserInterface $user
    *   The user entity.
    * @param array $vea
-   *   The voperson_external_affilliation values.
+   *   The voperson_external_affiliation values.
    *
    * @return array $roles
    *   Array of user roles.
    */
-  public function rolesFromAffilliation(UserInterface $user, array $vea): array {
-    $affilliation_mapping = $this->configFactory
-      ->get('myacademicid_user_roles.affilliation_to_role')
-      ->get('affilliation_mapping');
+  public function rolesFromAffiliation(UserInterface $user, array $vea): array {
+    $affiliation_mapping = $this->configFactory
+      ->get('myacademicid_user_roles.affiliation_to_role')
+      ->get('affiliation_mapping');
 
     $sho = $this->flattenValue($user, MyacademicidUserFields::FIELD_SHO);
 
     $keys = [];
 
-    // Gather all affilliation keys and schac_home_organization values.
+    // Gather all affiliation keys and schac_home_organization values.
     foreach ($vea as $idx => $item) {
       $parts = \explode('@' ,$item);
 
@@ -172,13 +172,13 @@ class MyacademicidUserRoles {
 
     $roles = [];
 
-    // Gather all mapped roles from affilliation keys.
+    // Gather all mapped roles from affiliation keys.
     foreach ($keys as $idx => $key) {
       if (
-        \array_key_exists($key, $affilliation_mapping) &&
-        ! empty($affilliation_mapping[$key])
+        \array_key_exists($key, $affiliation_mapping) &&
+        ! empty($affiliation_mapping[$key])
       ) {
-        $roles[] = $affilliation_mapping[$key];
+        $roles[] = $affiliation_mapping[$key];
       }
     }
 
@@ -196,9 +196,9 @@ class MyacademicidUserRoles {
    *   Whether the user entity should be saved after setting the value.
    */
   public function setUserRoles(UserInterface $user, array $roles, $save = TRUE) {
-    $affilliation_mapping = $this->configFactory
-      ->get('myacademicid_user_roles.affilliation_to_role')
-      ->get('affilliation_mapping');
+    $affiliation_mapping = $this->configFactory
+      ->get('myacademicid_user_roles.affiliation_to_role')
+      ->get('affiliation_mapping');
 
     $current = $user->getRoles(TRUE);
 
@@ -213,7 +213,7 @@ class MyacademicidUserRoles {
     foreach ($current as $idx => $rid) {
       if (
         ! \in_array($rid, $roles) &&
-        \in_array($rid, $affilliation_mapping)
+        \in_array($rid, $affiliation_mapping)
       ) {
         $user->removeRole($rid);
       }

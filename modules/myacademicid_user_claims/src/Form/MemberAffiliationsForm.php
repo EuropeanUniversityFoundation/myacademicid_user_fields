@@ -10,22 +10,22 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
-use Drupal\myacademicid_user_claims\AffilliationAssertion;
-use Drupal\myacademicid_user_fields\MyacademicidUserAffilliation;
+use Drupal\myacademicid_user_claims\AffiliationAssertion;
+use Drupal\myacademicid_user_fields\MyacademicidUserAffiliation;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Configure MyAcademicID member affilliations.
+ * Configure MyAcademicID member affiliations.
  */
-class MemberAffilliationsForm extends ConfigFormBase {
+class MemberAffiliationsForm extends ConfigFormBase {
 
   use StringTranslationTrait;
 
   /**
-   * The affilliation service.
+   * The affiliation service.
    */
-  protected $affilliation;
+  protected $affiliation;
 
   /**
    * The messenger.
@@ -39,8 +39,8 @@ class MemberAffilliationsForm extends ConfigFormBase {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
-   * @param \Drupal\myacademicid_user_fields\MyacademicidUserAffilliation $affilliation
-   *   The affilliation service.
+   * @param \Drupal\myacademicid_user_fields\MyacademicidUserAffiliation $affiliation
+   *   The affiliation service.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
@@ -48,12 +48,12 @@ class MemberAffilliationsForm extends ConfigFormBase {
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
-    MyacademicidUserAffilliation $affilliation,
+    MyacademicidUserAffiliation $affiliation,
     MessengerInterface $messenger,
     TranslationInterface $string_translation
   ) {
     parent::__construct($config_factory);
-    $this->affilliation      = $affilliation;
+    $this->affiliation       = $affiliation;
     $this->messenger         = $messenger;
     $this->stringTranslation = $string_translation;
   }
@@ -64,7 +64,7 @@ class MemberAffilliationsForm extends ConfigFormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
-      $container->get('myacademicid_user_fields.affilliation'),
+      $container->get('myacademicid_user_fields.affiliation'),
       $container->get('messenger'),
       $container->get('string_translation'),
     );
@@ -74,7 +74,7 @@ class MemberAffilliationsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'myacademicid_user_claims_member_affilliation_form';
+    return 'myacademicid_user_claims_member_affiliation_form';
   }
 
   /**
@@ -105,11 +105,11 @@ class MemberAffilliationsForm extends ConfigFormBase {
 
     $assertions = (array) $config->get('assert_member');
 
-    $types = $this->affilliation->getDefinedTypes();
+    $types = $this->affiliation->getDefinedTypes();
 
-    unset($types[MyacademicidUserAffilliation::MEMBER]);
+    unset($types[MyacademicidUserAffiliation::MEMBER]);
 
-    $defaults = AffilliationAssertion::ASSERT_MEMBER;
+    $defaults = AffiliationAssertion::ASSERT_MEMBER;
     $list = [];
 
     foreach ($defaults as $i => $value) {
@@ -118,8 +118,8 @@ class MemberAffilliationsForm extends ConfigFormBase {
     }
 
     $intro = '<p>' . $this
-      ->t('By default, the %member affilliation must be asserted for:', [
-        '%member' => MyacademicidUserAffilliation::MEMBER
+      ->t('By default, the %member affiliation must be asserted for:', [
+        '%member' => MyacademicidUserAffiliation::MEMBER
       ]) . '</p>';
 
     $intro .= '<ul>';
@@ -131,18 +131,18 @@ class MemberAffilliationsForm extends ConfigFormBase {
     $intro .= '</ul>';
 
     $intro .= '<p>' . $this
-      ->t('The %member affilliation will be asserted if %condition.', [
-        '%member' => MyacademicidUserAffilliation::MEMBER,
+      ->t('The %member affiliation will be asserted if %condition.', [
+        '%member' => MyacademicidUserAffiliation::MEMBER,
         '%condition' => $this->t(
-          'at least one of the above or below affilliations is present'
+          'at least one of the above or below affiliations is present'
         ),
       ]) . '</p>';
 
     $intro .= '<p>' . $this
-      ->t('If %condition, the %member affilliation will not be asserted.', [
+      ->t('If %condition, the %member affiliation will not be asserted.', [
         '%condition' => $this->t(
-          'none of the above or below affilliations are present'),
-        '%member' => MyacademicidUserAffilliation::MEMBER,
+          'none of the above or below affiliations are present'),
+        '%member' => MyacademicidUserAffiliation::MEMBER,
       ]) . '</p>';
 
     $form['intro'] = [
@@ -152,8 +152,8 @@ class MemberAffilliationsForm extends ConfigFormBase {
 
     $form['assert'] = [
       '#type' => 'checkboxes',
-      '#title' => $this->t('Assert %member affilliation for:', [
-        '%member' => MyacademicidUserAffilliation::MEMBER,
+      '#title' => $this->t('Assert %member affiliation for:', [
+        '%member' => MyacademicidUserAffiliation::MEMBER,
       ]),
       '#options' => $types,
     ];

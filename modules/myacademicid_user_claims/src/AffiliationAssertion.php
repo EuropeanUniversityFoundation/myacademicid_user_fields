@@ -6,13 +6,13 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\user\UserInterface;
-use Drupal\myacademicid_user_fields\MyacademicidUserAffilliation;
+use Drupal\myacademicid_user_fields\MyacademicidUserAffiliation;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 
 /**
- * Affilliation assertion service.
+ * Affiliation assertion service.
  */
-class AffilliationAssertion {
+class AffiliationAssertion {
 
   use StringTranslationTrait;
 
@@ -23,16 +23,16 @@ class AffilliationAssertion {
   ];
 
   const ASSERT_MEMBER = [
-    MyacademicidUserAffilliation::FACULTY,
-    MyacademicidUserAffilliation::STUDENT,
-    MyacademicidUserAffilliation::STAFF,
-    MyacademicidUserAffilliation::EMPLOYEE,
+    MyacademicidUserAffiliation::FACULTY,
+    MyacademicidUserAffiliation::STUDENT,
+    MyacademicidUserAffiliation::STAFF,
+    MyacademicidUserAffiliation::EMPLOYEE,
   ];
 
   /**
-   * The affilliation service.
+   * The affiliation service.
    */
-  protected $affilliation;
+  protected $affiliation;
 
   /**
    * Config factory.
@@ -46,23 +46,23 @@ class AffilliationAssertion {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
-   * @param \Drupal\myacademicid_user_fields\MyacademicidUserAffilliation $affilliation
-   *   The affilliation service.
+   * @param \Drupal\myacademicid_user_fields\MyacademicidUserAffiliation $affiliation
+   *   The affiliation service.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation service.
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
-    MyacademicidUserAffilliation $affilliation,
+    MyacademicidUserAffiliation $affiliation,
     TranslationInterface $string_translation
   ) {
     $this->configFactory     = $config_factory;
-    $this->affilliation      = $affilliation;
+    $this->affiliation       = $affiliation;
     $this->stringTranslation = $string_translation;
   }
 
   /**
-   * Member affilliation assertions defined in the system.
+   * Member affiliation assertions defined in the system.
    *
    * @return array $assertions
    */
@@ -112,21 +112,21 @@ class AffilliationAssertion {
     }
 
     if (\array_key_exists(MyacademicidUserFields::CLAIM_VEA, $claims)) {
-      $this->consolidateAffilliation($claims);
+      $this->consolidateAffiliation($claims);
     }
 
     return $claims;
   }
 
   /**
-   * Consolidate the affilliation claims.
+   * Consolidate the affiliation claims.
    */
-  private function consolidateAffilliation(array &$claims) {
+  private function consolidateAffiliation(array &$claims) {
     $assertions = $this->getAssertions();
 
     $structure = [];
 
-    // Gather all affilliation keys per schac_home_organization.
+    // Gather all affiliation keys per schac_home_organization.
     foreach ($claims[MyacademicidUserFields::CLAIM_VEA] as $idx => $value) {
       $parts = \explode('@' ,$value);
       $key = $parts[0];
@@ -140,13 +140,13 @@ class AffilliationAssertion {
       }
     }
 
-    // Check whether the member affilliation needs to be asserted and added.
+    // Check whether the member affiliation needs to be asserted and added.
     foreach ($structure as $sho => $keys) {
       if (
         ! empty(\array_intersect($assertions, $keys)) &&
-        ! \in_array(MyacademicidUserAffilliation::MEMBER, $keys)
+        ! \in_array(MyacademicidUserAffiliation::MEMBER, $keys)
       ) {
-        $member = \implode('@', [MyacademicidUserAffilliation::MEMBER, $sho]);
+        $member = \implode('@', [MyacademicidUserAffiliation::MEMBER, $sho]);
         $claims[MyacademicidUserFields::CLAIM_VEA][] = $member;
       }
     }

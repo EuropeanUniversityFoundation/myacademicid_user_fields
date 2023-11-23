@@ -7,9 +7,9 @@ use Drupal\user\UserInterface;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 
 /**
- * Event that is fired when a user's voperson_external_affilliation changes.
+ * Event that is fired when a user's voperson_external_affiliation changes.
  */
-class UserVopersonExternalAffilliationChangeEvent extends Event {
+class UserVopersonExternalAffiliationChangeEvent extends Event {
 
   const EVENT_NAME = 'user_vea_change';
 
@@ -21,7 +21,7 @@ class UserVopersonExternalAffilliationChangeEvent extends Event {
   public $user;
 
   /**
-   * Array of voperson_external_affilliation values.
+   * Array of voperson_external_affiliation values.
    *
    * @var array
    */

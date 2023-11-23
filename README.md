@@ -30,9 +30,9 @@ This module adds new base fields to the _User_ entity that match OpenID Connect 
 
 - `schac_home_organization`;
 - `schac_personal_unique_code`;
-- `voperson_external_affilliation`.
+- `voperson_external_affiliation`.
 
-The field names follow the convention `myaid_{claim}`.
+The field names follow the convention `maid_{claim}`.
 
 ### Event based functionality
 

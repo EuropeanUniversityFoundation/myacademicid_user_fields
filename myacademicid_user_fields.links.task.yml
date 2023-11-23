@@ -5,8 +5,8 @@ myacademicid_user_fields.settings_form:
   route_name: myacademicid_user_fields.settings_form
   weight: 1
 
-myacademicid_user_fields.affilliation_types_form:
-  title: 'Affilliation types'
+myacademicid_user_fields.affiliation_types_form:
+  title: 'Affiliation types'
   base_route: myacademicid_user_fields.settings_form
-  route_name: myacademicid_user_fields.affilliation_types_form
+  route_name: myacademicid_user_fields.affiliation_types_form
   weight: 2

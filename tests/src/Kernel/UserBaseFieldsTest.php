@@ -18,7 +18,7 @@ class UserBaseFieldsTest extends KernelTestBase {
   const NEW_BASE_FIELDS = [
     'maid_schac_home_organization',
     'maid_schac_personal_unique_code',
-    'maid_voperson_external_affilliation'
+    'maid_voperson_external_affiliation'
   ];
 
   /**

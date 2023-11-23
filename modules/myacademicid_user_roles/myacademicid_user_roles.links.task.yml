@@ -1,8 +1,8 @@
 # Local tasks
-myacademicid_user_roles.affilliation_mapping_form:
-  title: 'Affilliation mapping'
+myacademicid_user_roles.affiliation_mapping_form:
+  title: 'Affiliation mapping'
   base_route: myacademicid_user_fields.settings_form
-  route_name: myacademicid_user_roles.affilliation_mapping_form
+  route_name: myacademicid_user_roles.affiliation_mapping_form
   weight: 5
 
 myacademicid_user_roles.role_mapping_form:

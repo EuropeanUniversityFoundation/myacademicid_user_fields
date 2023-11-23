@@ -6,9 +6,9 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\myacademicid_user_fields\Event\SetUserVopersonExternalAffilliationEvent;
+use Drupal\myacademicid_user_fields\Event\SetUserVopersonExternalAffiliationEvent;
 use Drupal\myacademicid_user_fields\Event\UserSchacHomeOrganizationChangeEvent;
-use Drupal\myacademicid_user_fields\Event\UserVopersonExternalAffilliationChangeEvent;
+use Drupal\myacademicid_user_fields\Event\UserVopersonExternalAffiliationChangeEvent;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Drupal\myacademicid_user_roles\Event\SetUserRolesEvent;
 use Drupal\myacademicid_user_roles\Event\UserRolesChangeEvent;
@@ -101,8 +101,8 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
       UserSchacHomeOrganizationChangeEvent::EVENT_NAME => [
         'onUserSchacHomeOrganizationChange'
       ],
-      UserVopersonExternalAffilliationChangeEvent::EVENT_NAME => [
-        'onUserVopersonExternalAffilliationChange'
+      UserVopersonExternalAffiliationChangeEvent::EVENT_NAME => [
+        'onUserVopersonExternalAffiliationChange'
       ],
     ];
   }
@@ -149,15 +149,15 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
       }
     }
 
-    // Edge case: enforce user roles based on affilliation.
+    // Edge case: enforce user roles based on affiliation.
     elseif ($mode === MyacademicidUserFields::CLIENT_MODE) {
       $equals = $this->fieldsService
         ->equalValue($event->user, MyacademicidUserFields::FIELD_VEA);
       // Defer to the onUserSchacHomeOrganizationChange method.
       if ($equals) {
-        // Instantiate a mock UserVopersonExternalAffilliationChangeEvent.
-        $mock = new UserVopersonExternalAffilliationChangeEvent($event->user);
-        $this->onUserVopersonExternalAffilliationChange($mock);
+        // Instantiate a mock UserVopersonExternalAffiliationChangeEvent.
+        $mock = new UserVopersonExternalAffiliationChangeEvent($event->user);
+        $this->onUserVopersonExternalAffiliationChange($mock);
       }
     }
   }
@@ -182,15 +182,15 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
         ->flattenValue($event->user, MyacademicidUserFields::FIELD_SHO);
 
       // Instantiate our event.
-      $event = new SetUserVopersonExternalAffilliationEvent(
+      $event = new SetUserVopersonExternalAffiliationEvent(
         $event->user,
-        $this->rolesService->affilliationfromRoles($event->user, $roles, $sho),
+        $this->rolesService->affiliationfromRoles($event->user, $roles, $sho),
         FALSE
       );
       // Dispatch the event.
       $this->eventDispatcher->dispatch(
         $event,
-        SetUserVopersonExternalAffilliationEvent::EVENT_NAME
+        SetUserVopersonExternalAffiliationEvent::EVENT_NAME
       );
     }
 
@@ -200,33 +200,33 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
         ->equalValue($event->user, MyacademicidUserFields::FIELD_VEA);
       // Defer to the onUserSchacHomeOrganizationChange method.
       if ($equals) {
-        // Instantiate a mock UserVopersonExternalAffilliationChangeEvent.
-        $mock = new UserVopersonExternalAffilliationChangeEvent($event->user);
-        $this->onUserVopersonExternalAffilliationChange($mock);
+        // Instantiate a mock UserVopersonExternalAffiliationChangeEvent.
+        $mock = new UserVopersonExternalAffiliationChangeEvent($event->user);
+        $this->onUserVopersonExternalAffiliationChange($mock);
       }
     }
   }
 
   /**
-   * Subscribe to the user voperson_external_affilliation change event.
+   * Subscribe to the user voperson_external_affiliation change event.
    *
-   * @param \Drupal\myacademicid_user_fields\Event\UserVopersonExternalAffilliationChangeEvent $event
+   * @param \Drupal\myacademicid_user_fields\Event\UserVopersonExternalAffiliationChangeEvent $event
    *   The event object.
    */
-  public function onUserVopersonExternalAffilliationChange(UserVopersonExternalAffilliationChangeEvent $event) {
+  public function onUserVopersonExternalAffiliationChange(UserVopersonExternalAffiliationChangeEvent $event) {
     $mode = $this->configFactory
       ->get('myacademicid_user_fields.settings')
       ->get('mode');
 
     if ($mode === MyacademicidUserFields::CLIENT_MODE) {
-      // Collect user voperson_external_affilliation values.
+      // Collect user voperson_external_affiliation values.
       $vea = $this->rolesService
         ->flattenValue($event->user, MyacademicidUserFields::FIELD_VEA);
 
       // Instantiate our event.
       $event = new SetUserRolesEvent(
         $event->user,
-        $this->rolesService->rolesFromAffilliation($event->user, $vea),
+        $this->rolesService->rolesFromAffiliation($event->user, $vea),
         FALSE
       );
       // Dispatch the event.

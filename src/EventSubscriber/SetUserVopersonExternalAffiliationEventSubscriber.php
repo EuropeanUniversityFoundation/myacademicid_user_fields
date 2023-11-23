@@ -6,14 +6,14 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\user\Entity\User;
-use Drupal\myacademicid_user_fields\Event\SetUserVopersonExternalAffilliationEvent;
+use Drupal\myacademicid_user_fields\Event\SetUserVopersonExternalAffiliationEvent;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * SetUserVopersonExternalAffilliationEvent subscriber.
+ * SetUserVopersonExternalAffiliationEvent subscriber.
  */
-class SetUserVopersonExternalAffilliationEventSubscriber implements EventSubscriberInterface {
+class SetUserVopersonExternalAffiliationEventSubscriber implements EventSubscriberInterface {
 
   use StringTranslationTrait;
 
@@ -56,19 +56,19 @@ class SetUserVopersonExternalAffilliationEventSubscriber implements EventSubscri
    */
   public static function getSubscribedEvents() {
     return [
-      SetUserVopersonExternalAffilliationEvent::EVENT_NAME => [
-        'onSetUserVopersonExternalAffilliation'
+      SetUserVopersonExternalAffiliationEvent::EVENT_NAME => [
+        'onSetUserVopersonExternalAffiliation'
       ],
     ];
   }
 
   /**
-   * Subscribe to the user voperson_external_affilliation change event.
+   * Subscribe to the user voperson_external_affiliation change event.
    *
-   * @param \Drupal\myacademicid_user_fields\Event\SetUserVopersonExternalAffilliationEvent $event
+   * @param \Drupal\myacademicid_user_fields\Event\SetUserVopersonExternalAffiliationEvent $event
    *   The event object.
    */
-  public function onSetUserVopersonExternalAffilliation(SetUserVopersonExternalAffilliationEvent $event) {
+  public function onSetUserVopersonExternalAffiliation(SetUserVopersonExternalAffiliationEvent $event) {
     if (empty($event->vea)) {
       $message = $this->t('Unsetting %claim claim for user %user...', [
         '%user' => $event->user->label(),
@@ -87,7 +87,7 @@ class SetUserVopersonExternalAffilliationEventSubscriber implements EventSubscri
       // $this->messenger->addStatus($message);
     }
 
-    $this->service->setUserVopersonExternalAffilliation(
+    $this->service->setUserVopersonExternalAffiliation(
       $event->user,
       $event->vea,
       $event->save

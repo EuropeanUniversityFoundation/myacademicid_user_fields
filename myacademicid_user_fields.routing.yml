@@ -6,10 +6,10 @@ myacademicid_user_fields.settings_form:
   requirements:
     _permission: 'administer myacademicid user fields'
 
-myacademicid_user_fields.affilliation_types_form:
-  path: '/admin/config/services/myacademicid/affilliation-types'
+myacademicid_user_fields.affiliation_types_form:
+  path: '/admin/config/services/myacademicid/affiliation-types'
   defaults:
-    _title: 'MyAcademicID affilliation types'
-    _form: 'Drupal\myacademicid_user_fields\Form\AffilliationTypesForm'
+    _title: 'MyAcademicID affiliation types'
+    _form: 'Drupal\myacademicid_user_fields\Form\AffiliationTypesForm'
   requirements:
     _permission: 'administer myacademicid user fields'
