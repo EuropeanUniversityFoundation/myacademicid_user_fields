@@ -70,7 +70,7 @@ function myacademicid_user_fields_update_10101() {
     $value['maid_' . $right . '_value'] = $value['maid_' . $wrong . '_value'];
     unset($value['maid_' . $wrong . '_value']);
 
-    $database->insert('maid_' . $right, 'user')
+    $database->insert('user__maid_' . $right)
       ->fields(array_keys($value), array_values($value))
       ->execute();
   }
