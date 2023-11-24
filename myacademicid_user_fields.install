@@ -33,7 +33,7 @@ function myacademicid_user_fields_update_10101() {
   $definition_manager = \Drupal::entityDefinitionUpdateManager();
 
   $storage = $entity_type_manager->getStorage('user');
-  $existing_table_name = 'user__' . $wrong;
+  $existing_table_name = 'user__maid_' . $wrong;
 
   // Store the existing values.
   $existing_values = $database->select($existing_table_name)
@@ -49,7 +49,7 @@ function myacademicid_user_fields_update_10101() {
 
   // Create a new field definition.
   $new_storage_definition = BaseFieldDefinition::create('string')
-    ->setLabel(t('MyAcademicID voperson_external_affiliation claim.')
+    ->setLabel(t('MyAcademicID voperson_external_affiliation claim.'))
     ->setDescription(t('As provided by MyAcademicID.'))
     ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
     ->setRequired(FALSE)
