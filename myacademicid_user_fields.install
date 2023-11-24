@@ -5,6 +5,9 @@
  * Install, update and uninstall functions for the MyAcademicID user fields module.
  */
 
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
+
 /**
  * Implements hook_install().
  */
