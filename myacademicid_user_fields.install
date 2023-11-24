@@ -5,6 +5,9 @@
  * Install, update and uninstall functions for the MyAcademicID user fields module.
  */
 
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
+
 /**
  * Implements hook_install().
  */
@@ -17,4 +20,61 @@ function myacademicid_user_fields_install() {
  */
 function myacademicid_user_fields_uninstall() {
   \Drupal::messenger()->addStatus(__FUNCTION__);
+}
+
+/**
+ * Corrects typo in Affiliation base field.
+ */
+function myacademicid_user_fields_update_10101() {
+  $wrong = 'voperson_external_affilliation';
+  $right = 'voperson_external_affiliation';
+
+  $database = \Drupal::database();
+  $transaction = $database->startTransaction();
+
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $definition_manager = \Drupal::entityDefinitionUpdateManager();
+
+  $storage = $entity_type_manager->getStorage('user');
+  $existing_table_name = 'user__maid_' . $wrong;
+
+  // Store the existing values.
+  $existing_values = $database->select($existing_table_name)
+    ->fields($existing_table_name)
+    ->execute();
+
+  // Uninstall the field.
+  $existing_storage_definition = $definition_manager
+    ->getFieldStorageDefinition('maid_' . $wrong, 'user');
+
+  $definition_manager
+    ->uninstallFieldStorageDefinition($existing_storage_definition);
+
+  // Create a new field definition.
+  $new_storage_definition = BaseFieldDefinition::create('string')
+    ->setLabel(t('MyAcademicID voperson_external_affiliation claim.'))
+    ->setDescription(t('As provided by MyAcademicID.'))
+    ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+    ->setRequired(FALSE)
+    ->setDisplayOptions('form', [
+      'type' => 'string_textfield',
+      'weight' => 100,
+    ]);
+
+  $definition_manager
+    ->installFieldStorageDefinition('maid_' . $right, 'user', 'user', $new_storage_definition);
+
+  // Restore the values.
+  foreach ($existing_values as $id => $value) {
+    $value = (array) $value;
+    $value['maid_' . $right . '_value'] = $value['maid_' . $wrong . '_value'];
+    unset($value['maid_' . $wrong . '_value']);
+
+    $database->insert('user__maid_' . $right)
+      ->fields(array_keys($value), array_values($value))
+      ->execute();
+  }
+
+  // Commit transaction.
+  unset($transaction);
 }

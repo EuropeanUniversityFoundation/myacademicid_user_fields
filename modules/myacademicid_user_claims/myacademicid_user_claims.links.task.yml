@@ -1,6 +1,6 @@
 # Local tasks
-myacademicid_user_fields.member_affilliations_form:
-  title: 'Member affilliations'
+myacademicid_user_fields.member_affiliations_form:
+  title: 'Member affiliations'
   base_route: myacademicid_user_fields.settings_form
-  route_name: myacademicid_user_fields.member_affilliations_form
+  route_name: myacademicid_user_fields.member_affiliations_form
   weight: 3

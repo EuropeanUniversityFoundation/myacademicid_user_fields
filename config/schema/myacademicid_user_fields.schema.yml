@@ -8,10 +8,10 @@ myacademicid_user_fields.settings:
 
 myacademicid_user_fields.types:
   type: config_object
-  label: 'MyAcademicID affilliation types'
+  label: 'MyAcademicID affiliation types'
   mapping:
     additional:
       type: sequence
-      label: 'Additional affilliation types'
+      label: 'Additional affiliation types'
       sequence:
         type: string

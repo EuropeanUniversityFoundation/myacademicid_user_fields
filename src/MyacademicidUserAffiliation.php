@@ -7,10 +7,10 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 
 /**
- * Provides affilliation types.
+ * Provides affiliation types.
  *   @see https://wiki.refeds.org/display/STAN/eduPerson+2021-11#eduPerson202111-eduPersonAffiliation
  */
-class MyacademicidUserAffilliation {
+class MyacademicidUserAffiliation {
 
   use StringTranslationTrait;
 
@@ -24,17 +24,17 @@ class MyacademicidUserAffilliation {
   const LIBRARY_WALK_IN = 'library-walk-in';
 
   /**
-   * Default affilliation types.
+   * Default affiliation types.
    */
   protected $defaultTypes;
 
   /**
-   * Additional affilliation types.
+   * Additional affiliation types.
    */
   protected $additionalTypes;
 
   /**
-   * All defined affilliation types.
+   * All defined affiliation types.
    */
   protected $definedTypes;
 
@@ -62,10 +62,10 @@ class MyacademicidUserAffilliation {
   }
 
   /**
-   * Curated list of default affilliation types.
+   * Curated list of default affiliation types.
    *
    * @return array
-   *   An array of affilliation key => affilliation label pairs.
+   *   An array of affiliation key => affiliation label pairs.
    */
   public static function defaultTypes() {
     $default_types = [
@@ -83,10 +83,10 @@ class MyacademicidUserAffilliation {
   }
 
   /**
-   * Get list of default affilliation types.
+   * Get list of default affiliation types.
    *
    * @return array
-   *   An array of affilliation key => affilliation label pairs.
+   *   An array of affiliation key => affiliation label pairs.
    */
   public function getDefaultTypes(): array {
     if (!isset($this->defaultTypes)) {
@@ -97,10 +97,10 @@ class MyacademicidUserAffilliation {
   }
 
   /**
-   * Get list of additional affilliation types from config.
+   * Get list of additional affiliation types from config.
    *
    * @return array
-   *   An array of affilliation key => affilliation label pairs.
+   *   An array of affiliation key => affiliation label pairs.
    */
   public function getAdditionalTypes(): array {
     if (!isset($this->additionalTypes)) {
@@ -123,10 +123,10 @@ class MyacademicidUserAffilliation {
   }
 
   /**
-   * Get list of all defined affilliation types.
+   * Get list of all defined affiliation types.
    *
    * @return array
-   *   An array of affilliation key => affilliation label pairs.
+   *   An array of affiliation key => affiliation label pairs.
    */
   public function getDefinedTypes(): array {
     if (!isset($this->definedTypes)) {
@@ -140,10 +140,10 @@ class MyacademicidUserAffilliation {
   }
 
   /**
-   * Get an array of affilliation types as options.
+   * Get an array of affiliation types as options.
    *
    * @return array
-   *   An array of affilliation key => affilliation label pairs.
+   *   An array of affiliation key => affiliation label pairs.
    */
   public function getOptions(): array {
     // Build a list from the defined types.

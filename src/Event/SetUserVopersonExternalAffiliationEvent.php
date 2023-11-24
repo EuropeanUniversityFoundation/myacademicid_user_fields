@@ -6,11 +6,11 @@ use Drupal\Component\EventDispatcher\Event;
 use Drupal\user\UserInterface;
 
 /**
- * Event that is fired when a user's voperson_external_affilliation must be set.
+ * Event that is fired when a user's voperson_external_affiliation must be set.
  */
-class SetUserVopersonExternalAffilliationEvent extends Event {
+class SetUserVopersonExternalAffiliationEvent extends Event {
 
-  const EVENT_NAME = 'set_user_voperson_external_affilliation';
+  const EVENT_NAME = 'set_user_voperson_external_affiliation';
 
   /**
    * The user entity.
@@ -20,7 +20,7 @@ class SetUserVopersonExternalAffilliationEvent extends Event {
   public $user;
 
   /**
-   * Array of voperson_external_affilliation values.
+   * Array of voperson_external_affiliation values.
    *
    * @var array
    */
@@ -39,7 +39,7 @@ class SetUserVopersonExternalAffilliationEvent extends Event {
    * @param \Drupal\user\UserInterface $user
    *   The user entity.
    * @param array $vea
-   *   Array of voperson_external_affilliation values.
+   *   Array of voperson_external_affiliation values.
    * @param boolean $save
    *   Whether the user entity should be saved after setting the value.
    */

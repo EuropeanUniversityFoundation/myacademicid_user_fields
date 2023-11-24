@@ -8,7 +8,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\user\Entity\User;
 use Drupal\myacademicid_user_fields\Event\UserSchacHomeOrganizationChangeEvent;
 use Drupal\myacademicid_user_fields\Event\UserSchacPersonalUniqueCodeChangeEvent;
-use Drupal\myacademicid_user_fields\Event\UserVopersonExternalAffilliationChangeEvent;
+use Drupal\myacademicid_user_fields\Event\UserVopersonExternalAffiliationChangeEvent;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -53,8 +53,8 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
       UserSchacPersonalUniqueCodeChangeEvent::EVENT_NAME => [
         'onUserSchacPersonalUniqueCodeChange'
       ],
-      UserVopersonExternalAffilliationChangeEvent::EVENT_NAME => [
-        'onUserVopersonExternalAffilliationChange'
+      UserVopersonExternalAffiliationChangeEvent::EVENT_NAME => [
+        'onUserVopersonExternalAffiliationChange'
       ],
     ];
   }
@@ -112,12 +112,12 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * Subscribe to the user voperson_external_affilliation change event.
+   * Subscribe to the user voperson_external_affiliation change event.
    *
-   * @param \Drupal\myacademicid_user_fields\Event\UserVopersonExternalAffilliationChangeEvent $event
+   * @param \Drupal\myacademicid_user_fields\Event\UserVopersonExternalAffiliationChangeEvent $event
    *   The event object.
    */
-  public function onUserVopersonExternalAffilliationChange(UserVopersonExternalAffilliationChangeEvent $event) {
+  public function onUserVopersonExternalAffiliationChange(UserVopersonExternalAffiliationChangeEvent $event) {
     if (empty($event->vea)) {
       $message = $this->t('User %user has no %claim claim.', [
         '%user' => $event->user->label(),

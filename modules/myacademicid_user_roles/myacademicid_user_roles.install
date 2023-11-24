@@ -18,3 +18,41 @@ function myacademicid_user_roles_install() {
 function myacademicid_user_roles_uninstall() {
   \Drupal::messenger()->addStatus(__FUNCTION__);
 }
+
+/**
+ * Corrects typos in config object names.
+ */
+function myacademicid_user_roles_update_10101() {
+  $module = 'myacademicid_user_roles';
+
+  $wrong = 'affilliation';
+  $right = 'affiliation';
+
+  $wrong_a2r = $module . '.' . $wrong . '_to_role';
+  $right_a2r = $module . '.' . $right . '_to_role';
+
+  $wrong_r2a = $module . '.' . 'role_to_' . $wrong;
+  $right_r2a = $module . '.' . 'role_to_' . $right;
+
+  $config_factory = \Drupal::configFactory();
+
+  $config_factory->rename($wrong_a2r, $right_a2r);
+  $config_factory->rename($wrong_r2a, $right_r2a);
+}
+
+/**
+ * Corrects typos in config schema keys.
+ */
+function myacademicid_user_roles_update_10102() {
+  $config = \Drupal::configFactory()
+    ->getEditable('myacademicid_user_roles.affiliation_to_role');
+
+  $wrong = 'affilliation';
+  $right = 'affiliation';
+
+  $current_value = $config->get($wrong . '_mapping');
+
+  $config->set($right . '_mapping', $current_value);
+  $config->clear($wrong . '_mapping');
+  $config->save();
+}

@@ -3,13 +3,13 @@ services:
     class: Drupal\myacademicid_user_fields\MyacademicidUserFields
     arguments: ['@event_dispatcher', '@messenger', '@string_translation']
 
-  myacademicid_user_fields.affilliation:
-    class: Drupal\myacademicid_user_fields\MyacademicidUserAffilliation
+  myacademicid_user_fields.affiliation:
+    class: Drupal\myacademicid_user_fields\MyacademicidUserAffiliation
     arguments: ['@config.factory', '@string_translation']
 
   myacademicid_user_fields.form_alter:
     class: Drupal\myacademicid_user_fields\MyacademicidUserFieldsFormAlter
-    arguments: ['@current_user', '@myacademicid_user_fields.affilliation', '@string_translation']
+    arguments: ['@current_user', '@myacademicid_user_fields.affiliation', '@string_translation']
 
   myacademicid_user_fields.event_subscriber:
     class: Drupal\myacademicid_user_fields\EventSubscriber\MyacademicidUserFieldsSubscriber
@@ -30,7 +30,7 @@ services:
       - { name: event_subscriber }
 
   myacademicid_user_fields.set_vea_subscriber:
-    class: Drupal\myacademicid_user_fields\EventSubscriber\SetUserVopersonExternalAffilliationEventSubscriber
+    class: Drupal\myacademicid_user_fields\EventSubscriber\SetUserVopersonExternalAffiliationEventSubscriber
     arguments: ['@myacademicid_user_fields', '@messenger', '@string_translation']
     tags:
       - { name: event_subscriber }

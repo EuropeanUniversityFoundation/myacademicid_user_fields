@@ -1,14 +1,14 @@
-myacademicid_user_roles.affilliation_to_role:
+myacademicid_user_roles.affiliation_to_role:
   type: config_object
-  label: 'Affilliation mapping'
+  label: 'Affiliation mapping'
   mapping:
-    affilliation_mapping:
+    affiliation_mapping:
       type: sequence
-      label: 'Affilliation types'
+      label: 'Affiliation types'
       sequence:
         type: string
 
-myacademicid_user_roles.role_to_affilliation:
+myacademicid_user_roles.role_to_affiliation:
   type: config_object
   label: 'Role mapping'
   mapping:

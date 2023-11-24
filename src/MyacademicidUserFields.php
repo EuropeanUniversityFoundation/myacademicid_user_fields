@@ -11,7 +11,7 @@ use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 use Drupal\myacademicid_user_fields\Event\UserSchacHomeOrganizationChangeEvent;
 use Drupal\myacademicid_user_fields\Event\UserSchacPersonalUniqueCodeChangeEvent;
-use Drupal\myacademicid_user_fields\Event\UserVopersonExternalAffilliationChangeEvent;
+use Drupal\myacademicid_user_fields\Event\UserVopersonExternalAffiliationChangeEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -26,17 +26,17 @@ class MyacademicidUserFields {
 
   const FIELD_SHO = 'maid_schac_home_organization';
   const FIELD_SPUC = 'maid_schac_personal_unique_code';
-  const FIELD_VEA = 'maid_voperson_external_affilliation';
+  const FIELD_VEA = 'maid_voperson_external_affiliation';
 
   const EVENT_CLASS = [
     self::FIELD_SHO => UserSchacHomeOrganizationChangeEvent::class,
     self::FIELD_SPUC => UserSchacPersonalUniqueCodeChangeEvent::class,
-    self::FIELD_VEA => UserVopersonExternalAffilliationChangeEvent::class,
+    self::FIELD_VEA => UserVopersonExternalAffiliationChangeEvent::class,
   ];
 
   const CLAIM_SHO = 'schac_home_organization';
   const CLAIM_SPUC = 'schac_personal_unique_code';
-  const CLAIM_VEA = 'voperson_external_affilliation';
+  const CLAIM_VEA = 'voperson_external_affiliation';
 
   const DESCRIPTION = 'As provided by MyAcademicID.';
 
@@ -117,7 +117,7 @@ class MyacademicidUserFields {
         'type' => 'string_textfield',
         'weight' => 100,
       ]);
-      // ->addConstraint('VopersonExternalAffilliation');
+      // ->addConstraint('VopersonExternalAffiliation');
 
     return $fields;
   }
@@ -187,16 +187,16 @@ class MyacademicidUserFields {
   }
 
   /**
-   * Set voperson_external_affilliation value on a user entity.
+   * Set voperson_external_affiliation value on a user entity.
    *
    * @param \Drupal\user\UserInterface $user
    *   The user entity.
    * @param array $vea
-   *   Array of voperson_external_affilliation values.
+   *   Array of voperson_external_affiliation values.
    * @param boolean $save
    *   Whether the user entity should be saved after setting the value.
    */
-  public function setUserVopersonExternalAffilliation(UserInterface $user, array $vea, $save = TRUE) {
+  public function setUserVopersonExternalAffiliation(UserInterface $user, array $vea, $save = TRUE) {
     $this->setValidFieldValue($user, self::FIELD_VEA, $vea, self::CLAIM_VEA, $save);
   }
 
