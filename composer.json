@@ -1,13 +1,41 @@
 {
-  "name": "euf/myacademicid_user_fields",
-  "type": "drupal-module",
-  "description": "Drupal 9 module providing base fields for the User entity to store MyAcademicID data.",
-  "keywords": [
-  ],
-  "homepage": "",
-  "minimum-stability": "dev",
-  "support": {
-    "issues": "",
-    "source": ""
-  }
+    "name": "euf/myacademicid_user_fields",
+    "type": "drupal-module",
+    "description": "Extends the User entity to store MyAcademicID user claims.",
+    "keywords": [
+        "Drupal",
+        "MyAcademicID",
+        "OAuth2",
+        "OpenID Connect",
+        "User management"
+    ],
+    "homepage": "https://github.com/EuropeanUniversityFoundation/myacademicid_user_fields",
+    "support": {
+        "issues": "https://github.com/EuropeanUniversityFoundation/myacademicid_user_fields/issues",
+        "source": "https://github.com/EuropeanUniversityFoundation/myacademicid_user_fields"
+    },
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Tiago Simões",
+            "email": "tiago.simoes@uni-foundation.eu",
+            "role": "Maintainer"
+        }
+    ],
+    "suggest": {
+        "drupal/oauth2_server": "Provides OAuth2 server functionality.",
+        "drupal/openid_connect": "A pluggable client implementation for the OpenID Connect protocol.",
+        "euf/ewp_institutions": "Implements EWP Institutions as a content entity type."
+    },
+    "minimum-stability": "dev",
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.uni-foundation.eu"
+        },
+        {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        }
+    ]
 }
