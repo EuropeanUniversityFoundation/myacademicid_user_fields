@@ -3,7 +3,7 @@ type: module
 description: Bridge module between MyAcademicID user fields and EWP Institutions.
 package: MyAcademicID
 core: 8.x
-core_version_requirement: ^8 || ^9 || ^10
+core_version_requirement: ^8 || ^9 || ^10 || ^11
 dependencies:
   - myacademicid_user_fields:myacademicid_user_fields
   - ewp_institutions:ewp_institutions
