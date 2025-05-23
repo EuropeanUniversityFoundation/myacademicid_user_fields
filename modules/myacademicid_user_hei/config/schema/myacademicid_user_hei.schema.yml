@@ -5,6 +5,11 @@ myacademicid_user_hei.settings:
     sync_mode:
       type: string
       label: 'Synchronization mode'
+      constraints:
+        Choice:
+          - 'sync'
+          - 'empty'
+          - 'nosync'
     import:
       type: boolean
       label: 'Lookup and import'

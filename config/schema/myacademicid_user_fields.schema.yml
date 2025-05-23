@@ -5,6 +5,10 @@ myacademicid_user_fields.settings:
     mode:
       type: string
       label: 'Mode'
+      constraints:
+        Choice:
+          - client
+          - server
 
 myacademicid_user_fields.types:
   type: config_object
@@ -13,5 +17,9 @@ myacademicid_user_fields.types:
     additional:
       type: sequence
       label: 'Additional affiliation types'
+      constraints:
+        FullyValidatable: ~
       sequence:
         type: string
+        constraints:
+          Regex: '/^[a-zA-Z\-_]+(\|.*)?$/'

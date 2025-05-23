@@ -5,8 +5,15 @@ myacademicid_user_roles.affiliation_to_role:
     affiliation_mapping:
       type: sequence
       label: 'Affiliation types'
+      constraints:
+        FullyValidatable: ~
       sequence:
         type: string
+        # Until we have a RoleExists constraint in D11:
+        # https://www.drupal.org/project/drupal/issues/3508308
+        constraints:
+          Regex: '/^[a-zA-Z_]+$/'
+
 
 myacademicid_user_roles.role_to_affiliation:
   type: config_object
@@ -15,5 +22,10 @@ myacademicid_user_roles.role_to_affiliation:
     role_mapping:
       type: sequence
       label: 'Roles'
+      constraints:
+        FullyValidatable: ~
       sequence:
         type: string
+        # This requires a constraint based on defined affiliation types.
+        constraints:
+          Regex: '/^[a-zA-Z\-_]+$/'

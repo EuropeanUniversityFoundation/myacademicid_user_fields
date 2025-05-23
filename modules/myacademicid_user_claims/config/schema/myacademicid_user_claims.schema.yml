@@ -5,5 +5,9 @@ myacademicid_user_claims.settings:
     assert_member:
       type: sequence
       label: 'Additional member assertions'
+      constraints:
+        FullyValidatable: ~
       sequence:
         type: string
+        constraints:
+          Regex: '/^[a-zA-Z\-_]+$/'
