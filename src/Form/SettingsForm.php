@@ -3,6 +3,7 @@
 namespace Drupal\myacademicid_user_fields\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -31,22 +32,33 @@ class SettingsForm extends ConfigFormBase {
   protected $moduleHandler;
 
   /**
+   * The module extension list.
+   *
+   * @var \Drupal\Core\Extension\ModuleExtensionList
+   */
+  protected $moduleExtensionList;
+
+  /**
    * The constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler service.
+   * @param \Drupal\Core\Extension\ModuleExtensionList $module_extension_list
+   *   The module extension list.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation service.
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
     ModuleHandlerInterface $module_handler,
+    ModuleExtensionList $module_extension_list,
     TranslationInterface $string_translation
   ) {
     parent::__construct($config_factory);
-    $this->moduleHandler     = $module_handler;
+    $this->moduleHandler = $module_handler;
+    $this->moduleExtensionList = $module_extension_list;
     $this->stringTranslation = $string_translation;
   }
 
@@ -57,6 +69,7 @@ class SettingsForm extends ConfigFormBase {
     return new static(
       $container->get('config.factory'),
       $container->get('module_handler'),
+      $container->get('extension.list.module'),
       $container->get('string_translation'),
     );
   }
@@ -107,7 +120,8 @@ class SettingsForm extends ConfigFormBase {
     if (! $server_allowed) {
       $form['mode'][self::SERVER_MODE]['#description'] = $this
         ->t('Requires the %module module to be enabled.', [
-          '%module' => $this->moduleHandler->getName(self::SERVER_SUBMODULE),
+          '%module' => $this->moduleExtensionList
+            ->getName(self::SERVER_SUBMODULE),
         ]);
 
       $form['mode'][self::SERVER_MODE]['#disabled'] = TRUE;
