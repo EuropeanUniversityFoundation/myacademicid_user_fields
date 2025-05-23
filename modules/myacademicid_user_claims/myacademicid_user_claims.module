@@ -8,12 +8,12 @@
 use Drupal\user\UserInterface;
 
 /**
- * Implements hook_oauth2_server_user_claims.
+ * Implements hook_oauth2_server_claims.
  *
  * @return array
  *   An array of additional claims.
  */
-function myacademicid_user_claims_oauth2_server_user_claims(UserInterface $account, array $requested_scopes) {
+function myacademicid_user_claims_oauth2_server_claims(UserInterface $account, array $requested_scopes) {
   $assertion = \Drupal::service('myacademicid_user_claims.assertion');
   return $assertion->userClaims($account, $requested_scopes);
 }
