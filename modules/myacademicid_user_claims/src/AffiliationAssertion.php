@@ -106,6 +106,7 @@ class AffiliationAssertion {
           $field_values = [];
 
           foreach ($user->get($field) as $item) {
+            /** @var \Drupal\Core\Field\FieldItemListInterface $item */
             $field_values[] = $item->value;
           }
 

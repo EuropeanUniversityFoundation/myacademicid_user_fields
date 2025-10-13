@@ -26,7 +26,7 @@ class RoleMappingForm extends ConfigFormBase {
   /**
    * The user roles defined in the system.
    *
-   * @var Drupal\user\Entity\Role[]
+   * @var \Drupal\user\Entity\Role[]
    */
   protected $roles;
 
@@ -40,7 +40,7 @@ class RoleMappingForm extends ConfigFormBase {
   /**
    * The affiliation service.
    *
-   * @var Drupal\myacademicid_user_fields\MyacademicidUserAffiliation
+   * @var \Drupal\myacademicid_user_fields\MyacademicidUserAffiliation
    */
   protected $affiliation;
 

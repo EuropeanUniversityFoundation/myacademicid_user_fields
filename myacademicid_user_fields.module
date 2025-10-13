@@ -24,6 +24,7 @@ function myacademicid_user_fields_entity_base_field_info(EntityTypeInterface $en
  */
 function myacademicid_user_fields_user_presave(EntityInterface $user) {
   $service = \Drupal::service('myacademicid_user_fields');
+  /** @var \Drupal\user\UserInterface $user */
   $service->checkFieldChange($user);
 }
 

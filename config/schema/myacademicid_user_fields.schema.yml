@@ -17,5 +17,9 @@ myacademicid_user_fields.types:
     additional:
       type: sequence
       label: 'Additional affiliation types'
+      constraints:
+        FullyValidatable: ~
       sequence:
         type: string
+        constraints:
+          Regex: '/^[a-zA-Z0-9]([a-zA-Z0-9_-])*[a-zA-Z0-9](\|.+)?$/'

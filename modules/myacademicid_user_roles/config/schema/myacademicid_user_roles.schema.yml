@@ -5,8 +5,13 @@ myacademicid_user_roles.affiliation_to_role:
     affiliation_mapping:
       type: sequence
       label: 'Affiliation types'
+      constraints:
+        FullyValidatable: ~
       sequence:
         type: string
+        constraints:
+          ConfigExists:
+            prefix: user.role.
 
 myacademicid_user_roles.role_to_affiliation:
   type: config_object
@@ -15,5 +20,9 @@ myacademicid_user_roles.role_to_affiliation:
     role_mapping:
       type: sequence
       label: 'Roles'
+      constraints:
+        FullyValidatable: ~
       sequence:
         type: string
+        constraints:
+          NotNull: []

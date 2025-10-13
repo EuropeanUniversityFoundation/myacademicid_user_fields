@@ -249,6 +249,7 @@ class MyacademicidUserRoles {
    *   Array of field values.
    */
   public function flattenValue(UserInterface $user, string $field): array {
+    /** @var \Drupal\Core\Field\FieldItemListInterface $obj */
     $obj = $user->get($field);
     $value = [];
 

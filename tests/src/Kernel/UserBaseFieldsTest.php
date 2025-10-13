@@ -24,7 +24,7 @@ class UserBaseFieldsTest extends KernelTestBase {
   /**
    * Modules to enable.
    *
-   * @var array
+   * @var array<string>
    */
   protected static $modules = ['user', 'myacademicid_user_fields'];
 
