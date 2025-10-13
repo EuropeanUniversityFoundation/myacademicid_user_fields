@@ -38,7 +38,7 @@ class UserSchacPersonalUniqueCodeChangeEvent extends Event {
 
     $field = $this->user->get(MyacademicidUserFields::FIELD_SPUC);
 
-    foreach ($field as $idx => $item) {
+    foreach ($field as $item) {
       $this->spuc[] = $item->value;
     }
   }

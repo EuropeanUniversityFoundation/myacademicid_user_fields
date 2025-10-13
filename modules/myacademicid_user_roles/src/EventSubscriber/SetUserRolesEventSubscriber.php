@@ -5,7 +5,6 @@ namespace Drupal\myacademicid_user_roles\EventSubscriber;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\user\Entity\User;
 use Drupal\myacademicid_user_roles\Event\SetUserRolesEvent;
 use Drupal\myacademicid_user_roles\MyacademicidUserRoles;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -44,7 +43,7 @@ class SetUserRolesEventSubscriber implements EventSubscriberInterface {
   public function __construct(
     MyacademicidUserRoles $service,
     MessengerInterface $messenger,
-    TranslationInterface $string_translation
+    TranslationInterface $string_translation,
   ) {
     $this->service           = $service;
     $this->messenger         = $messenger;
@@ -57,7 +56,7 @@ class SetUserRolesEventSubscriber implements EventSubscriberInterface {
   public static function getSubscribedEvents() {
     return [
       SetUserRolesEvent::EVENT_NAME => [
-        'onSetUserRoles'
+        'onSetUserRoles',
       ],
     ];
   }

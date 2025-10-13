@@ -44,15 +44,17 @@ class SchacHomeOrganizationValidator extends ConstraintValidator {
    * Validates hostname labels.
    *
    * @param string $hostname
+   *   The hostname to validate.
    *
-   * @return bool $fail
+   * @return bool
+   *   Whether the labels are valid.
    */
   private function validateLabels(string $hostname): bool {
     // Labels are the components between periods in the hostname.
     $labels = \explode('.', $hostname);
 
     // The last label is the Top Level Domain (TLD).
-    $tld = $labels[\count($labels)-1];
+    $tld = $labels[\count($labels) - 1];
     // The TLD label must contain only letters.
     // The TLD label must contain at least 2 characters.
     // The longest known TLD is 24 characters long.
@@ -60,7 +62,7 @@ class SchacHomeOrganizationValidator extends ConstraintValidator {
 
     if (!$fail) {
       // Validate all other labels.
-      for ($i=0; $i < \count($labels)-1; $i++) {
+      for ($i = 0; $i < \count($labels) - 1; $i++) {
         $label = $labels[$i];
 
         if (!$fail) {
@@ -71,7 +73,7 @@ class SchacHomeOrganizationValidator extends ConstraintValidator {
 
         if (!$fail) {
           // There are restrictions on the domain label in particular.
-          $domain = ($i === \count($labels)-2);
+          $domain = ($i === \count($labels) - 2);
           // Validate an individual label.
           $fail = $this->validateSingleLabel($label, $domain);
         }
@@ -85,16 +87,19 @@ class SchacHomeOrganizationValidator extends ConstraintValidator {
    * Validates a single label.
    *
    * @param string $label
+   *   The label to validate.
    * @param bool $domain
+   *   Whether the label is a domain label.
    *
-   * @return bool $fail
+   * @return bool
+   *   Whether the label is valid.
    */
   private function validateSingleLabel(string $label, bool $domain): bool {
     // Hyphens are allowed, under certain conditions.
     $parts = \explode('-', $label);
 
     // No leading or trailing hyphens allowed (so no empty parts).
-    $fail = (empty($parts[0]) || empty($parts[\count($parts)-1]));
+    $fail = (empty($parts[0]) || empty($parts[\count($parts) - 1]));
 
     if (!$fail) {
       // Apart from hyphens, all other characters must be alphanumerical.
@@ -112,4 +117,5 @@ class SchacHomeOrganizationValidator extends ConstraintValidator {
 
     return $fail;
   }
+
 }

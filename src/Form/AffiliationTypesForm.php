@@ -4,6 +4,7 @@ namespace Drupal\myacademicid_user_fields\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Form\ConfigTarget;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -19,6 +20,8 @@ class AffiliationTypesForm extends ConfigFormBase {
 
   /**
    * The affiliation service.
+   *
+   * @var \Drupal\myacademicid_user_fields\MyacademicidUserAffiliation
    */
   protected $affiliation;
 
@@ -35,10 +38,10 @@ class AffiliationTypesForm extends ConfigFormBase {
   public function __construct(
     ConfigFactoryInterface $config_factory,
     MyacademicidUserAffiliation $affiliation,
-    TranslationInterface $string_translation
+    TranslationInterface $string_translation,
   ) {
     parent::__construct($config_factory);
-    $this->affiliation      = $affiliation;
+    $this->affiliation       = $affiliation;
     $this->stringTranslation = $string_translation;
   }
 
@@ -73,7 +76,7 @@ class AffiliationTypesForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $intro = '<p>' . $this
       ->t('Here are all the defined affiliation types. %caveat', [
-        '%caveat' => $this->t('This configuration is used by submodules.')
+        '%caveat' => $this->t('This configuration is used by submodules.'),
       ]) . '</p>';
 
     $form['intro'] = [
@@ -118,10 +121,6 @@ class AffiliationTypesForm extends ConfigFormBase {
       '#empty' => $this->t('Nothing to display.'),
     ];
 
-    $config = $this->config('myacademicid_user_fields.types');
-
-    $additional = (array) $config->get('additional');
-
     $description = '<p>' . $this
       ->t('Add affiliation types or override the labels of existing ones.');
     $description .= '<br/>' . $this
@@ -130,47 +129,46 @@ class AffiliationTypesForm extends ConfigFormBase {
       ->t('If no label is provided, the key will also be used as the label.');
     $description .= '</p>';
 
-    $default_text = ($additional) ? implode("\n", $additional) : '';
-
     $form['additional'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Additional affiliation types'),
       '#description' => $description,
-      '#default_value' => $default_text,
       '#rows' => 5,
+      '#config_target' => new ConfigTarget(
+        'myacademicid_user_fields.types',
+        'additional',
+        static::class . '::arrayToMultiLineString',
+        static::class . '::multiLineStringToArray',
+      ),
     ];
 
     return parent::buildForm($form, $form_state);
   }
 
   /**
-   * {@inheritdoc}
+   * Prepares the submitted value to be stored in config.
+   *
+   * @param string $value
+   *   The submitted value.
+   *
+   * @return array
+   *   The value to be stored in config.
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    parent::validateForm($form, $form_state);
+  public static function multiLineStringToArray(string $value): array {
+    return array_filter(array_map('trim', explode("\n", trim($value))));
   }
 
   /**
-   * {@inheritdoc}
+   * Prepares the config value to be displayed in the form.
+   *
+   * @param array $value
+   *   The value saved in config.
+   *
+   * @return string
+   *   The value of the form element.
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->config('myacademicid_user_fields.types');
-
-    $multiline = $form_state->getValue('additional');
-
-    $additional = array_filter(
-      array_map(
-        'trim', explode(
-          "\n", $multiline
-        )
-      ), 'strlen'
-    );
-
-    $config->set('additional', $additional);
-
-    $config->save();
-
-    parent::submitForm($form, $form_state);
+  public static function arrayToMultiLineString(array $value): string {
+    return implode("\n", $value);
   }
 
 }

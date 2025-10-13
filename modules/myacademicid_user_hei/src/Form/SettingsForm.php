@@ -40,16 +40,16 @@ class SettingsForm extends ConfigFormBase {
 
     $sync_modes = [
       self::KEEP_IN_SYNC => $this
-        ->t('Keep user\'s Institution and %sho claim in sync.', [
+        ->t("Keep user's Institution and %sho claim in sync.", [
           '%sho' => self::CLAIM_SHO,
         ]),
       self::SYNC_IF_EMPTY => $this
-        ->t('Sync user\'s Institution with %sho claim @condition.', [
+        ->t("Sync user's Institution with %sho claim @condition.", [
           '%sho' => self::CLAIM_SHO,
-          '@condition' => $this->t('only when Institution is empty')
+          '@condition' => $this->t('only when Institution is empty'),
         ]),
       self::DO_NOT_SYNC => $this
-        ->t('Do not sync user\'s Institution with %sho claim.', [
+        ->t("Do not sync user's Institution with %sho claim.", [
           '%sho' => self::CLAIM_SHO,
         ]),
     ];
@@ -66,7 +66,7 @@ class SettingsForm extends ConfigFormBase {
 
     $form['sync_mode'][self::SYNC_IF_EMPTY]['#description'] = $this
       ->t('This will only have an effect when operating in %mode.', [
-        '%mode' => $this->t('Client mode')
+        '%mode' => $this->t('Client mode'),
       ]);
 
     $form['import'] = [
@@ -78,13 +78,6 @@ class SettingsForm extends ConfigFormBase {
     ];
 
     return parent::buildForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    parent::validateForm($form, $form_state);
   }
 
   /**

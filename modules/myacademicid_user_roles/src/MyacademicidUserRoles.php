@@ -3,10 +3,10 @@
 namespace Drupal\myacademicid_user_roles;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\user\Entity\Role;
 use Drupal\user\UserInterface;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Drupal\myacademicid_user_roles\Event\UserRolesChangeEvent;
@@ -25,6 +25,13 @@ class MyacademicidUserRoles {
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
 
   /**
    * Event dispatcher.
@@ -52,6 +59,8 @@ class MyacademicidUserRoles {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    * @param \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher service.
    * @param \Drupal\myacademicid_user_fields\MyacademicidUserFields $fields_service
@@ -63,12 +72,14 @@ class MyacademicidUserRoles {
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
+    EntityTypeManagerInterface $entity_type_manager,
     EventDispatcherInterface $event_dispatcher,
     MyacademicidUserFields $fields_service,
     MessengerInterface $messenger,
-    TranslationInterface $string_translation
+    TranslationInterface $string_translation,
   ) {
     $this->configFactory     = $config_factory;
+    $this->entityTypeManager = $entity_type_manager;
     $this->eventDispatcher   = $event_dispatcher;
     $this->fieldsService     = $fields_service;
     $this->messenger         = $messenger;
@@ -79,9 +90,10 @@ class MyacademicidUserRoles {
    * Check for changes in the user entity to dispatch events.
    *
    * @param \Drupal\user\UserInterface $user
+   *   The user entity.
    */
   public function checkRoleChange(UserInterface $user) {
-    if (! $this->equalRoles($user)) {
+    if (!$this->equalRoles($user)) {
       // Instantiate our event.
       $event = new UserRolesChangeEvent($user);
       // Dispatch the event.
@@ -96,7 +108,8 @@ class MyacademicidUserRoles {
    * @param \Drupal\user\UserInterface $user
    *   The user entity.
    *
-   * @return boolean
+   * @return bool
+   *   Whether the roles are equal.
    */
   public function equalRoles(UserInterface $user): bool {
     // Get the original user roles.
@@ -125,14 +138,14 @@ class MyacademicidUserRoles {
 
     $vea = [];
 
-    foreach ($roles as $idx => $rid) {
+    foreach ($roles as $rid) {
       if (
         \array_key_exists($rid, $role_mapping) &&
-        ! empty($role_mapping[$rid])
+        !empty($role_mapping[$rid])
       ) {
         $key = $role_mapping[$rid];
 
-        foreach ($sho as $idx => $value) {
+        foreach ($sho as $value) {
           $vea[] = \implode('@', [$key, $value]);
         }
       }
@@ -149,7 +162,7 @@ class MyacademicidUserRoles {
    * @param array $vea
    *   The voperson_external_affiliation values.
    *
-   * @return array $roles
+   * @return array
    *   Array of user roles.
    */
   public function rolesFromAffiliation(UserInterface $user, array $vea): array {
@@ -162,8 +175,8 @@ class MyacademicidUserRoles {
     $keys = [];
 
     // Gather all affiliation keys and schac_home_organization values.
-    foreach ($vea as $idx => $item) {
-      $parts = \explode('@' ,$item);
+    foreach ($vea as $item) {
+      $parts = \explode('@', $item);
 
       if (\in_array($parts[1], $sho)) {
         $keys[] = $parts[0];
@@ -173,10 +186,10 @@ class MyacademicidUserRoles {
     $roles = [];
 
     // Gather all mapped roles from affiliation keys.
-    foreach ($keys as $idx => $key) {
+    foreach ($keys as $key) {
       if (
         \array_key_exists($key, $affiliation_mapping) &&
-        ! empty($affiliation_mapping[$key])
+        !empty($affiliation_mapping[$key])
       ) {
         $roles[] = $affiliation_mapping[$key];
       }
@@ -192,7 +205,7 @@ class MyacademicidUserRoles {
    *   The user entity.
    * @param array $roles
    *   The roles to be set on the user entity.
-   * @param boolean $save
+   * @param bool $save
    *   Whether the user entity should be saved after setting the value.
    */
   public function setUserRoles(UserInterface $user, array $roles, $save = TRUE) {
@@ -203,16 +216,16 @@ class MyacademicidUserRoles {
     $current = $user->getRoles(TRUE);
 
     // Roles to add.
-    foreach ($roles as $idx => $rid) {
-      if (! \in_array($rid, $current)) {
+    foreach ($roles as $rid) {
+      if (!\in_array($rid, $current)) {
         $user->addRole($rid);
       }
     }
 
     // Roles to remove.
-    foreach ($current as $idx => $rid) {
+    foreach ($current as $rid) {
       if (
-        ! \in_array($rid, $roles) &&
+        !\in_array($rid, $roles) &&
         \in_array($rid, $affiliation_mapping)
       ) {
         $user->removeRole($rid);
@@ -232,14 +245,14 @@ class MyacademicidUserRoles {
    * @param string $field
    *   The field name.
    *
-   * @return array $value
+   * @return array
    *   Array of field values.
    */
   public function flattenValue(UserInterface $user, string $field): array {
     $obj = $user->get($field);
     $value = [];
 
-    foreach ($obj as $key => $item) {
+    foreach ($obj as $item) {
       $value[] = $item->value;
     }
 
@@ -252,14 +265,15 @@ class MyacademicidUserRoles {
    * @param array $roles
    *   Array of role keys.
    *
-   * @return array $labels
+   * @return array
    *   Array of role labels.
    */
   public function roleLabels(array $roles): array {
+    $storage = $this->entityTypeManager->getStorage('user_role');
     $labels = [];
 
-    foreach ($roles as $idx => $key) {
-      $labels[] = Role::load($key)->label();
+    foreach ($roles as $role) {
+      $labels[] = $storage->load($role)->label();
     }
 
     return $labels;

@@ -69,7 +69,7 @@ class MyacademicidUserHei {
     InstitutionLookupManager $hei_lookup,
     LoggerChannelFactoryInterface $logger_factory,
     RendererInterface $renderer,
-    TranslationInterface $string_translation
+    TranslationInterface $string_translation,
   ) {
     $this->heiManager        = $hei_manager;
     $this->heiLookup         = $hei_lookup;
@@ -83,7 +83,7 @@ class MyacademicidUserHei {
    *
    * @param string $sho
    *   The schac_home_organization value.
-   * @param boolean $import
+   * @param bool $import
    *   Whether to lookup and import an Institution.
    *
    * @return array
@@ -126,7 +126,8 @@ class MyacademicidUserHei {
 
     if ($import) {
       $this->logger->error($message);
-    } else {
+    }
+    else {
       $this->logger->warning($message);
     }
   }

@@ -5,7 +5,6 @@ namespace Drupal\myacademicid_user_fields\EventSubscriber;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\user\Entity\User;
 use Drupal\myacademicid_user_fields\Event\SetUserVopersonExternalAffiliationEvent;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -44,7 +43,7 @@ class SetUserVopersonExternalAffiliationEventSubscriber implements EventSubscrib
   public function __construct(
     MyacademicidUserFields $service,
     MessengerInterface $messenger,
-    TranslationInterface $string_translation
+    TranslationInterface $string_translation,
   ) {
     $this->service           = $service;
     $this->messenger         = $messenger;
@@ -57,7 +56,7 @@ class SetUserVopersonExternalAffiliationEventSubscriber implements EventSubscrib
   public static function getSubscribedEvents() {
     return [
       SetUserVopersonExternalAffiliationEvent::EVENT_NAME => [
-        'onSetUserVopersonExternalAffiliation'
+        'onSetUserVopersonExternalAffiliation',
       ],
     ];
   }
@@ -81,7 +80,7 @@ class SetUserVopersonExternalAffiliationEventSubscriber implements EventSubscrib
       $message = $this->t('Setting %claim claim as %vea for user %user...', [
         '%user' => $event->user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_VEA,
-        '%vea' => \implode(', ', $event->vea)
+        '%vea' => \implode(', ', $event->vea),
       ]);
 
       // $this->messenger->addStatus($message);

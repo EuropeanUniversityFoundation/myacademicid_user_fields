@@ -29,7 +29,7 @@ class SetUserSchacPersonalUniqueCodeEvent extends Event {
   /**
    * Whether the user entity should be saved after setting the value.
    *
-   * @var boolean
+   * @var bool
    */
   public $save;
 
@@ -40,7 +40,7 @@ class SetUserSchacPersonalUniqueCodeEvent extends Event {
    *   The user entity.
    * @param array $spuc
    *   Array of schac_personal_unique_code values.
-   * @param boolean $save
+   * @param bool $save
    *   Whether the user entity should be saved after setting the value.
    */
   public function __construct(UserInterface $user, array $spuc, $save = TRUE) {

@@ -3,6 +3,7 @@
 namespace Drupal\myacademicid_user_roles\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
@@ -10,12 +11,14 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
-use Drupal\user\Entity\Role;
 use Drupal\user\RoleInterface;
 use Drupal\myacademicid_user_fields\MyacademicidUserAffiliation;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Maps affiliation claims to user roles.
+ */
 class AffiliationMappingForm extends ConfigFormBase {
 
   use StringTranslationTrait;
@@ -26,6 +29,13 @@ class AffiliationMappingForm extends ConfigFormBase {
    * @var Drupal\user\Entity\Role[]
    */
   protected $roles;
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
 
   /**
    * The affiliation service.
@@ -46,6 +56,8 @@ class AffiliationMappingForm extends ConfigFormBase {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    * @param \Drupal\myacademicid_user_fields\MyacademicidUserAffiliation $affiliation
    *   The affiliation service.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
@@ -55,16 +67,20 @@ class AffiliationMappingForm extends ConfigFormBase {
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
+    EntityTypeManagerInterface $entity_type_manager,
     MyacademicidUserAffiliation $affiliation,
     MessengerInterface $messenger,
-    TranslationInterface $string_translation
+    TranslationInterface $string_translation,
   ) {
     parent::__construct($config_factory);
-    $this->affiliation      = $affiliation;
+    $this->entityTypeManager = $entity_type_manager;
+    $this->affiliation       = $affiliation;
     $this->messenger         = $messenger;
     $this->stringTranslation = $string_translation;
 
-    $this->roles = Role::loadMultiple();
+    $this->roles = $this->entityTypeManager
+      ->getStorage('user_role')
+      ->loadMultiple();
 
     foreach ($this->roles as $rid => $role) {
       if (
@@ -83,6 +99,7 @@ class AffiliationMappingForm extends ConfigFormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
+      $container->get('entity_type.manager'),
       $container->get('myacademicid_user_fields.affiliation'),
       $container->get('messenger'),
       $container->get('string_translation'),
@@ -133,7 +150,7 @@ class AffiliationMappingForm extends ConfigFormBase {
         'Map affiliation claims to be converted into user roles. %caveat', [
           '%caveat' => $this->t(
             'Admin roles cannot be automatically assigned for security reasons.'
-          )
+          ),
         ]
       ),
     ];
@@ -144,7 +161,7 @@ class AffiliationMappingForm extends ConfigFormBase {
     }
 
     foreach ($this->affiliation->getOptions() as $key => $label) {
-      $default = isset($affiliationmap[$key]) ? $affiliationmap[$key] : '';
+      $default = $affiliationmap[$key] ?? '';
 
       $form['affiliation_mapping'][$key] = [
         '#type' => 'select',
@@ -157,13 +174,6 @@ class AffiliationMappingForm extends ConfigFormBase {
     }
 
     return parent::buildForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    parent::validateForm($form, $form_state);
   }
 
   /**

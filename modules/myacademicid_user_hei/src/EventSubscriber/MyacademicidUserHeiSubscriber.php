@@ -91,7 +91,7 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
     MyacademicidUserHei $hei_service,
     MessengerInterface $messenger,
     RendererInterface $renderer,
-    TranslationInterface $string_translation
+    TranslationInterface $string_translation,
   ) {
     $this->configFactory     = $config_factory;
     $this->eventDispatcher   = $event_dispatcher;
@@ -108,10 +108,10 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
   public static function getSubscribedEvents() {
     return [
       UserInstitutionChangeEvent::EVENT_NAME => [
-        'onUserInstitutionChange'
+        'onUserInstitutionChange',
       ],
       UserSchacHomeOrganizationChangeEvent::EVENT_NAME => [
-        'onUserSchacHomeOrganizationChange'
+        'onUserSchacHomeOrganizationChange',
       ],
     ];
   }
@@ -132,7 +132,7 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
       // Instantiate our event.
       $new_event = new SetUserSchacHomeOrganizationEvent(
         $event->user,
-        $event->hei_id,
+        $event->heiId,
         FALSE
       );
       // Dispatch the event.
@@ -179,15 +179,15 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
         ->get('myacademicid_user_hei.settings')
         ->get('import');
 
-      foreach ($event->sho as $idx => $sho) {
+      foreach ($event->sho as $sho) {
         $exists = $this->heiService->getHeiBySho($sho, $import);
 
         if ($exists) {
-          foreach ($exists as $id => $hei) {
+          foreach ($exists as $hei) {
             $hei_list[] = $hei;
             $renderable = $hei->toLink()->toRenderable();
           }
-          $message = $this->t('User %user\'s %claim claim matches @link', [
+          $message = $this->t("User %user's %claim claim matches @link", [
             '%user' => $event->user->label(),
             '%claim' => MyacademicidUserFields::CLAIM_SHO,
             '@link' => $this->renderer->render($renderable),

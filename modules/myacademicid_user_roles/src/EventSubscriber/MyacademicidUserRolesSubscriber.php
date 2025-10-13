@@ -80,7 +80,7 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
     MyacademicidUserFields $fields_service,
     MyacademicidUserRoles $roles_service,
     MessengerInterface $messenger,
-    TranslationInterface $string_translation
+    TranslationInterface $string_translation,
   ) {
     $this->configFactory     = $config_factory;
     $this->eventDispatcher   = $event_dispatcher;
@@ -96,13 +96,13 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
   public static function getSubscribedEvents() {
     return [
       UserRolesChangeEvent::EVENT_NAME => [
-        'onUserRolesChange'
+        'onUserRolesChange',
       ],
       UserSchacHomeOrganizationChangeEvent::EVENT_NAME => [
-        'onUserSchacHomeOrganizationChange'
+        'onUserSchacHomeOrganizationChange',
       ],
       UserVopersonExternalAffiliationChangeEvent::EVENT_NAME => [
-        'onUserVopersonExternalAffiliationChange'
+        'onUserVopersonExternalAffiliationChange',
       ],
     ];
   }

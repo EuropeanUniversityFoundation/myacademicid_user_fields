@@ -38,7 +38,7 @@ class UserSchacHomeOrganizationChangeEvent extends Event {
 
     $field = $this->user->get(MyacademicidUserFields::FIELD_SHO);
 
-    foreach ($field as $idx => $item) {
+    foreach ($field as $item) {
       $this->sho[] = $item->value;
     }
   }

@@ -29,7 +29,7 @@ class SetUserSchacHomeOrganizationEvent extends Event {
   /**
    * Whether the user entity should be saved after setting the value.
    *
-   * @var boolean
+   * @var bool
    */
   public $save;
 
@@ -40,7 +40,7 @@ class SetUserSchacHomeOrganizationEvent extends Event {
    *   The user entity.
    * @param array $sho
    *   Array of schac_home_organization values.
-   * @param boolean $save
+   * @param bool $save
    *   Whether the user entity should be saved after setting the value.
    */
   public function __construct(UserInterface $user, array $sho, $save = TRUE) {

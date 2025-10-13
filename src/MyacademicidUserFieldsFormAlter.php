@@ -6,8 +6,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxy;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\myacademicid_user_fields\MyacademicidUserAffiliation;
-use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 
 /**
  * MyAcademicID user fields form alter service.
@@ -21,17 +19,21 @@ class MyacademicidUserFieldsFormAlter {
   const BASE_FIELDS = [
     MyacademicidUserFields::FIELD_SHO,
     MyacademicidUserFields::FIELD_SPUC,
-    MyacademicidUserFields::FIELD_VEA
+    MyacademicidUserFields::FIELD_VEA,
   ];
   const WRAPPER = 'myacademicid_user_fields_wrapper';
 
   /**
    * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountProxy
    */
   protected $currentUser;
 
   /**
    * The affiliation service.
+   *
+   * @var \Drupal\myacademicid_user_fields\MyacademicidUserAffiliation
    */
   protected $affiliation;
 
@@ -48,7 +50,7 @@ class MyacademicidUserFieldsFormAlter {
   public function __construct(
     AccountProxy $current_user,
     MyacademicidUserAffiliation $affiliation,
-    TranslationInterface $string_translation
+    TranslationInterface $string_translation,
   ) {
     $this->currentUser       = $current_user;
     $this->affiliation       = $affiliation;
@@ -59,29 +61,31 @@ class MyacademicidUserFieldsFormAlter {
    * Alter the user form element according to permissions.
    *
    * @param array $form
-   * @param Drupal\Core\Form\FormStateInterface $form_state
+   *   The form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state object.
    */
   public function userFormAlter(&$form, FormStateInterface $form_state) {
     // Determine whether the current user is allowed to view the value.
     $view_allowed = $this->currentUser
-      ->hasPermission(self::VIEW_PERMISSION, $this->currentUser);
+      ->hasPermission(self::VIEW_PERMISSION);
 
     // Determine whether the current user is allowed to set the value.
     $set_allowed = $this->currentUser
-      ->hasPermission(self::ADMIN_PERMISSION, $this->currentUser);
+      ->hasPermission(self::ADMIN_PERMISSION);
 
     $form[self::WRAPPER] = [
       '#type' => ($view_allowed) ? 'details' : 'hidden',
       '#title' => $this->t('MyAcademicID user fields'),
       '#weight' => 100,
-      '#open' => $set_allowed
+      '#open' => $set_allowed,
     ];
 
-    foreach (self::BASE_FIELDS as $idx => $field) {
-      // If the base field is in the user form, changes may be needed,
+    foreach (self::BASE_FIELDS as $field) {
+      // If the base field is in the user form, changes may be needed,.
       if (\array_key_exists($field, $form)) {
         // If not allowed, the form element must be replaced with text.
-        if (! $set_allowed) {
+        if (!$set_allowed) {
           // Hide the form element.
           $form[$field]['#type'] = 'hidden';
 

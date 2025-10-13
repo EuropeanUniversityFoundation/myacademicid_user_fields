@@ -38,7 +38,7 @@ class UserVopersonExternalAffiliationChangeEvent extends Event {
 
     $field = $this->user->get(MyacademicidUserFields::FIELD_VEA);
 
-    foreach ($field as $idx => $item) {
+    foreach ($field as $item) {
       $this->vea[] = $item->value;
     }
   }
