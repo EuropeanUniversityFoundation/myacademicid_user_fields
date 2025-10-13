@@ -2,7 +2,7 @@
 
 namespace Drupal\myacademicid_user_roles\EventSubscriber;
 
-use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\myacademicid_user_roles\Event\SetUserRolesEvent;
@@ -17,6 +17,13 @@ class SetUserRolesEventSubscriber implements EventSubscriberInterface {
   use StringTranslationTrait;
 
   /**
+   * The logger service.
+   *
+   * @var \Psr\Log\LoggerInterface
+   */
+  protected $logger;
+
+  /**
    * The MyAcademicID user roles service.
    *
    * @var \Drupal\myacademicid_user_roles\MyacademicidUserRoles
@@ -24,29 +31,22 @@ class SetUserRolesEventSubscriber implements EventSubscriberInterface {
   protected $service;
 
   /**
-   * The messenger.
-   *
-   * @var \Drupal\Core\Messenger\MessengerInterface
-   */
-  protected $messenger;
-
-  /**
    * Constructs event subscriber.
    *
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
+   *   The logger factory service.
    * @param \Drupal\myacademicid_user_roles\MyacademicidUserRoles $service
    *   The MyAcademicID user roles service.
-   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
-   *   The messenger.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation service.
    */
   public function __construct(
+    LoggerChannelFactoryInterface $logger_factory,
     MyacademicidUserRoles $service,
-    MessengerInterface $messenger,
     TranslationInterface $string_translation,
   ) {
+    $this->logger            = $logger_factory->get('myacademicid_user_roles');
     $this->service           = $service;
-    $this->messenger         = $messenger;
     $this->stringTranslation = $string_translation;
   }
 
@@ -73,7 +73,7 @@ class SetUserRolesEventSubscriber implements EventSubscriberInterface {
         '%user' => $event->user->label(),
       ]);
 
-      // $this->messenger->addWarning($message);
+      $this->logger->notice($message);
     }
     else {
       $labels = $this->service->roleLabels($event->roles);
@@ -84,7 +84,7 @@ class SetUserRolesEventSubscriber implements EventSubscriberInterface {
         '%labels' => \implode(', ', \array_unique($labels)),
       ]);
 
-      // $this->messenger->addStatus($message);
+      $this->logger->notice($message);
     }
 
     $this->service->setUserRoles(

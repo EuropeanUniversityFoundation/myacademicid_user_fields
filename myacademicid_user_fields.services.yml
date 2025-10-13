@@ -13,24 +13,24 @@ services:
 
   myacademicid_user_fields.event_subscriber:
     class: Drupal\myacademicid_user_fields\EventSubscriber\MyacademicidUserFieldsSubscriber
-    arguments: ['@messenger', '@string_translation']
+    arguments: ['@logger.factory', '@string_translation']
     tags:
       - { name: event_subscriber }
 
   myacademicid_user_fields.set_sho_subscriber:
     class: Drupal\myacademicid_user_fields\EventSubscriber\SetUserSchacHomeOrganizationEventSubscriber
-    arguments: ['@myacademicid_user_fields', '@messenger', '@string_translation']
+    arguments: ['@logger.factory', '@myacademicid_user_fields', '@string_translation']
     tags:
       - { name: event_subscriber }
 
   myacademicid_user_fields.set_spuc_subscriber:
     class: Drupal\myacademicid_user_fields\EventSubscriber\SetUserSchacPersonalUniqueCodeEventSubscriber
-    arguments: ['@myacademicid_user_fields', '@messenger', '@string_translation']
+    arguments: ['@logger.factory', '@myacademicid_user_fields', '@string_translation']
     tags:
       - { name: event_subscriber }
 
   myacademicid_user_fields.set_vea_subscriber:
     class: Drupal\myacademicid_user_fields\EventSubscriber\SetUserVopersonExternalAffiliationEventSubscriber
-    arguments: ['@myacademicid_user_fields', '@messenger', '@string_translation']
+    arguments: ['@logger.factory', '@myacademicid_user_fields', '@string_translation']
     tags:
       - { name: event_subscriber }
