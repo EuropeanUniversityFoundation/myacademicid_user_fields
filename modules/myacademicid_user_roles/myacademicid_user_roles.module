@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityInterface;
  * Implements hook_ENTITY_TYPE_presave().
  */
 function myacademicid_user_roles_user_presave(EntityInterface $user) {
+  /** @var \Drupal\user\UserInterface $user */
   $service = \Drupal::service('myacademicid_user_roles');
   $service->checkRoleChange($user);
 }

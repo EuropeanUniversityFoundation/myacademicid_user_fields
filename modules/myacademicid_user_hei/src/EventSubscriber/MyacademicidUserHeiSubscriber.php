@@ -3,7 +3,7 @@
 namespace Drupal\myacademicid_user_hei\EventSubscriber;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -39,6 +39,13 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
   protected $eventDispatcher;
 
   /**
+   * The logger service.
+   *
+   * @var \Psr\Log\LoggerInterface
+   */
+  protected $logger;
+
+  /**
    * The MyAcademicID user fields service.
    *
    * @var \Drupal\myacademicid_user_fields\MyacademicidUserFields
@@ -51,13 +58,6 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
    * @var \Drupal\myacademicid_user_hei\MyacademicidUserHei
    */
   protected $heiService;
-
-  /**
-   * The messenger.
-   *
-   * @var \Drupal\Core\Messenger\MessengerInterface
-   */
-  protected $messenger;
 
   /**
    * The renderer service.
@@ -73,12 +73,12 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
    *   The config factory.
    * @param \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher service.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
+   *   The logger factory service.
    * @param \Drupal\myacademicid_user_fields\MyacademicidUserFields $fields_service
    *   The MyAcademicID user fields service.
    * @param \Drupal\myacademicid_user_hei\MyacademicidUserHei $hei_service
    *   The MyAcademicID user institution service.
-   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
-   *   The messenger.
    * @param \Drupal\Core\Render\RendererInterface $renderer
    *   The renderer service.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
@@ -87,17 +87,17 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
   public function __construct(
     ConfigFactoryInterface $config_factory,
     EventDispatcherInterface $event_dispatcher,
+    LoggerChannelFactoryInterface $logger_factory,
     MyacademicidUserFields $fields_service,
     MyacademicidUserHei $hei_service,
-    MessengerInterface $messenger,
     RendererInterface $renderer,
-    TranslationInterface $string_translation
+    TranslationInterface $string_translation,
   ) {
     $this->configFactory     = $config_factory;
     $this->eventDispatcher   = $event_dispatcher;
+    $this->logger            = $logger_factory->get('myacademicid_user_hei');
     $this->fieldsService     = $fields_service;
     $this->heiService        = $hei_service;
-    $this->messenger         = $messenger;
     $this->renderer          = $renderer;
     $this->stringTranslation = $string_translation;
   }
@@ -108,10 +108,10 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
   public static function getSubscribedEvents() {
     return [
       UserInstitutionChangeEvent::EVENT_NAME => [
-        'onUserInstitutionChange'
+        'onUserInstitutionChange',
       ],
       UserSchacHomeOrganizationChangeEvent::EVENT_NAME => [
-        'onUserSchacHomeOrganizationChange'
+        'onUserSchacHomeOrganizationChange',
       ],
     ];
   }
@@ -132,7 +132,7 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
       // Instantiate our event.
       $new_event = new SetUserSchacHomeOrganizationEvent(
         $event->user,
-        $event->hei_id,
+        $event->heiId,
         FALSE
       );
       // Dispatch the event.
@@ -179,27 +179,27 @@ class MyacademicidUserHeiSubscriber implements EventSubscriberInterface {
         ->get('myacademicid_user_hei.settings')
         ->get('import');
 
-      foreach ($event->sho as $idx => $sho) {
+      foreach ($event->sho as $sho) {
         $exists = $this->heiService->getHeiBySho($sho, $import);
 
         if ($exists) {
-          foreach ($exists as $id => $hei) {
+          foreach ($exists as $hei) {
             $hei_list[] = $hei;
             $renderable = $hei->toLink()->toRenderable();
           }
-          $message = $this->t('User %user\'s %claim claim matches @link', [
+          $message = $this->t("User %user's %claim claim matches @link", [
             '%user' => $event->user->label(),
             '%claim' => MyacademicidUserFields::CLAIM_SHO,
             '@link' => $this->renderer->render($renderable),
           ]);
-          // $this->messenger->addMessage($message);
+          $this->logger->notice($message);
         }
         else {
           $message = $this->t('No match found for %claim claim %sho.', [
             '%claim' => MyacademicidUserFields::CLAIM_SHO,
             '%sho' => $sho,
           ]);
-          // $this->messenger->addWarning($message);
+          $this->logger->notice($message);
           $this->heiService->logUnmatched($event->user, $sho, $import);
         }
       }

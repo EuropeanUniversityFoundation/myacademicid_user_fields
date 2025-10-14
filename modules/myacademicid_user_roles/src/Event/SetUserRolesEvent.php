@@ -29,7 +29,7 @@ class SetUserRolesEvent extends Event {
   /**
    * Whether the user entity should be saved after setting the value.
    *
-   * @var boolean
+   * @var bool
    */
   public $save;
 
@@ -40,7 +40,7 @@ class SetUserRolesEvent extends Event {
    *   The user entity.
    * @param array $roles
    *   Array of user roles.
-   * @param boolean $save
+   * @param bool $save
    *   Whether the user entity should be saved after setting the value.
    */
   public function __construct(UserInterface $user, array $roles, $save = TRUE) {

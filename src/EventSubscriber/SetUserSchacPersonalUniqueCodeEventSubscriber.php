@@ -2,10 +2,9 @@
 
 namespace Drupal\myacademicid_user_fields\EventSubscriber;
 
-use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\user\Entity\User;
 use Drupal\myacademicid_user_fields\Event\SetUserSchacPersonalUniqueCodeEvent;
 use Drupal\myacademicid_user_fields\MyacademicidUserFields;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -18,6 +17,13 @@ class SetUserSchacPersonalUniqueCodeEventSubscriber implements EventSubscriberIn
   use StringTranslationTrait;
 
   /**
+   * The logger service.
+   *
+   * @var \Psr\Log\LoggerInterface
+   */
+  protected $logger;
+
+  /**
    * The MyAcademicID user fields service.
    *
    * @var \Drupal\myacademicid_user_fields\MyacademicidUserFields
@@ -25,29 +31,22 @@ class SetUserSchacPersonalUniqueCodeEventSubscriber implements EventSubscriberIn
   protected $service;
 
   /**
-   * The messenger.
-   *
-   * @var \Drupal\Core\Messenger\MessengerInterface
-   */
-  protected $messenger;
-
-  /**
    * Constructs event subscriber.
    *
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
+   *   The logger factory service.
    * @param \Drupal\myacademicid_user_fields\MyacademicidUserFields $service
    *   The MyAcademicID user fields service.
-   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
-   *   The messenger.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation service.
    */
   public function __construct(
+    LoggerChannelFactoryInterface $logger_factory,
     MyacademicidUserFields $service,
-    MessengerInterface $messenger,
-    TranslationInterface $string_translation
+    TranslationInterface $string_translation,
   ) {
+    $this->logger            = $logger_factory->get('myacademicid_user_fields');
     $this->service           = $service;
-    $this->messenger         = $messenger;
     $this->stringTranslation = $string_translation;
   }
 
@@ -57,7 +56,7 @@ class SetUserSchacPersonalUniqueCodeEventSubscriber implements EventSubscriberIn
   public static function getSubscribedEvents() {
     return [
       SetUserSchacPersonalUniqueCodeEvent::EVENT_NAME => [
-        'onSetUserSchacPersonalUniqueCode'
+        'onSetUserSchacPersonalUniqueCode',
       ],
     ];
   }
@@ -75,16 +74,16 @@ class SetUserSchacPersonalUniqueCodeEventSubscriber implements EventSubscriberIn
         '%claim' => MyacademicidUserFields::CLAIM_SPUC,
       ]);
 
-      // $this->messenger->addWarning($message);
+      $this->logger->notice($message);
     }
     else {
       $message = $this->t('Setting %claim claim as %spuc for user %user...', [
         '%user' => $event->user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_SPUC,
-        '%spuc' => \implode(', ', $event->spuc)
+        '%spuc' => \implode(', ', $event->spuc),
       ]);
 
-      // $this->messenger->addStatus($message);
+      $this->logger->notice($message);
     }
 
     $this->service->setUserSchacPersonalUniqueCode(

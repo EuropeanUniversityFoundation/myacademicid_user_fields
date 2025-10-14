@@ -31,6 +31,8 @@ class AffiliationAssertion {
 
   /**
    * The affiliation service.
+   *
+   * @var \Drupal\myacademicid_user_fields\MyacademicidUserAffiliation
    */
   protected $affiliation;
 
@@ -54,7 +56,7 @@ class AffiliationAssertion {
   public function __construct(
     ConfigFactoryInterface $config_factory,
     MyacademicidUserAffiliation $affiliation,
-    TranslationInterface $string_translation
+    TranslationInterface $string_translation,
   ) {
     $this->configFactory     = $config_factory;
     $this->affiliation       = $affiliation;
@@ -64,7 +66,8 @@ class AffiliationAssertion {
   /**
    * Member affiliation assertions defined in the system.
    *
-   * @return array $assertions
+   * @return array
+   *   The affiliation assertions.
    */
   public function getAssertions(): array {
     $assertions = self::ASSERT_MEMBER;
@@ -73,8 +76,8 @@ class AffiliationAssertion {
 
     $additional_assertions = (array) $config->get('assert_member');
 
-    foreach ($additional_assertions as $idx => $value) {
-      $assertions[] = $value;
+    foreach ($additional_assertions as $assertion) {
+      $assertions[] = $assertion;
     }
 
     return $assertions;
@@ -103,6 +106,7 @@ class AffiliationAssertion {
           $field_values = [];
 
           foreach ($user->get($field) as $item) {
+            /** @var \Drupal\Core\Field\FieldItemListInterface $item */
             $field_values[] = $item->value;
           }
 
@@ -127,8 +131,8 @@ class AffiliationAssertion {
     $structure = [];
 
     // Gather all affiliation keys per schac_home_organization.
-    foreach ($claims[MyacademicidUserFields::CLAIM_VEA] as $idx => $value) {
-      $parts = \explode('@' ,$value);
+    foreach ($claims[MyacademicidUserFields::CLAIM_VEA] as $value) {
+      $parts = \explode('@', $value);
       $key = $parts[0];
       $sho = $parts[1];
 
@@ -143,8 +147,8 @@ class AffiliationAssertion {
     // Check whether the member affiliation needs to be asserted and added.
     foreach ($structure as $sho => $keys) {
       if (
-        ! empty(\array_intersect($assertions, $keys)) &&
-        ! \in_array(MyacademicidUserAffiliation::MEMBER, $keys)
+        !empty(\array_intersect($assertions, $keys)) &&
+        !\in_array(MyacademicidUserAffiliation::MEMBER, $keys)
       ) {
         $member = \implode('@', [MyacademicidUserAffiliation::MEMBER, $sho]);
         $claims[MyacademicidUserFields::CLAIM_VEA][] = $member;

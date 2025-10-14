@@ -18,13 +18,13 @@ class UserBaseFieldsTest extends KernelTestBase {
   const NEW_BASE_FIELDS = [
     'maid_schac_home_organization',
     'maid_schac_personal_unique_code',
-    'maid_voperson_external_affiliation'
+    'maid_voperson_external_affiliation',
   ];
 
   /**
    * Modules to enable.
    *
-   * @var array
+   * @var array<string>
    */
   protected static $modules = ['user', 'myacademicid_user_fields'];
 
@@ -49,4 +49,5 @@ class UserBaseFieldsTest extends KernelTestBase {
       $this->assertInstanceOf(BaseFieldDefinition::class, $fields[$field]);
     }
   }
+
 }

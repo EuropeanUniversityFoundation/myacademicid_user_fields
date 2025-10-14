@@ -25,6 +25,13 @@ class SettingsForm extends ConfigFormBase {
   use StringTranslationTrait;
 
   /**
+   * The module extension list service.
+   *
+   * @var \Drupal\Core\Extension\ModuleExtensionList
+   */
+  protected $extensionList;
+
+  /**
    * The module handler service.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
@@ -43,6 +50,8 @@ class SettingsForm extends ConfigFormBase {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
+   * @param \Drupal\Core\Extension\ModuleExtensionList $module_extension_list
+   *   The module extension list service.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler service.
    * @param \Drupal\Core\Extension\ModuleExtensionList $module_extension_list
@@ -52,13 +61,13 @@ class SettingsForm extends ConfigFormBase {
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
-    ModuleHandlerInterface $module_handler,
     ModuleExtensionList $module_extension_list,
-    TranslationInterface $string_translation
+    ModuleHandlerInterface $module_handler,
+    TranslationInterface $string_translation,
   ) {
     parent::__construct($config_factory);
+    $this->extensionList = $module_extension_list;
     $this->moduleHandler = $module_handler;
-    $this->moduleExtensionList = $module_extension_list;
     $this->stringTranslation = $string_translation;
   }
 
@@ -68,6 +77,7 @@ class SettingsForm extends ConfigFormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
+      $container->get('extension.list.module'),
       $container->get('module_handler'),
       $container->get('extension.list.module'),
       $container->get('string_translation'),
@@ -109,6 +119,7 @@ class SettingsForm extends ConfigFormBase {
       '#title' => $this->t('Mode of operation'),
       '#options' => $modes,
       '#default_value' => ($server_allowed) ? $current_mode : self::CLIENT_MODE,
+      '#config_target' => 'myacademicid_user_fields.settings:mode',
     ];
 
     $form['mode'][self::CLIENT_MODE]['#description'] = $this
@@ -117,37 +128,16 @@ class SettingsForm extends ConfigFormBase {
     $form['mode'][self::SERVER_MODE]['#description'] = $this
       ->t('To be used in combination with an OAuth2 server module.');
 
-    if (! $server_allowed) {
+    if (!$server_allowed) {
       $form['mode'][self::SERVER_MODE]['#description'] = $this
         ->t('Requires the %module module to be enabled.', [
-          '%module' => $this->moduleExtensionList
-            ->getName(self::SERVER_SUBMODULE),
+          '%module' => $this->extensionList->getName(self::SERVER_SUBMODULE),
         ]);
 
       $form['mode'][self::SERVER_MODE]['#disabled'] = TRUE;
     }
 
     return parent::buildForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    parent::validateForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->config('myacademicid_user_fields.settings');
-
-    $config->set('mode', $form_state->getValue('mode'));
-
-    $config->save();
-
-    parent::submitForm($form, $form_state);
   }
 
 }

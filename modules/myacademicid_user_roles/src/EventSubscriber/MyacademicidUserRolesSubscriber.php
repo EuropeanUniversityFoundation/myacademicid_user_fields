@@ -3,7 +3,7 @@
 namespace Drupal\myacademicid_user_roles\EventSubscriber;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\myacademicid_user_fields\Event\SetUserVopersonExternalAffiliationEvent;
@@ -38,6 +38,13 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
   protected $eventDispatcher;
 
   /**
+   * The logger service.
+   *
+   * @var \Psr\Log\LoggerInterface
+   */
+  protected $logger;
+
+  /**
    * The MyAcademicID user fields service.
    *
    * @var \Drupal\myacademicid_user_fields\MyacademicidUserFields
@@ -52,41 +59,34 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
   protected $rolesService;
 
   /**
-   * The messenger.
-   *
-   * @var \Drupal\Core\Messenger\MessengerInterface
-   */
-  protected $messenger;
-
-  /**
    * Constructs event subscriber.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
    * @param \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher service.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
+   *   The logger factory service.
    * @param \Drupal\myacademicid_user_fields\MyacademicidUserFields $fields_service
    *   The MyAcademicID user fields service.
    * @param \Drupal\myacademicid_user_roles\MyacademicidUserRoles $roles_service
    *   The MyAcademicID user roles service.
-   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
-   *   The messenger.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation service.
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
     EventDispatcherInterface $event_dispatcher,
+    LoggerChannelFactoryInterface $logger_factory,
     MyacademicidUserFields $fields_service,
     MyacademicidUserRoles $roles_service,
-    MessengerInterface $messenger,
-    TranslationInterface $string_translation
+    TranslationInterface $string_translation,
   ) {
     $this->configFactory     = $config_factory;
     $this->eventDispatcher   = $event_dispatcher;
+    $this->logger            = $logger_factory->get('myacademicid_user_roles');
     $this->fieldsService     = $fields_service;
     $this->rolesService      = $roles_service;
-    $this->messenger         = $messenger;
     $this->stringTranslation = $string_translation;
   }
 
@@ -96,13 +96,13 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
   public static function getSubscribedEvents() {
     return [
       UserRolesChangeEvent::EVENT_NAME => [
-        'onUserRolesChange'
+        'onUserRolesChange',
       ],
       UserSchacHomeOrganizationChangeEvent::EVENT_NAME => [
-        'onUserSchacHomeOrganizationChange'
+        'onUserSchacHomeOrganizationChange',
       ],
       UserVopersonExternalAffiliationChangeEvent::EVENT_NAME => [
-        'onUserVopersonExternalAffiliationChange'
+        'onUserVopersonExternalAffiliationChange',
       ],
     ];
   }
@@ -119,7 +119,7 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
         '%user' => $event->user->label(),
       ]);
 
-      // $this->messenger->addWarning($message);
+      $this->logger->notice($message);
     }
     else {
       $labels = $this->rolesService->roleLabels($event->roles);
@@ -130,7 +130,7 @@ class MyacademicidUserRolesSubscriber implements EventSubscriberInterface {
         '%user' => $event->user->label(),
       ]);
 
-      // $this->messenger->addStatus($message);
+      $this->logger->notice($message);
     }
 
     $mode = $this->configFactory

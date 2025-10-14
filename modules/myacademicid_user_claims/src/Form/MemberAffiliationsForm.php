@@ -24,6 +24,8 @@ class MemberAffiliationsForm extends ConfigFormBase {
 
   /**
    * The affiliation service.
+   *
+   * @var \Drupal\myacademicid_user_fields\MyacademicidUserAffiliation
    */
   protected $affiliation;
 
@@ -50,7 +52,7 @@ class MemberAffiliationsForm extends ConfigFormBase {
     ConfigFactoryInterface $config_factory,
     MyacademicidUserAffiliation $affiliation,
     MessengerInterface $messenger,
-    TranslationInterface $string_translation
+    TranslationInterface $string_translation,
   ) {
     parent::__construct($config_factory);
     $this->affiliation       = $affiliation;
@@ -112,20 +114,20 @@ class MemberAffiliationsForm extends ConfigFormBase {
     $defaults = AffiliationAssertion::ASSERT_MEMBER;
     $list = [];
 
-    foreach ($defaults as $i => $value) {
+    foreach ($defaults as $value) {
       $list[] = $value;
       unset($types[$value]);
     }
 
     $intro = '<p>' . $this
       ->t('By default, the %member affiliation must be asserted for:', [
-        '%member' => MyacademicidUserAffiliation::MEMBER
+        '%member' => MyacademicidUserAffiliation::MEMBER,
       ]) . '</p>';
 
     $intro .= '<ul>';
-    foreach ($list as $i => $value) {
+    foreach ($list as $value) {
       $intro .= '<li>' . $this->t('%key', [
-        '%key' => $value
+        '%key' => $value,
       ]) . '</li>';
     }
     $intro .= '</ul>';
@@ -163,13 +165,6 @@ class MemberAffiliationsForm extends ConfigFormBase {
     }
 
     return parent::buildForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    parent::validateForm($form, $form_state);
   }
 
   /**

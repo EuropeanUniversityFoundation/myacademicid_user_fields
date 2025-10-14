@@ -15,7 +15,11 @@ use Symfony\Component\Validator\Constraint;
  */
 class SchacHomeOrganization extends Constraint {
 
-  // The message that will be shown if the SCHAC code is not valid.
+  /**
+   * The message that will be shown if the SCHAC code is not valid.
+   *
+   * @var string
+   */
   public $message = '%value is not a valid SCHAC code.';
 
 }

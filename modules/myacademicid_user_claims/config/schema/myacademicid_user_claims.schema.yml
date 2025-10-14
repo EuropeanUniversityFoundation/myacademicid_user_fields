@@ -10,4 +10,4 @@ myacademicid_user_claims.settings:
       sequence:
         type: string
         constraints:
-          Regex: '/^[a-zA-Z\-_]+$/'
+          NotNull: []

@@ -36,9 +36,10 @@ class UserVopersonExternalAffiliationChangeEvent extends Event {
   public function __construct(UserInterface $user) {
     $this->user = $user;
 
+    /** @var \Drupal\Core\Field\FieldItemListInterface $field */
     $field = $this->user->get(MyacademicidUserFields::FIELD_VEA);
 
-    foreach ($field as $idx => $item) {
+    foreach ($field as $item) {
       $this->vea[] = $item->value;
     }
   }

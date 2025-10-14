@@ -8,6 +8,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 
 /**
  * Provides affiliation types.
+ *
  *   @see https://wiki.refeds.org/display/STAN/eduPerson+2021-11#eduPerson202111-eduPersonAffiliation
  */
 class MyacademicidUserAffiliation {
@@ -25,18 +26,24 @@ class MyacademicidUserAffiliation {
 
   /**
    * Default affiliation types.
+   *
+   * @var array
    */
-  protected $defaultTypes;
+  protected $defaultTypes = [];
 
   /**
    * Additional affiliation types.
+   *
+   * @var array
    */
-  protected $additionalTypes;
+  protected $additionalTypes = [];
 
   /**
    * All defined affiliation types.
+   *
+   * @var array
    */
-  protected $definedTypes;
+  protected $definedTypes = [];
 
   /**
    * Config factory.
@@ -55,7 +62,7 @@ class MyacademicidUserAffiliation {
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
-    TranslationInterface $string_translation
+    TranslationInterface $string_translation,
   ) {
     $this->configFactory = $config_factory;
     $this->stringTranslation = $string_translation;
@@ -89,7 +96,7 @@ class MyacademicidUserAffiliation {
    *   An array of affiliation key => affiliation label pairs.
    */
   public function getDefaultTypes(): array {
-    if (!isset($this->defaultTypes)) {
+    if (empty($this->defaultTypes)) {
       $this->defaultTypes = static::defaultTypes();
     }
 
@@ -103,14 +110,12 @@ class MyacademicidUserAffiliation {
    *   An array of affiliation key => affiliation label pairs.
    */
   public function getAdditionalTypes(): array {
-    if (!isset($this->additionalTypes)) {
-      $this->additionalTypes = [];
-
+    if (empty($this->additionalTypes)) {
       $config = $this->configFactory->get('myacademicid_user_fields.types');
 
       $additional = (array) $config->get('additional');
 
-      foreach ($additional as $idx => $value) {
+      foreach ($additional as $value) {
         $pair = \explode('|', $value, 2);
         $key = $pair[0];
         $label = (count($pair) === 2) ? $pair[1] : $key;
@@ -129,7 +134,7 @@ class MyacademicidUserAffiliation {
    *   An array of affiliation key => affiliation label pairs.
    */
   public function getDefinedTypes(): array {
-    if (!isset($this->definedTypes)) {
+    if (empty($this->definedTypes)) {
       $default = $this->getDefaultTypes();
       $additional = $this->getAdditionalTypes();
 

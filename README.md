@@ -39,7 +39,7 @@ The field names follow the convention `maid_{claim}`.
 This module defines two groups of `Event`s and corresponding `EventSubscriber`s to handle the main use cases:
 
 - `User{Claim}ChangeEvent`s are dispatched when the corresponding _User_ fields change;
-- the built-in `MyacademicidUserFieldsSubscriber` issues messages accordingly;
+- the built-in `MyacademicidUserFieldsSubscriber` logs messages accordingly;
 - `SetUser{Claim}Event`s are dispatched when the corresponding user fields should be set to a given value;
 - the built-in `SetUser{Claim}EventSubscriber`s set the field values if the User entity passes validation.
 
@@ -50,8 +50,6 @@ This module adds one permission: _Administer MyAcademicID user fields_.
 Users with this permission can edit MyAcademicID user fields (their own or any user's, depending on other core permissions).
 
 Users without this permission will see their MyAcademicID claims printed as plain text in their user account form.
-
-With this permission, a user can also trigger the `SetUser{Claim}Event`s via a form located at `admin/config/services/myacademicid/trigger-set-events`.
 
 ### Populating MyAcademicID user fields
 

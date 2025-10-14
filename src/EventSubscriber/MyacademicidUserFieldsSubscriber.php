@@ -2,10 +2,9 @@
 
 namespace Drupal\myacademicid_user_fields\EventSubscriber;
 
-use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\user\Entity\User;
 use Drupal\myacademicid_user_fields\Event\UserSchacHomeOrganizationChangeEvent;
 use Drupal\myacademicid_user_fields\Event\UserSchacPersonalUniqueCodeChangeEvent;
 use Drupal\myacademicid_user_fields\Event\UserVopersonExternalAffiliationChangeEvent;
@@ -20,27 +19,27 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
   use StringTranslationTrait;
 
   /**
-   * The messenger.
+   * The logger service.
    *
-   * @var \Drupal\Core\Messenger\MessengerInterface
+   * @var \Psr\Log\LoggerInterface
    */
-  protected $messenger;
+  protected $logger;
 
   /**
    * Constructs event subscriber.
    *
-   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
-   *   The messenger.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
+   *   The logger factory service.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation service.
    */
-   public function __construct(
-     MessengerInterface $messenger,
-     TranslationInterface $string_translation
-   ) {
-     $this->messenger         = $messenger;
-     $this->stringTranslation = $string_translation;
-   }
+  public function __construct(
+    LoggerChannelFactoryInterface $logger_factory,
+    TranslationInterface $string_translation,
+  ) {
+    $this->logger            = $logger_factory->get('myacademicid_user_fields');
+    $this->stringTranslation = $string_translation;
+  }
 
   /**
    * {@inheritdoc}
@@ -48,13 +47,13 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
   public static function getSubscribedEvents() {
     return [
       UserSchacHomeOrganizationChangeEvent::EVENT_NAME => [
-        'onUserSchacHomeOrganizationChange'
+        'onUserSchacHomeOrganizationChange',
       ],
       UserSchacPersonalUniqueCodeChangeEvent::EVENT_NAME => [
-        'onUserSchacPersonalUniqueCodeChange'
+        'onUserSchacPersonalUniqueCodeChange',
       ],
       UserVopersonExternalAffiliationChangeEvent::EVENT_NAME => [
-        'onUserVopersonExternalAffiliationChange'
+        'onUserVopersonExternalAffiliationChange',
       ],
     ];
   }
@@ -72,16 +71,16 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
         '%claim' => MyacademicidUserFields::CLAIM_SHO,
       ]);
 
-      // $this->messenger->addWarning($message);
+      $this->logger->notice($message);
     }
     else {
       $message = $this->t('User %user has a %claim claim of %value.', [
         '%user' => $event->user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_SHO,
-        '%value' => \implode(', ', $event->sho)
+        '%value' => \implode(', ', $event->sho),
       ]);
 
-      // $this->messenger->addStatus($message);
+      $this->logger->notice($message);
     }
   }
 
@@ -98,16 +97,16 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
         '%claim' => MyacademicidUserFields::CLAIM_SPUC,
       ]);
 
-      // $this->messenger->addWarning($message);
+      $this->logger->notice($message);
     }
     else {
       $message = $this->t('User %user has a %claim claim of %value.', [
         '%user' => $event->user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_SPUC,
-        '%value' => \implode(', ', $event->spuc)
+        '%value' => \implode(', ', $event->spuc),
       ]);
 
-      // $this->messenger->addStatus($message);
+      $this->logger->notice($message);
     }
   }
 
@@ -124,16 +123,16 @@ class MyacademicidUserFieldsSubscriber implements EventSubscriberInterface {
         '%claim' => MyacademicidUserFields::CLAIM_VEA,
       ]);
 
-      // $this->messenger->addWarning($message);
+      $this->logger->notice($message);
     }
     else {
       $message = $this->t('User %user has a %claim claim of %value.', [
         '%user' => $event->user->label(),
         '%claim' => MyacademicidUserFields::CLAIM_VEA,
-        '%value' => \implode(', ', $event->vea)
+        '%value' => \implode(', ', $event->vea),
       ]);
 
-      // $this->messenger->addStatus($message);
+      $this->logger->notice($message);
     }
   }
 

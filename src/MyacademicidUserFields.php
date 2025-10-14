@@ -7,7 +7,6 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 use Drupal\myacademicid_user_fields\Event\UserSchacHomeOrganizationChangeEvent;
 use Drupal\myacademicid_user_fields\Event\UserSchacPersonalUniqueCodeChangeEvent;
@@ -67,7 +66,7 @@ class MyacademicidUserFields {
   public function __construct(
     EventDispatcherInterface $event_dispatcher,
     MessengerInterface $messenger,
-    TranslationInterface $string_translation
+    TranslationInterface $string_translation,
   ) {
     $this->eventDispatcher   = $event_dispatcher;
     $this->messenger         = $messenger;
@@ -77,12 +76,13 @@ class MyacademicidUserFields {
   /**
    * Attach base fields to an entity.
    *
-   * @return array $fields[]
+   * @return array
+   *   The altered list of fields.
    */
   public function attachBaseFields(): array {
     $fields[self::FIELD_SHO] = BaseFieldDefinition::create('string')
       ->setLabel($this->t('MyAcademicID %claim claim.', [
-        '%claim' => self::CLAIM_SHO
+        '%claim' => self::CLAIM_SHO,
       ]))
       ->setDescription(self::DESCRIPTION)
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
@@ -95,7 +95,7 @@ class MyacademicidUserFields {
 
     $fields[self::FIELD_SPUC] = BaseFieldDefinition::create('string')
       ->setLabel($this->t('MyAcademicID %claim claim.', [
-        '%claim' => self::CLAIM_SPUC
+        '%claim' => self::CLAIM_SPUC,
       ]))
       ->setDescription(self::DESCRIPTION)
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
@@ -104,11 +104,10 @@ class MyacademicidUserFields {
         'type' => 'string_textfield',
         'weight' => 100,
       ]);
-      // ->addConstraint('SchacPersonalUniqueCode');
-
+    // ->addConstraint('SchacPersonalUniqueCode');
     $fields[self::FIELD_VEA] = BaseFieldDefinition::create('string')
       ->setLabel($this->t('MyAcademicID %claim claim.', [
-        '%claim' => self::CLAIM_VEA
+        '%claim' => self::CLAIM_VEA,
       ]))
       ->setDescription(self::DESCRIPTION)
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
@@ -117,8 +116,7 @@ class MyacademicidUserFields {
         'type' => 'string_textfield',
         'weight' => 100,
       ]);
-      // ->addConstraint('VopersonExternalAffiliation');
-
+    // ->addConstraint('VopersonExternalAffiliation');
     return $fields;
   }
 
@@ -126,10 +124,11 @@ class MyacademicidUserFields {
    * Check for changes in the user entity to dispatch events.
    *
    * @param \Drupal\user\UserInterface $user
+   *   The user entity.
    */
   public function checkFieldChange(UserInterface $user) {
     foreach (self::EVENT_CLASS as $field => $event_class) {
-      if (! $this->equalValue($user, $field)) {
+      if (!$this->equalValue($user, $field)) {
         // Instantiate our event.
         $event = new $event_class($user);
         // Dispatch the event.
@@ -147,7 +146,8 @@ class MyacademicidUserFields {
    * @param string $field
    *   The field name.
    *
-   * @return boolean
+   * @return bool
+   *   Whether is value is equal.
    */
   public function equalValue(UserInterface $user, string $field): bool {
     $old_value = (empty($user->original)) ? NULL : $user->original
@@ -165,7 +165,7 @@ class MyacademicidUserFields {
    *   The user entity.
    * @param array $sho
    *   Array of schac_home_organization values.
-   * @param boolean $save
+   * @param bool $save
    *   Whether the user entity should be saved after setting the value.
    */
   public function setUserSchacHomeOrganization(UserInterface $user, array $sho, $save = TRUE) {
@@ -179,7 +179,7 @@ class MyacademicidUserFields {
    *   The user entity.
    * @param array $spuc
    *   Array of schac_personal_unique_code values.
-   * @param boolean $save
+   * @param bool $save
    *   Whether the user entity should be saved after setting the value.
    */
   public function setUserSchacPersonalUniqueCode(UserInterface $user, array $spuc, $save = TRUE) {
@@ -193,7 +193,7 @@ class MyacademicidUserFields {
    *   The user entity.
    * @param array $vea
    *   Array of voperson_external_affiliation values.
-   * @param boolean $save
+   * @param bool $save
    *   Whether the user entity should be saved after setting the value.
    */
   public function setUserVopersonExternalAffiliation(UserInterface $user, array $vea, $save = TRUE) {
@@ -211,7 +211,7 @@ class MyacademicidUserFields {
    *   The new value for the field.
    * @param string $claim
    *   The corresponding claim to the field.
-   * @param boolean $save
+   * @param bool $save
    *   Whether the user entity should be saved after setting the value.
    */
   private function setValidFieldValue(UserInterface $user, string $field, array $value, string $claim, $save = TRUE) {
@@ -223,13 +223,13 @@ class MyacademicidUserFields {
     $violations = $user->validate();
 
     if ($violations->count() > 0) {
-      foreach ($violations as $idx => $violation) {
+      foreach ($violations as $violation) {
         $this->messenger->addError($violation->getMessage());
       }
 
       $this->messenger->addError($this->t('Cannot set %claim claim to %value', [
         '%claim' => $claim,
-        '%value' => \implode(', ', $value)
+        '%value' => \implode(', ', $value),
       ]));
 
       $user->set($field, $original);

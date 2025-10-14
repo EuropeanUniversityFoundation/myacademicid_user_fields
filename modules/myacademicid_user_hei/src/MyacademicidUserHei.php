@@ -55,7 +55,7 @@ class MyacademicidUserHei {
    *
    * @param \Drupal\ewp_institutions_get\InstitutionManager $hei_manager
    *   EWP Institutions manager service.
-   * @param \Drupal\ewp_institutions_user\InstitutionLookupManager $hei_lookup
+   * @param \Drupal\ewp_institutions_lookup\InstitutionLookupManager $hei_lookup
    *   EWP Institutions lookup manager service.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
    *   The logger factory service.
@@ -69,7 +69,7 @@ class MyacademicidUserHei {
     InstitutionLookupManager $hei_lookup,
     LoggerChannelFactoryInterface $logger_factory,
     RendererInterface $renderer,
-    TranslationInterface $string_translation
+    TranslationInterface $string_translation,
   ) {
     $this->heiManager        = $hei_manager;
     $this->heiLookup         = $hei_lookup;
@@ -83,7 +83,7 @@ class MyacademicidUserHei {
    *
    * @param string $sho
    *   The schac_home_organization value.
-   * @param boolean $import
+   * @param bool $import
    *   Whether to lookup and import an Institution.
    *
    * @return array
@@ -126,7 +126,8 @@ class MyacademicidUserHei {
 
     if ($import) {
       $this->logger->error($message);
-    } else {
+    }
+    else {
       $this->logger->warning($message);
     }
   }
