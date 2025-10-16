@@ -3,6 +3,7 @@
 namespace Drupal\myacademicid_user_fields\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\ConfigTarget;
 use Drupal\Core\Form\FormStateInterface;
@@ -30,6 +31,8 @@ class AffiliationTypesForm extends ConfigFormBase {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
+   * @param \Drupal\Core\Config\TypedConfigManagerInterface $typed_config_manager
+   *   The typed configuration manager.
    * @param \Drupal\myacademicid_user_fields\MyacademicidUserAffiliation $affiliation
    *   The affiliation service.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
@@ -37,10 +40,11 @@ class AffiliationTypesForm extends ConfigFormBase {
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
+    TypedConfigManagerInterface $typed_config_manager,
     MyacademicidUserAffiliation $affiliation,
     TranslationInterface $string_translation,
   ) {
-    parent::__construct($config_factory);
+    parent::__construct($config_factory, $typed_config_manager);
     $this->affiliation       = $affiliation;
     $this->stringTranslation = $string_translation;
   }
@@ -51,6 +55,7 @@ class AffiliationTypesForm extends ConfigFormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
+      $container->get('config.typed'),
       $container->get('myacademicid_user_fields.affiliation'),
       $container->get('string_translation'),
     );
