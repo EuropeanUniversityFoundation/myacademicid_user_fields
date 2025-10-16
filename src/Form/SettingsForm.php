@@ -39,13 +39,6 @@ class SettingsForm extends ConfigFormBase {
   protected $moduleHandler;
 
   /**
-   * The module extension list.
-   *
-   * @var \Drupal\Core\Extension\ModuleExtensionList
-   */
-  protected $moduleExtensionList;
-
-  /**
    * The constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -54,8 +47,6 @@ class SettingsForm extends ConfigFormBase {
    *   The module extension list service.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler service.
-   * @param \Drupal\Core\Extension\ModuleExtensionList $module_extension_list
-   *   The module extension list.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation service.
    */
@@ -79,7 +70,6 @@ class SettingsForm extends ConfigFormBase {
       $container->get('config.factory'),
       $container->get('extension.list.module'),
       $container->get('module_handler'),
-      $container->get('extension.list.module'),
       $container->get('string_translation'),
     );
   }

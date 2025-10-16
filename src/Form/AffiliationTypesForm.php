@@ -154,7 +154,7 @@ class AffiliationTypesForm extends ConfigFormBase {
    * @return array
    *   The value to be stored in config.
    */
-  public static function multiLineStringToArray(string $value): array {
+  public static function multiLineStringToArray(string $value = ""): array {
     return array_filter(array_map('trim', explode("\n", trim($value))));
   }
 
@@ -167,7 +167,7 @@ class AffiliationTypesForm extends ConfigFormBase {
    * @return string
    *   The value of the form element.
    */
-  public static function arrayToMultiLineString(array $value): string {
+  public static function arrayToMultiLineString(array $value = []): string {
     return implode("\n", $value);
   }
 
