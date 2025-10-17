@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\myacademicid_user_roles\Functional;
 
+use Drupal\user\Entity\User;
 use Drupal\Tests\BrowserTestBase;
 use Drupal\user\Entity\Role;
 
@@ -30,12 +31,12 @@ class AffiliationMappingFormTest extends BrowserTestBase {
   /**
    * Admin user account.
    */
-  protected \Drupal\user\Entity\User $admin;
+  protected User $admin;
 
   /**
    * Authenticated user account.
    */
-  protected \Drupal\user\Entity\User $user;
+  protected User $user;
 
   /**
    * {@inheritdoc}
@@ -49,7 +50,7 @@ class AffiliationMappingFormTest extends BrowserTestBase {
 
     // New user, new role which interferes with the test and must be removed.
     $this->user = $this->drupalCreateUser([]);
-    foreach($this->user->getRoles(TRUE) as $rid) {
+    foreach ($this->user->getRoles(TRUE) as $rid) {
       $this->user->removeRole($rid);
     }
 

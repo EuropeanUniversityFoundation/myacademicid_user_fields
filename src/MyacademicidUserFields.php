@@ -219,6 +219,7 @@ class MyacademicidUserFields {
 
     $user->set($field, $value);
 
+    // @phpstan-ignore-next-line
     $user->_skipProtectedUserFieldConstraint = TRUE;
     $violations = $user->validate();
 

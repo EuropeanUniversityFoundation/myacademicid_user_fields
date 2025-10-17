@@ -48,7 +48,7 @@ class MemberAffiliationsFormTest extends BrowserTestBase {
 
     $this->drupalGet('admin/config/services/myacademicid/member-affiliations');
     $this->assertSession()
-        ->statusCodeEquals(403);
+      ->statusCodeEquals(403);
   }
 
   /**
@@ -119,7 +119,7 @@ class MemberAffiliationsFormTest extends BrowserTestBase {
     $additional = [
       'ewp-admin',
       'honor|Honoris Causa',
-      'faculty|Academics staff',
+      'faculty|Academic staff',
     ];
     \Drupal::configFactory()
       ->getEditable('myacademicid_user_fields.types')

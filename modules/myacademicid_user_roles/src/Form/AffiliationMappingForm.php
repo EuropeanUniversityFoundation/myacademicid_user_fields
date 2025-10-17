@@ -147,7 +147,7 @@ class AffiliationMappingForm extends ConfigFormBase {
     if (empty($this->roles)) {
       $warning = $this->t('@problem @solution', [
         '@problem' => 'There are no user roles available for mapping.',
-        '@solution' => 'Create a new user role and try again.'
+        '@solution' => 'Create a new user role and try again.',
       ]);
 
       $this->messenger->addWarning($warning);
