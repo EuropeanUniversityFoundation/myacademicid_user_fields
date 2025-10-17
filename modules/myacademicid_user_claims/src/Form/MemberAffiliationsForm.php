@@ -3,6 +3,7 @@
 namespace Drupal\myacademicid_user_claims\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
@@ -41,6 +42,8 @@ class MemberAffiliationsForm extends ConfigFormBase {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
+   * @param \Drupal\Core\Config\TypedConfigManagerInterface $typed_config_manager
+   *   The typed configuration manager.
    * @param \Drupal\myacademicid_user_fields\MyacademicidUserAffiliation $affiliation
    *   The affiliation service.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
@@ -50,11 +53,12 @@ class MemberAffiliationsForm extends ConfigFormBase {
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
+    TypedConfigManagerInterface $typed_config_manager,
     MyacademicidUserAffiliation $affiliation,
     MessengerInterface $messenger,
     TranslationInterface $string_translation,
   ) {
-    parent::__construct($config_factory);
+    parent::__construct($config_factory, $typed_config_manager);
     $this->affiliation       = $affiliation;
     $this->messenger         = $messenger;
     $this->stringTranslation = $string_translation;
@@ -66,6 +70,7 @@ class MemberAffiliationsForm extends ConfigFormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
+      $container->get('config.typed'),
       $container->get('myacademicid_user_fields.affiliation'),
       $container->get('messenger'),
       $container->get('string_translation'),
