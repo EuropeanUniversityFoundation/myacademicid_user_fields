@@ -34,7 +34,7 @@ class SettingsFormServerModeTest extends BrowserTestBase {
   }
 
   /**
-   * Tests that the settings form is NOT acessible by a non-privileged user.
+   * Tests access to the settings form by a non-privileged user.
    */
   public function testSettingsFormWithoutPermission() {
     $account = $this->drupalCreateUser(['access content']);

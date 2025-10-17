@@ -5,7 +5,7 @@ namespace Drupal\Tests\myacademicid_user_fields\Functional;
 use Drupal\Tests\BrowserTestBase;
 
 /**
- * Test description.
+ * Tests the Affiliation types form.
  *
  * @group myacademicid_user_fields
  */
@@ -29,9 +29,20 @@ class AffiliationTypesFormTest extends BrowserTestBase {
   }
 
   /**
-   * Tests that the settings page is acessible by a privileged user.
+   * Tests access to the Affiliation types form by a non-privileged user.
    */
-  public function testAffiliationTypesPage() {
+  public function testAffiliationTypesFormWithoutPermission() {
+    $account = $this->drupalCreateUser(['access content']);
+    $this->drupalLogin($account);
+
+    $this->drupalGet('admin/config/services/myacademicid/affiliation-types');
+    $this->assertSession()->statusCodeEquals(403);
+  }
+
+  /**
+   * Tests the Affiliation types form as a privileged user.
+   */
+  public function testAffiliationTypesForm() {
     $account = $this->drupalCreateUser(['administer myacademicid user fields']);
     $this->drupalLogin($account);
 
@@ -124,17 +135,6 @@ class AffiliationTypesFormTest extends BrowserTestBase {
     $this->assertSession()
       ->pageTextMatchesCount(0, '/Override/');
 
-  }
-
-  /**
-   * Tests that the settings page is NOT acessible by a non-privileged user.
-   */
-  public function testAffiliationTypesPageWithoutPermission() {
-    $account = $this->drupalCreateUser(['access content']);
-    $this->drupalLogin($account);
-
-    $this->drupalGet('admin/config/services/myacademicid/affiliation-types');
-    $this->assertSession()->statusCodeEquals(403);
   }
 
 }
