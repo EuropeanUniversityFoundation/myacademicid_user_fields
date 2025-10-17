@@ -41,7 +41,8 @@ class SettingsFormServerModeTest extends BrowserTestBase {
     $this->drupalLogin($account);
 
     $this->drupalGet('admin/config/services/myacademicid');
-    $this->assertSession()->statusCodeEquals(403);
+    $this->assertSession()
+      ->statusCodeEquals(403);
   }
 
   /**
@@ -65,7 +66,7 @@ class SettingsFormServerModeTest extends BrowserTestBase {
     $this->assertSession()
       ->checkboxChecked('edit-mode-client');
 
-    // Test the Server option is disabled by default.
+    // Test the Server option is available.
     $this->assertSession()
       ->fieldEnabled('edit-mode-server');
 

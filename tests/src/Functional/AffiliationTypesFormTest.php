@@ -36,7 +36,8 @@ class AffiliationTypesFormTest extends BrowserTestBase {
     $this->drupalLogin($account);
 
     $this->drupalGet('admin/config/services/myacademicid/affiliation-types');
-    $this->assertSession()->statusCodeEquals(403);
+    $this->assertSession()
+      ->statusCodeEquals(403);
   }
 
   /**
@@ -93,6 +94,9 @@ class AffiliationTypesFormTest extends BrowserTestBase {
     // Look for exactly one label override.
     $this->assertSession()
       ->pageTextMatchesCount(1, '/Override/');
+    // Test default values on the page, now that one is overridden.
+    $this->assertSession()
+      ->pageTextMatchesCount(7, '/Default/');
 
     // First additional value has no label, so the key appears four times.
     $this->assertSession()
@@ -125,7 +129,7 @@ class AffiliationTypesFormTest extends BrowserTestBase {
       ->get('additional');
     $this->assertEmpty($reset_config);
 
-    // Test default values on the page.
+    // Test default values on the page once more.
     $this->assertSession()
       ->pageTextMatchesCount(8, '/Default/');
     $this->assertSession()

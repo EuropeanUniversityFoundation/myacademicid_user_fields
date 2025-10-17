@@ -36,7 +36,8 @@ class SettingsFormTest extends BrowserTestBase {
     $this->drupalLogin($account);
 
     $this->drupalGet('admin/config/services/myacademicid');
-    $this->assertSession()->statusCodeEquals(403);
+    $this->assertSession()
+      ->statusCodeEquals(403);
   }
 
   /**

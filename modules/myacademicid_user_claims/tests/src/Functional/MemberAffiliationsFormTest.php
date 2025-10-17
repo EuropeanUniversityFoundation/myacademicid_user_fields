@@ -5,7 +5,7 @@ namespace Drupal\Tests\myacademicid_user_claims\Functional;
 use Drupal\Tests\BrowserTestBase;
 
 /**
- * Tests the global settings form when Server mode is available.
+ * Tests the Member affiliation form.
  *
  * @group myacademicid_user_fields
  */
@@ -32,6 +32,7 @@ class MemberAffiliationsFormTest extends BrowserTestBase {
   protected function setUp(): void {
     parent::setUp();
 
+    // Set Server mode by default for these tests.
     \Drupal::configFactory()
       ->getEditable('myacademicid_user_fields.settings')
       ->set('mode', 'server')
@@ -39,29 +40,30 @@ class MemberAffiliationsFormTest extends BrowserTestBase {
   }
 
   /**
-   * Tests that the settings form is NOT acessible by a non-privileged user.
+   * Tests access to the Member affiliation form by a non-privileged user.
    */
-  public function testSettingsFormWithoutPermission() {
+  public function testMemberAffiliationFormWithoutPermission() {
     $account = $this->drupalCreateUser(['access content']);
     $this->drupalLogin($account);
 
     $this->drupalGet('admin/config/services/myacademicid/member-affiliations');
-    $this->assertSession()->statusCodeEquals(403);
+    $this->assertSession()
+        ->statusCodeEquals(403);
   }
 
   /**
-   * Tests the settings form as a privileged user.
+   * Tests the Member affiliation form as a privileged user.
    */
-  public function testSettingsForm() {
+  public function testMemberAffiliationForm() {
     $account = $this->drupalCreateUser(['administer myacademicid user fields']);
     $this->drupalLogin($account);
 
-    // Test access to the settings form.
+    // Test access to the Member affiliation form.
     $this->drupalGet('admin/config/services/myacademicid/member-affiliations');
     $this->assertSession()
       ->statusCodeEquals(200);
 
-    // Test the default configuration, but with upstream Server mode.
+    // Test the configuration upstream Server mode and remaining defaults.
     $mode_config = $this->config('myacademicid_user_fields.settings')
       ->get('mode');
     $this->assertEquals($mode_config, 'server');
@@ -107,9 +109,9 @@ class MemberAffiliationsFormTest extends BrowserTestBase {
   }
 
   /**
-   * Tests the settings form with additional affiliation types.
+   * Tests the Member affiliation form with additional affiliation types.
    */
-  public function testSettingsFormAdditionalTypes() {
+  public function testMemberAffiliationFormAdditionalTypes() {
     $account = $this->drupalCreateUser(['administer myacademicid user fields']);
     $this->drupalLogin($account);
 
@@ -124,7 +126,7 @@ class MemberAffiliationsFormTest extends BrowserTestBase {
       ->set('additional', $additional)
       ->save();
 
-    // Test access to the settings form.
+    // Test access to the Member affiliation form.
     $this->drupalGet('admin/config/services/myacademicid/member-affiliations');
     $this->assertSession()
       ->statusCodeEquals(200);
@@ -171,9 +173,9 @@ class MemberAffiliationsFormTest extends BrowserTestBase {
   }
 
   /**
-   * Tests the settings form in Client mode.
+   * Tests the Member affiliation form in Client mode.
    */
-  public function testSettingsFormClientMode() {
+  public function testMemberAffiliationFormClientMode() {
     $account = $this->drupalCreateUser(['administer myacademicid user fields']);
     $this->drupalLogin($account);
 
@@ -183,7 +185,7 @@ class MemberAffiliationsFormTest extends BrowserTestBase {
       ->set('mode', 'client')
       ->save();
 
-    // Test access to the settings form.
+    // Test access to the Member affiliation form.
     $this->drupalGet('admin/config/services/myacademicid/member-affiliations');
     $this->assertSession()
       ->statusCodeEquals(200);
