@@ -5,11 +5,11 @@ namespace Drupal\Tests\myacademicid_user_fields\Functional;
 use Drupal\Tests\BrowserTestBase;
 
 /**
- * Tests the global settings form.
+ * Tests the global settings form when Server mode is available.
  *
  * @group myacademicid_user_fields
  */
-class SettingsFormTest extends BrowserTestBase {
+class SettingsFormServerModeTest extends BrowserTestBase {
 
   /**
    * {@inheritdoc}
@@ -19,7 +19,12 @@ class SettingsFormTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['user', 'myacademicid_user_fields'];
+  protected static $modules = [
+    'user',
+    'oauth2_server',
+    'myacademicid_user_fields',
+    'myacademicid_user_claims',
+  ];
 
   /**
    * {@inheritdoc}
@@ -62,7 +67,24 @@ class SettingsFormTest extends BrowserTestBase {
 
     // Test the Server option is disabled by default.
     $this->assertSession()
-      ->fieldDisabled('edit-mode-server');
+      ->fieldEnabled('edit-mode-server');
+
+    // Test form submission.
+    $this->submitForm(['mode' => 'server'], 'Save configuration');
+    $this->assertSession()
+      ->pageTextContains('The configuration options have been saved.');
+
+    // Test the configuration has been updated.
+    $new_config = $this->config('myacademicid_user_fields.settings')
+      ->get('mode');
+    $this->assertEquals($new_config, 'server');
+
+    // Test the new value is present in the form.
+    $this->drupalGet('admin/config/services/myacademicid');
+    $this->assertSession()
+      ->statusCodeEquals(200);
+    $this->assertSession()
+      ->checkboxChecked('edit-mode-server');
   }
 
 }

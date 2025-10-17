@@ -37,5 +37,9 @@
             "type": "composer",
             "url": "https://packages.drupal.org/8"
         }
-    ]
+    ],
+    "require-dev": {
+        "drupal/oauth2_server": "^2.0",
+        "euf/ewp_institutions": "^1.0"
+    }
 }

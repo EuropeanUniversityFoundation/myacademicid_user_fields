@@ -35,15 +35,15 @@ class AffiliationTypesFormTest extends BrowserTestBase {
     $account = $this->drupalCreateUser(['administer myacademicid user fields']);
     $this->drupalLogin($account);
 
-    // Test access to the settings form.
-    $this->drupalGet('admin/config/services/myacademicid/affiliation-types');
-    $this->assertSession()
-      ->statusCodeEquals(200);
-
     // Test the default configuration.
     $default_config = $this->config('myacademicid_user_fields.types')
       ->get('additional');
     $this->assertEmpty($default_config);
+
+    // Test access to the settings form.
+    $this->drupalGet('admin/config/services/myacademicid/affiliation-types');
+    $this->assertSession()
+      ->statusCodeEquals(200);
 
     // Test default values on the page.
     $this->assertSession()
@@ -58,13 +58,18 @@ class AffiliationTypesFormTest extends BrowserTestBase {
     // Test form submission.
     $additional_values = [
       'ewp-admin',
-      'honoris|Honoris Causa',
+      'honor|Honoris Causa',
       'faculty|Academic staff',
     ];
     $submission_data = ['additional' => implode("\n", $additional_values)];
     $this->submitForm($submission_data, 'Save configuration');
     $this->assertSession()
       ->pageTextContains('The configuration options have been saved.');
+
+    // Test the configuration has been updated.
+    $new_config = $this->config('myacademicid_user_fields.types')
+      ->get('additional');
+    $this->assertNotEquals($default_config, $new_config);
 
     // Test the form loads normally.
     $this->drupalGet('admin/config/services/myacademicid/affiliation-types');
@@ -84,7 +89,7 @@ class AffiliationTypesFormTest extends BrowserTestBase {
 
     // Second additional value has label, so the key appears three times.
     $this->assertSession()
-      ->pageTextMatchesCount(3, '/honoris/');
+      ->pageTextMatchesCount(3, '/honor/');
     // Second additional value has label, so the label appears twice.
     $this->assertSession()
       ->pageTextMatchesCount(2, '/Causa/');
@@ -99,10 +104,26 @@ class AffiliationTypesFormTest extends BrowserTestBase {
     $this->assertSession()
       ->pageTextMatchesCount(0, '/Faculty/');
 
+    // Tests manual reset to default configuration.
+    $this->submitForm(['additional' => ''], 'Save configuration');
+    $this->assertSession()
+      ->pageTextContains('The configuration options have been saved.');
+
     // Test the configuration has been updated.
-    $new_config = $this->config('myacademicid_user_fields.types')
+    $reset_config = $this->config('myacademicid_user_fields.types')
       ->get('additional');
-    $this->assertNotEquals($default_config, $new_config);
+    $this->assertEmpty($reset_config);
+
+    // Test default values on the page.
+    $this->assertSession()
+      ->pageTextMatchesCount(8, '/Default/');
+    $this->assertSession()
+      ->pageTextMatchesCount(8, '/domain.tld/');
+    $this->assertSession()
+      ->pageTextMatchesCount(0, '/Config/');
+    $this->assertSession()
+      ->pageTextMatchesCount(0, '/Override/');
+
   }
 
   /**
