@@ -59,6 +59,7 @@ class SettingsForm extends ConfigFormBase {
       '#title' => $this->t('Synchronization mode'),
       '#options' => $sync_modes,
       '#default_value' => $config->get('sync_mode') ?? self::DO_NOT_SYNC,
+      '#config_target' => 'myacademicid_user_hei.settings:sync_mode',
     ];
 
     $form['sync_mode'][self::KEEP_IN_SYNC]['#description'] = $this
@@ -75,23 +76,10 @@ class SettingsForm extends ConfigFormBase {
         ->t('Lookup and import Institution when it does not exist.'),
       '#default_value' => $config->get('import') ?? FALSE,
       '#return_value' => TRUE,
+      '#config_target' => 'myacademicid_user_hei.settings:import',
     ];
 
     return parent::buildForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->config('myacademicid_user_hei.settings');
-
-    $config->set('sync_mode', $form_state->getValue('sync_mode'));
-    $config->set('import', (bool) $form_state->getValue('import'));
-
-    $config->save();
-
-    parent::submitForm($form, $form_state);
   }
 
 }
